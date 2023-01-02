@@ -184,14 +184,14 @@ export function LandingPage() {
       <div className="flex justify-center alignw-screen w-screen max-w-screen overflow-hidden">
         <img
           src={kaleidoscopePlaceholder}
-          className="mt-[264px] w-[250px]"
+          className="mt-[255px] w-[230px]"
         ></img>
       </div>
       <div className="flex justify-between p-10  absolute w-full top-0">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscope</h3>
         <ConnectButton />
       </div>
-      <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative text-gray-200">
+      <div className="flex justify-center alignw-screen mt-24 z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-xs">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
       {mintPrice && maxSupply && totalSupply && (
@@ -223,7 +223,7 @@ export function LandingPage() {
           ) : (
             <div>
               <button
-                className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out"
+                className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
                   setMintCount(Math.max(mintCount - 1, 1));
                   handleAmountClickDown();
@@ -253,7 +253,7 @@ export function LandingPage() {
                   : "Sold out"}
               </button>
               <button
-                className="text-xl font-bold hover:scale-125 duration-100 ease-in-out"
+                className="text-xl font-bold hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
                   setMintCount(mintCount + 1);
                   handleAmountClickUp();
@@ -308,108 +308,118 @@ export function LandingPage() {
           </div>
         </div>
       )}
-
-      <div className="flex justify-center alignw-screen mt-28 z-1 pl-10 pr-10 z-10 relative">
-        <p className="font-bold">
+      <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative ">
+        <p className="font-bold text-gray-100 text-center max-w-[340px]">
           Fully on-chain, procedurally generated, animated solar systems.
         </p>
       </div>
-      <div className="flex justify-center alignw-screen mt-10 z-1 pl-10 pr-10 relative">
-        <div className="block bg-white border border-gray-100 rounded-lg shadow-md w-[450px]">
-          <div className="w-100 px-5 pt-5">
-            <p className="font- text-xl pb-4">FAQ</p>
-            <div className="block bg-gray-100 px-3 py-2 rounded-lg w-100 text-sm text-gray-900 ">
-              <span>What are Solar Systems?</span>
-            </div>
-            <p className="text-sm text-gray-500 px-3 pt-3 pb-5">
-              Solar Systems is a fully on-chain NFT collection which features
-              procedurally generated planets orbiting around a star. Each Solar
-              System is unique and can be minted for the price of 0.01 ETH. The
-              collection is limited to 1,000 Solar Systems.
-            </p>
-            <div className="block bg-gray-100 px-3 py-2 rounded-lg w-100 text-sm text-gray-900 mt-1">
-              <span>Features</span>
-            </div>
-            <div className="text-sm text-gray-500 px-3 pt-3 pb-5">
-              Each Solar System is
-              <ul className="space-y-2 mt-2  list-disc list-inside ml-3">
-                <li>
-                  <span className="text-gray-500 font-bold">
-                    Procedurally generated.
-                  </span>{" "}
-                  This means that the solar systems are generated using a set of
-                  rules or procedures, rather than being created manually or
-                  pre-designed. This makes each solar system fully unique.
-                </li>
-                <li>
-                  <a
-                    href={`${etherscanBaseURL}/address/${deployments.contracts.Renderer.address}`}
-                    onClick={() => {
-                      playGeneralClick();
-                    }}
-                  >
-                    <span className="text-gray-500 font-bold underline hover:text-blue-900">
-                      Fully on-chain
-                    </span>
-                  </a>
-                  . This means that your NFT will exist for as long as the
-                  Ethereum blockchain is around.
-                </li>
-                <li>
-                  <span className="text-gray-500 font-bold">Animated.</span>{" "}
-                  Planets orbit around a star which adds to a dynamic and lively
-                  viewing experience.
-                </li>
-              </ul>
-            </div>
+      <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative ">
+        <div className="block bg-zinc-900 border border-zinc-800 rounded-lg  p-4">
+          <div className=" grid  grid-flow-col gap-3">
+            <a
+              href="https://opensea.io/collection/onchain-solarsystems"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-110 duration-100 ease-in-out"
+              onClick={() => {
+                playGeneralClick();
+              }}
+            >
+              <img src={opensea} alt="opensea" />
+            </a>
+            <a
+              className="hover:scale-110 duration-100 ease-in-out"
+              href={`${etherscanBaseURL}/address/${deployments.contracts.SolarSystems.address}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                playGeneralClick();
+              }}
+            >
+              <img src={etherscan} alt="etherscan" />
+            </a>
+            <a
+              href="https://github.com/lbowles/SolarNFT"
+              className="hover:scale-110 duration-100 ease-in-out"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                playGeneralClick();
+              }}
+            >
+              <img src={github} alt="github" />
+            </a>
+            <a
+              href="https://twitter.com/SolarSystemsNFT"
+              className="hover:scale-110 duration-100 ease-in-out"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                playGeneralClick();
+              }}
+            >
+              <img src={twitter} alt="twitter" />
+            </a>
           </div>
-          <div className="w-100 bg-slate-900 h-12 -ml-0 -mr-0 translate-y-[1px] rounded-bl-lg rounded-br-lg pt-3">
-            <div className="flex justify-center items-center ">
-              <div className=" grid  grid-flow-col gap-3">
-                <a
-                  href="https://opensea.io/collection/onchain-solarsystems"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:scale-110 duration-100 ease-in-out"
-                  onClick={() => {
-                    playGeneralClick();
-                  }}
-                >
-                  <img src={opensea} alt="opensea" />
-                </a>
-                <a
-                  className="hover:scale-110 duration-100 ease-in-out"
-                  href={`${etherscanBaseURL}/address/${deployments.contracts.SolarSystems.address}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    playGeneralClick();
-                  }}
-                >
-                  <img src={etherscan} alt="etherscan" />
-                </a>
-                <a
-                  href="https://github.com/lbowles/SolarNFT"
-                  className="hover:scale-110 duration-100 ease-in-out"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    playGeneralClick();
-                  }}
-                >
-                  <img src={github} alt="github" />
-                </a>
-                <a
-                  href="https://twitter.com/SolarSystemsNFT"
-                  className="hover:scale-110 duration-100 ease-in-out"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    playGeneralClick();
-                  }}
-                >
-                  <img src={twitter} alt="twitter" />
-                </a>
+        </div>
+      </div>
+      <div className="flex justify-center alignw-screen mt-10 z-1 pl-5 pr-5 relative">
+        <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[580px]">
+          <div className="p-5">
+            <p className="font- text-xl pb-4 text-gray-100">FAQ</p>
+            <div className=" ">
+              <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
+                <span>What are Solar Systems?</span>
+              </div>
+              <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
+                Solar Systems is a fully on-chain NFT collection which features
+                procedurally generated planets orbiting around a star. Each
+                Solar System is unique and can be minted for the price of 0.01
+                ETH. The collection is limited to 1,000 Solar Systems.
+              </p>
+            </div>
+            <div className="">
+              <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
+                <span>Features</span>
+              </div>
+              <div className="grid grid-cols- md:grid-cols-2">
+                <div className="text-sm text-zinc-500 px-3 pt-3 col-span-1">
+                  Each Solar System is
+                  <ul className="space-y-2 mt-2  list-disc list-inside ml-3">
+                    <li>
+                      <a
+                        href={`${etherscanBaseURL}/address/${deployments.contracts.Renderer.address}`}
+                        onClick={() => {
+                          playGeneralClick();
+                        }}
+                      >
+                        <span className=" font-bold underline hover:text-blue-900">
+                          Fully on-chain
+                        </span>
+                      </a>
+                      . This means that your NFT will exist for as long as the
+                      Ethereum blockchain is around.
+                    </li>
+                    <li>
+                      <span className="font-bold">Animated.</span> Planets orbit
+                      around a star which adds to a dynamic and lively viewing
+                      experience.
+                    </li>
+                  </ul>
+                </div>
+                <div className="text-sm text-zinc-500 px-3 pt-3 ">
+                  <ul className="space-y-2  md:mt-7  list-disc list-inside ml-3">
+                    <li>
+                      <span className=" font-bold">
+                        Procedurally generated.
+                      </span>{" "}
+                      This means that the solar systems are generated using a
+                      set of rules or procedures, rather than being created
+                      manually or pre-designed. This makes each solar system
+                      fully unique.
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

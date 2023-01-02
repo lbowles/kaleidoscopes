@@ -46,9 +46,9 @@ function App() {
         showRecentTransactions={true}
         chains={chains}
         theme={{
-          ...darkTheme({ accentColor: "#A397C6" }),
+          ...darkTheme({ accentColor: "#7b3fe4" }),
           fonts: {
-            body: "Space Mono, monospace",
+            body: "Lexend",
           },
         }}
       >

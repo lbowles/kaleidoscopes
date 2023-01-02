@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500&family=Space+Mono:wght@400;700&display=swap");
 
 :root {
   --accent1: #c697b4;
@@ -10,7 +10,7 @@
 
 body {
   margin: 0;
-  font-family: "Space Mono";
+  font-family: "Lexend";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;

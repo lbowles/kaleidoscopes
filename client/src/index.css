@@ -3,6 +3,11 @@
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
 
+:root {
+  --accent1: #c697b4;
+  --accent2: #a397c6;
+}
+
 body {
   margin: 0;
   font-family: "Space Mono";
@@ -14,8 +19,10 @@ body {
   background-position-y: 0;
   background-repeat: no-repeat;
   background-size: 1510px;
+  background-color: black;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }

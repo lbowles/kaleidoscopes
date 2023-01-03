@@ -1,13 +1,15 @@
 import { SolarSystems, SolarSystems__factory } from "../../../backend/types";
 import style from "./LandingPage.module.css";
 import deployments from "../../src/deployments.json";
-import background from ".././img/background.svg";
 import loading from ".././img/loading.svg";
 import opensea from ".././img/opensea.svg";
 import github from ".././img/github.svg";
 import twitter from ".././img/twitter.svg";
 import etherscan from ".././img/etherscan.svg";
+import noReflections from ".././img/noReflections.svg";
 import kaleidoscopePlaceholder from ".././img/placeholder.png";
+import maxSaturation from ".././img/maxSaturation.svg";
+import inputShapes from ".././img/inputShapes.svg";
 import { ConnectButton, useAddRecentTransaction } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import { prepareWriteContract, writeContract } from "@wagmi/core";
@@ -309,8 +311,8 @@ export function LandingPage() {
         </div>
       )}
       <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative ">
-        <p className="font-bold text-gray-100 text-center max-w-[340px]">
-          Fully on-chain, procedurally generated, animated solar systems.
+        <p className="font-bold text-gray-100 text-center max-w-[300px]">
+          Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>
       </div>
       <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative ">
@@ -427,58 +429,35 @@ export function LandingPage() {
         <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
           <div className="p-5">
             <p className="font- text-xl pb-4 text-gray-100">Traits</p>
-            <div className=" ">
-              <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
-                <span>What are Solar Systems?</span>
-              </div>
-              <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
-                Solar Systems is a fully on-chain NFT collection which features
-                procedurally generated planets orbiting around a star. Each
-                Solar System is unique and can be minted for the price of 0.01
-                ETH. The collection is limited to 1,000 Solar Systems.
-              </p>
-            </div>
-            <div className="">
-              <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
-                <span>Features</span>
-              </div>
-              <div className="grid grid-cols- md:grid-cols-2">
-                <div className="text-sm text-zinc-500 px-3 pt-3 col-span-1">
-                  Each Solar System is
-                  <ul className="space-y-2 mt-2  list-disc list-inside ml-3">
-                    <li>
-                      <a
-                        href={`${etherscanBaseURL}/address/${deployments.contracts.Renderer.address}`}
-                        onClick={() => {
-                          playGeneralClick();
-                        }}
-                      >
-                        <span className=" font-bold underline hover:text-blue-900">
-                          Fully on-chain
-                        </span>
-                      </a>
-                      . This means that your NFT will exist for as long as the
-                      Ethereum blockchain is around.
-                    </li>
-                    <li>
-                      <span className="font-bold">Animated.</span> Planets orbit
-                      around a star which adds to a dynamic and lively viewing
-                      experience.
-                    </li>
-                  </ul>
+            <div className="grid  gap-4 grid-cols-1 sm:grid-cols-3  ">
+              <div>
+                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center ">
+                  <img
+                    src={noReflections}
+                    alt="Number Of Reflections"
+                    className="h-5 mr-3"
+                  ></img>
+                  <span>Number Of Reflections</span>
                 </div>
-                <div className="text-sm text-zinc-500 px-3 pt-3 ">
-                  <ul className="space-y-2  md:mt-7  list-disc list-inside ml-3">
-                    <li>
-                      <span className=" font-bold">
-                        Procedurally generated.
-                      </span>{" "}
-                      This means that the solar systems are generated using a
-                      set of rules or procedures, rather than being created
-                      manually or pre-designed. This makes each solar system
-                      fully unique.
-                    </li>
-                  </ul>
+              </div>
+              <div>
+                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center min-h-20">
+                  <img
+                    src={maxSaturation}
+                    alt="Max Saturation"
+                    className="h-5 mr-3"
+                  ></img>
+                  <span>Max Color Saturation</span>
+                </div>
+              </div>
+              <div>
+                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center">
+                  <img
+                    src={inputShapes}
+                    alt="Number Of Reflections"
+                    className="h-5 mr-3"
+                  ></img>
+                  <span>Number Of Reflections</span>
                 </div>
               </div>
             </div>

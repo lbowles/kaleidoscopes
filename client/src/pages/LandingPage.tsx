@@ -189,7 +189,7 @@ export function LandingPage() {
           className="mt-[255px] w-[230px]"
         ></img>
       </div>
-      <div className="flex justify-between p-10  absolute w-full top-0">
+      <div className="flex justify-between p-5 sm:p-10 absolute w-full top-0">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscope</h3>
         <ConnectButton />
       </div>

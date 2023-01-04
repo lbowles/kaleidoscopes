@@ -9,11 +9,45 @@
   <body>
     <div id="canvasContainer"></div>
     <script>
+      function randomRange(min, max) {
+        return Math.random() * (max - min) + min
+      }
+
+      function randomCircle(x, y, r) {
+        const x1 = randomRange(0, x)
+        const x2 = randomRange(r / 2, x)
+
+        const y1 = randomRange(0, y)
+        const y2 = randomRange(r / 2, y)
+
+        const cr = randomRange(5, r / 6)
+
+        const shouldAlternate = Math.random() > 0.7
+
+        let animations = ""
+
+        if (shouldAlternate) {
+          animations +=
+            Math.random() > 0.5
+              ? `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>`
+              : `<animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>`
+        } else {
+          animations += `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>
+              <animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>`
+        }
+
+        return `
+        <circle cx="50" cy="50" r="${cr}">
+          ${animations}
+        </circle>
+        `
+      }
+
       function getSVG(canvasWidth) {
         const halfCanvasWidth = canvasWidth / 2
 
         // const mirrors = Math.ceil(Math.random() * 10)
-        const n = 6
+        const n = Math.round(randomRange(3, 10))
         const r = 100
         const angleInterval = 360 / n
         const angle = (((180 - angleInterval) / 2) * Math.PI) / 180
@@ -26,12 +60,17 @@
 
         const path = `M0,0L${x},${y}L${x * 2},0Z`
 
-        console.log(path)
-
         const paths = new Array(n)
           .fill(0)
           .map((_, i) => {
             return `<use xlink:href="#tile" transform="rotate(${angleInterval * i},${x},${y})" />`
+          })
+          .join("")
+
+        const circles = new Array(Math.round(randomRange(1, 5)))
+          .fill(0)
+          .map((_, i) => {
+            return randomCircle(x, y, r)
           })
           .join("")
 
@@ -43,27 +82,11 @@
             </clipPath>
             <g id="tile" clip-path="url(#clip)">
               <rect x="0" y="0" width="${r * 2}" height="${r}" fill="green" />
-              <circle cx="50" cy="50" r="5">
-                <animate attributeName="cx" values="${x};${
-          Math.random() * x
-        };${x}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
-          Math.random() * 3 + 1
-        }s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="${y};${
-          Math.random() * y
-        };${y}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
-          Math.random() * 3 + 1
-        }s" repeatCount="indefinite"/>
-              </circle>
+              ${circles}
             </g>
             <g id="kaleidoscopeTile" stroke="red" >
             ${paths}
           </g>
-          <pattern id="kaleidoscope" x="0" y="0" width="${r * 2}" height="${
-          r * 2
-        }" patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse">
-            <use xlink:href="#kaleidoscopeTile" x="0" y="0" />
-          </pattern>
           </defs>
           
         </defs>

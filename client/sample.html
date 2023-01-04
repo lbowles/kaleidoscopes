@@ -13,8 +13,7 @@
         let colors = []
         for (let i = 0; i < n; i++) {
           // Generate a color with a saturation and lightness value that decreases as the index increases
-          const interval = 100 / Math.max(10, n)
-          let color = `hsl(${mainHue}, ${100 - i * 10}%, ${50 - i * 10}%)`
+          let color = `hsl(${mainHue}, ${100 - (i / n) * 50}%, ${50 - (i / n) * 20}%)`
           colors.push(color)
         }
         return colors
@@ -22,6 +21,27 @@
 
       function randomRange(min, max) {
         return Math.random() * (max - min) + min
+      }
+
+      function randomTriangle(x, y, r, color) {
+        // Generate coordinates for isosceles triangle with side length r
+        const x1 = randomRange(0, x)
+        const y1 = randomRange(0, y)
+        const x2 = x1 + r
+        const y2 = y1
+
+        const duration = randomRange(5, 10)
+
+        let animations = ""
+        animations += `<animateTransform attributeName="transform" type="rotate" from="0 ${x1} -${y1}" to="360 ${x1} -${y1}" begin="0s" dur="${Math.round(
+          randomRange(4, 10),
+        )}s" repeatCount="indefinite" />`
+
+        return `
+      <polygon points="0,${-y} ${x2},${y2} ${x1},${y2}" fill="${color}">
+        ${animations}
+      </polygon>
+      `
       }
 
       function randomCircle(x, y, r, color) {
@@ -48,16 +68,16 @@
                 }s" repeatCount="indefinite"/>`
         } else {
           animations += `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${duration}s" repeatCount="indefinite"/>
-              <animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
+                  <animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
             duration / 2
           }s" repeatCount="indefinite"/>`
         }
 
         return `
-        <circle cx="50" cy="50" r="${cr}" fill="${color}">
-          ${animations}
-        </circle>
-        `
+          <circle cx="50" cy="50" r="${cr}" fill="${color}">
+            ${animations}
+          </circle>
+          `
       }
 
       function getSVG(canvasWidth) {
@@ -73,15 +93,24 @@
 
         const numCircles = Math.round(randomRange(1, 5))
         const mainHue = Math.floor(Math.random() * 360)
-        const colors = generateColors(mainHue, numCircles)
+        const [firstColor, ...colors] = generateColors(mainHue, numCircles + 1)
         const mainColor = `hsl(${mainHue}, 100%, 20%)`
         const backgroundColor = `hsl(${mainHue}, 100%, 75%)`
+
+        console.log([firstColor, ...colors])
 
         const path = `M0,0L${x},${y}L${x * 2},0A${r},${r},0,0,0,0,0Z`
         const paths = new Array(n)
           .fill(0)
           .map((_, i) => {
             return `<use xlink:href="#tile" transform="rotate(${angleInterval * i},${x},${y})" />`
+          })
+          .join("")
+
+        const bigShapes = new Array(1)
+          .fill(0)
+          .map((_, i) => {
+            return randomTriangle(x, y, r, firstColor)
           })
           .join("")
 
@@ -93,26 +122,27 @@
           .join("")
 
         return `
-        <svg width="${canvasWidth}" height="${canvasWidth}" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <clipPath id="clip">
-              <path d="${path}" />
-            </clipPath>
-            <g id="tile" clip-path="url(#clip)">
-              <rect x="0" y="-${r}" width="${r * 2}" height="${r * 2}" fill="${mainColor}" />
-              ${circles}
-            </g>
-            <g id="kaleidoscopeTile">
-              <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColor}" />
-              ${paths}
-            </g>
+          <svg width="${canvasWidth}" height="${canvasWidth}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="clip">
+                <path d="${path}" />
+              </clipPath>
+              <g id="tile" clip-path="url(#clip)">
+                <rect x="0" y="-${r}" width="${r * 2}" height="${r * 2}" fill="${mainColor}" />
+                ${bigShapes}  
+                ${circles}
+              </g>
+              <g id="kaleidoscopeTile">
+                <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColor}" />
+                ${paths}
+              </g>
+            </defs>
+
           </defs>
-          
-        </defs>
-        <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColor}"></rect>
-          <use xlink:href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
-        </svg>
-        `
+          <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColor}"></rect>
+            <use xlink:href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
+          </svg>
+          `
       }
 
       // Clear the canvas container

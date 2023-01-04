@@ -13,7 +13,7 @@
         let colors = []
         for (let i = 0; i < n; i++) {
           // Generate a color with a saturation and lightness value that decreases as the index increases
-          let color = `hsl(${mainHue}, ${100 - (i / n) * 50}%, ${50 - (i / n) * 20}%)`
+          let color = `hsl(${mainHue}, ${100 - (i / n) * 50}%, ${70 - (i / n) * 40}%)`
           colors.push(color)
         }
         return colors
@@ -21,6 +21,25 @@
 
       function randomRange(min, max) {
         return Math.random() * (max - min) + min
+      }
+
+      function randomRect(x, y, r, color) {
+        const width = randomRange(r / 2, r)
+        const height = randomRange(r / 2, r)
+
+        const shouldAlternate = Math.random() > 0.7
+
+        const duration = randomRange(5, 10)
+
+        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 0 -${y}" to="360 0 -${y}" begin="0s" dur="${Math.round(
+          randomRange(4, 10),
+        )}s" repeatCount="indefinite" />`
+
+        return `
+          <rect rx="3" ry="3" x="0" y="-${y}" width="${width}" height="${height}" fill="${color}">
+            ${animations}
+          </rect>
+          `
       }
 
       function randomTriangle(x, y, r, color) {
@@ -32,16 +51,35 @@
 
         const duration = randomRange(5, 10)
 
-        let animations = ""
-        animations += `<animateTransform attributeName="transform" type="rotate" from="0 ${x1} -${y1}" to="360 ${x1} -${y1}" begin="0s" dur="${Math.round(
+        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 ${x1} -${y1}" to="360 ${x1} -${y1}" begin="0s" dur="${Math.round(
           randomRange(4, 10),
         )}s" repeatCount="indefinite" />`
 
         return `
-      <polygon points="0,${-y} ${x2},${y2} ${x1},${y2}" fill="${color}">
-        ${animations}
-      </polygon>
-      `
+          <polygon points="0,${-y} ${x2},${y2} ${x1},${y2}" fill="${color}">
+            ${animations}
+          </polygon>
+          `
+      }
+
+      function getHueName(hue) {
+        const colors = [
+          "Red",
+          "Orange",
+          "Yellow",
+          "Chartreuse",
+          "Green",
+          "Spring green",
+          "Turquoise",
+          "Teal",
+          "Blue",
+          "Violet",
+          "Magenta",
+          "Rose",
+        ]
+
+        const colorIndex = Math.round(hue / 30) % colors.length
+        return colors[colorIndex]
       }
 
       function randomCircle(x, y, r, color) {
@@ -49,15 +87,15 @@
         const x2 = randomRange(r / 2, x)
 
         const y1 = randomRange(0, y)
-        const y2 = randomRange(r / 2, y)
+        const y2 = randomRange(y, r)
 
         const cr = randomRange(5, r / 6)
 
         const shouldAlternate = Math.random() > 0.7
 
-        const duration = randomRange(5, 10)
-
         let animations = ""
+
+        const duration = randomRange(5, 10)
 
         if (shouldAlternate) {
           animations +=
@@ -74,7 +112,7 @@
         }
 
         return `
-          <circle cx="50" cy="50" r="${cr}" fill="${color}">
+          <circle cx="${r / 2}" cy="${r / 2}" r="${cr}" fill="${color}">
             ${animations}
           </circle>
           `
@@ -85,7 +123,7 @@
 
         // const mirrors = Math.ceil(Math.random() * 10)
         const n = Math.round(randomRange(3, 10))
-        const r = 100
+        const r = 200
         const angleInterval = 360 / n
         const angle = (((180 - angleInterval) / 2) * Math.PI) / 180
         const x = Math.cos(angle) * r
@@ -94,10 +132,20 @@
         const numCircles = Math.round(randomRange(1, 5))
         const mainHue = Math.floor(Math.random() * 360)
         const [firstColor, ...colors] = generateColors(mainHue, numCircles + 1)
-        const mainColor = `hsl(${mainHue}, 100%, 20%)`
+        const mainColor = `hsl(${mainHue}, 100%, 30%)`
+        const mainColorSecondary = `hsl(${(mainHue + 10) % 360}, 100%, 10%)`
         const backgroundColor = `hsl(${mainHue}, 100%, 75%)`
 
-        console.log([firstColor, ...colors])
+        console.log("mainHue", getHueName(mainHue))
+
+        const gradientDef = `
+          <linearGradient id="gradient" gradientTransform="rotate(0)">
+            <stop offset="0%" stop-color="${mainColor}"/>
+            <stop offset="100%" stop-color="${mainColorSecondary}"/>
+          </linearGradient>
+        `
+
+        const hasGradient = Math.random() > 0.9
 
         const path = `M0,0L${x},${y}L${x * 2},0A${r},${r},0,0,0,0,0Z`
         const paths = new Array(n)
@@ -107,12 +155,7 @@
           })
           .join("")
 
-        const bigShapes = new Array(1)
-          .fill(0)
-          .map((_, i) => {
-            return randomTriangle(x, y, r, firstColor)
-          })
-          .join("")
+        const bigShapes = Math.random() > 0.5 ? randomTriangle(x, y, r, firstColor) : randomRect(x, y, r, firstColor)
 
         const circles = new Array(numCircles)
           .fill(0)
@@ -124,11 +167,16 @@
         return `
           <svg width="${canvasWidth}" height="${canvasWidth}" xmlns="http://www.w3.org/2000/svg">
             <defs>
+              ${gradientDef}
               <clipPath id="clip">
                 <path d="${path}" />
               </clipPath>
               <g id="tile" clip-path="url(#clip)">
-                <rect x="0" y="-${r}" width="${r * 2}" height="${r * 2}" fill="${mainColor}" />
+                <rect x="0" y="-${r}" width="${r * 2}" height="${r * 2}" fill="${
+          hasGradient ? "url(#gradient)" : mainColor
+        }">
+                  
+                </rect>
                 ${bigShapes}  
                 ${circles}
               </g>
@@ -141,6 +189,7 @@
           </defs>
           <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColor}"></rect>
             <use xlink:href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
+              <!--<use xlink:href="#kaleidoscopeTile"/>--!>
           </svg>
           `
       }

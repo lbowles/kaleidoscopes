@@ -9,11 +9,21 @@
   <body>
     <div id="canvasContainer"></div>
     <script>
+      function generateColors(mainHue, n) {
+        let colors = []
+        for (let i = 0; i < n; i++) {
+          // Generate a color with a saturation and lightness value that decreases as the index increases
+          let color = `hsl(${mainHue}, ${100 - i * 10}%, ${50 - i * 10}%)`
+          colors.push(color)
+        }
+        return colors
+      }
+
       function randomRange(min, max) {
         return Math.random() * (max - min) + min
       }
 
-      function randomCircle(x, y, r) {
+      function randomCircle(x, y, r, color) {
         const x1 = randomRange(0, x)
         const x2 = randomRange(r / 2, x)
 
@@ -24,20 +34,26 @@
 
         const shouldAlternate = Math.random() > 0.7
 
+        const duration = randomRange(5, 10)
+
         let animations = ""
 
         if (shouldAlternate) {
           animations +=
             Math.random() > 0.5
-              ? `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>`
-              : `<animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>`
+              ? `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${duration}s" repeatCount="indefinite"/>`
+              : `<animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
+                  duration / 2
+                }s" repeatCount="indefinite"/>`
         } else {
-          animations += `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>
-              <animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="1s" repeatCount="indefinite"/>`
+          animations += `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${duration}s" repeatCount="indefinite"/>
+              <animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
+            duration / 2
+          }s" repeatCount="indefinite"/>`
         }
 
         return `
-        <circle cx="50" cy="50" r="${cr}">
+        <circle cx="50" cy="50" r="${cr}" fill="${color}">
           ${animations}
         </circle>
         `
@@ -67,10 +83,16 @@
           })
           .join("")
 
-        const circles = new Array(Math.round(randomRange(1, 5)))
+        const numCircles = Math.round(randomRange(1, 5))
+        const mainHue = Math.floor(Math.random() * 360)
+        const colors = generateColors(mainHue, numCircles)
+        const mainColor = `hsl(${mainHue}, 100%, 20%)`
+        const backgroundColor = `hsl(${mainHue}, 100%, 75%)`
+
+        const circles = new Array(numCircles)
           .fill(0)
           .map((_, i) => {
-            return randomCircle(x, y, r)
+            return randomCircle(x, y, r, colors[i])
           })
           .join("")
 
@@ -81,17 +103,18 @@
               <path d="${path}" />
             </clipPath>
             <g id="tile" clip-path="url(#clip)">
-              <rect x="0" y="0" width="${r * 2}" height="${r}" fill="green" />
+              <rect x="0" y="0" width="${r * 2}" height="${r}" fill="${mainColor}" />
               ${circles}
             </g>
-            <g id="kaleidoscopeTile" stroke="red" >
-            ${paths}
-          </g>
+            <g id="kaleidoscopeTile">
+              ${paths}
+            </g>
           </defs>
           
         </defs>
+        <rect width="${canvasWidth}" height="${canvasWidth}" stroke="black" fill="${backgroundColor}"></rect>
         <use xlink:href="#kaleidoscopeTile" x="${2 * y}" y="${2 * y}" />
-        <rect width="${canvasWidth}" height="${canvasWidth}" stroke="black" fill="none"></rect>
+        
         </svg>
         `
       }

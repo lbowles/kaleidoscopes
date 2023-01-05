@@ -19,8 +19,15 @@
         return colors
       }
 
-      function randomRange(min, max) {
-        return Math.random() * (max - min) + min
+      function randomRange(min, max, random) {
+        random = random || Math.random()
+        return random * (max - min) + min
+      }
+
+      function randomBetaLeft(min, max) {
+        const unif = Math.random()
+        const beta = Math.pow(Math.sin((unif * pi) / 2), 2)
+        return randomRange(min, max, beta)
       }
 
       function randomRect(x, y, r, color) {
@@ -121,7 +128,6 @@
       function getSVG(canvasWidth) {
         const halfCanvasWidth = canvasWidth / 2
 
-        // const mirrors = Math.ceil(Math.random() * 10)
         const n = Math.round(randomRange(3, 20))
         const r = 200
         const angleInterval = 360 / n
@@ -129,23 +135,31 @@
         const x = Math.cos(angle) * r
         const y = Math.sin(angle) * r
 
-        const numCircles = Math.round(randomRange(3, 30))
+        const numCircles = Math.round(randomRange(3, 10))
+        const numBigShapes = Math.round(randomRange(1, 3))
+        const hasGradient = Math.random() > 0.9
+
+        const hasSecondaryColor = Math.random() > 0.85
+
         const mainHue = Math.floor(Math.random() * 360)
-        const [firstColor, ...colors] = generateColors(mainHue, numCircles + 1)
+        const secondaryHue = hasSecondaryColor ? (mainHue + 240) % 360 : mainHue
+        const primaryColors = generateColors(mainHue, numCircles + 1)
+        const secondaryColors = generateColors(secondaryHue, numCircles + 1)
         const mainColor = `hsl(${mainHue}, 100%, 30%)`
-        const mainColorSecondary = `hsl(${(mainHue + 10) % 360}, 100%, 10%)`
-        const backgroundColor = `hsl(${mainHue}, 100%, 75%)`
+        const gradientSecondary = `hsl(${(mainHue + 10) % 360}, 100%, 10%)`
+        const secondaryColor = `hsl(${secondaryHue}, 100%, 70%)`
+        const backgroundColor = `hsl(${mainHue}, 100%, 10%)`
 
         console.log("mainHue", getHueName(mainHue))
+        console.log("hasGradient", hasGradient)
+        console.log("hasSecondaryColor", hasSecondaryColor)
 
         const gradientDef = `
           <linearGradient id="gradient" gradientTransform="rotate(0)">
             <stop offset="0%" stop-color="${mainColor}"/>
-            <stop offset="100%" stop-color="${mainColorSecondary}"/>
+            <stop offset="100%" stop-color="${gradientSecondary}"/>
           </linearGradient>
         `
-
-        const hasGradient = Math.random() > 0.9
 
         const path = `M0,0L${x},${y}L${x * 2},0A${r},${r},0,0,0,0,0Z`
         const paths = new Array(n)
@@ -155,16 +169,19 @@
           })
           .join("")
 
-        let bigShapes
-        for (let k = 0; k < randomRange(1, 10); k++) {
-          bigShapes =
-            bigShapes + (Math.random() > 0.5 ? randomTriangle(x, y, r, firstColor) : randomRect(x, y, r, firstColor))
-        }
+        const bigShapes = new Array(numBigShapes)
+          .fill(0)
+          .map((_, i) => {
+            const color = i % 2 === 0 ? primaryColors[i] : secondaryColors[i]
+            return Math.random() > 0.5 ? randomTriangle(x, y, r, color) : randomRect(x, y, r, color)
+          })
+          .join("")
 
         const circles = new Array(numCircles)
           .fill(0)
           .map((_, i) => {
-            return randomCircle(x, y, r, colors[i])
+            const color = i % 2 === 0 ? primaryColors[i] : secondaryColors[i]
+            return randomCircle(x, y, r, color)
           })
           .join("")
 

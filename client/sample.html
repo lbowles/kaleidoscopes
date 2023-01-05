@@ -151,7 +151,7 @@
         const paths = new Array(n)
           .fill(0)
           .map((_, i) => {
-            return `<use xlink:href="#tile" transform="rotate(${angleInterval * i},${x},${y})" />`
+            return `<use href="#tile" transform="rotate(${angleInterval * i},${x},${y})" />`
           })
           .join("")
 
@@ -193,8 +193,8 @@
 
           </defs>
           <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColor}"></rect>
-            <use xlink:href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
-              <!--<use xlink:href="#kaleidoscopeTile"/>--!>
+            <use href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
+              <!--<use href="#kaleidoscopeTile"/>--!>
           </svg>
           `
       }

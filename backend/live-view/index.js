@@ -13,10 +13,10 @@ async function main() {
 
   async function handler() {
     const { result: compileResult, targetContract } = compile(SOURCE)
-    const { abi, bytecode, name: targetName } = targetContract
-    // const address = await deployAll(vm, pk, compileResult, targetName)
+    const { abi, bytecode } = targetContract
     const address = await deploy(vm, pk, bytecode, compileResult)
-    const result = await call(vm, address, abi, "render", [Math.floor(Math.random() * 10_000)])
+    const tokenId = Math.floor(Math.random() * 10_000)
+    const result = await call(vm, address, abi, "render", [tokenId])
     return result
   }
 

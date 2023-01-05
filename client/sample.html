@@ -146,7 +146,7 @@
         console.log("hasSecondaryColor", hasSecondaryColor)
 
         const gradientDef = `
-          <linearGradient id="gradient" gradientTransform="rotate(0)">
+          <linearGradient id="gradient">
             <stop offset="0%" stop-color="${mainColorHsl}"/>
             <stop offset="100%" stop-color="${darkerSecondaryHsl}"/>
           </linearGradient>
@@ -195,12 +195,10 @@
                 <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColorHsl}" />
                 ${paths}
               </g>
-            </defs>
 
           </defs>
           <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColorHsl}"></rect>
             <use href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
-              <!--<use href="#kaleidoscopeTile"/>--!>
           </svg>
           `
       }

@@ -4,7 +4,7 @@ const serve = require("./serve")
 const boot = require("./boot")
 const call = require("./call")
 const compile = require("./compile")
-const deploy = require("./deploy")
+const { deploy } = require("./deploy")
 
 const SOURCE = path.join(__dirname, "..", "contracts", "Renderer.sol")
 
@@ -12,9 +12,11 @@ async function main() {
   const { vm, pk } = await boot()
 
   async function handler() {
-    const { abi, bytecode } = compile(SOURCE)
-    const address = await deploy(vm, pk, bytecode)
-    const result = await call(vm, address, abi, "getSVG", [Math.floor(Math.random() * 10_000)])
+    const { result: compileResult, targetContract } = compile(SOURCE)
+    const { abi, bytecode, name: targetName } = targetContract
+    // const address = await deployAll(vm, pk, compileResult, targetName)
+    const address = await deploy(vm, pk, bytecode, compileResult)
+    const result = await call(vm, address, abi, "render", [Math.floor(Math.random() * 10_000)])
     return result
   }
 

@@ -1,18 +1,18 @@
-import { SolarSystems, SolarSystems__factory } from "../../../backend/types";
-import style from "./LandingPage.module.css";
-import deployments from "../../src/deployments.json";
-import loading from ".././img/loading.svg";
-import opensea from ".././img/opensea.svg";
-import github from ".././img/github.svg";
-import twitter from ".././img/twitter.svg";
-import etherscan from ".././img/etherscan.svg";
-import noReflections from ".././img/noReflections.svg";
-import kaleidoscopePlaceholder from ".././img/placeholder.png";
-import maxSaturation from ".././img/maxSaturation.svg";
-import inputShapes from ".././img/inputShapes.svg";
-import { ConnectButton, useAddRecentTransaction } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
-import { prepareWriteContract, writeContract } from "@wagmi/core";
+import { SolarSystems, SolarSystems__factory } from "../../../backend/types"
+import style from "./LandingPage.module.css"
+import deployments from "../../src/deployments.json"
+import loading from ".././img/loading.svg"
+import opensea from ".././img/opensea.svg"
+import github from ".././img/github.svg"
+import twitter from ".././img/twitter.svg"
+import etherscan from ".././img/etherscan.svg"
+import noReflections from ".././img/noReflections.svg"
+import kaleidoscopePlaceholder from ".././img/testKaleidoscope.svg"
+import maxSaturation from ".././img/maxSaturation.svg"
+import inputShapes from ".././img/inputShapes.svg"
+import { ConnectButton, useAddRecentTransaction } from "@rainbow-me/rainbowkit"
+import { useEffect, useState } from "react"
+import { prepareWriteContract, writeContract } from "@wagmi/core"
 import {
   useAccount,
   useContractRead,
@@ -20,81 +20,79 @@ import {
   usePrepareContractWrite,
   useSigner,
   useWaitForTransaction,
-} from "wagmi";
-import { BigNumber } from "ethers";
-import { formatEther } from "ethers/lib/utils.js";
-import useSound from "use-sound";
-import successSound from ".././sounds/success.mp3";
-import smallClickSound from ".././sounds/smallClick.mp3";
-import mintClickSound from ".././sounds/mintClickSound.mp3";
-import generalClickSound from ".././sounds/generalClickSound.mp3";
+} from "wagmi"
+import { BigNumber } from "ethers"
+import { formatEther } from "ethers/lib/utils.js"
+import useSound from "use-sound"
+import successSound from ".././sounds/success.mp3"
+import smallClickSound from ".././sounds/smallClick.mp3"
+import mintClickSound from ".././sounds/mintClickSound.mp3"
+import generalClickSound from ".././sounds/generalClickSound.mp3"
 
 const solarSystemsConfig = {
   address: deployments.contracts.SolarSystems.address,
   abi: deployments.contracts.SolarSystems.abi,
-};
+}
 
 const rendererConfig = {
   address: deployments.contracts.Renderer.address,
   abi: deployments.contracts.Renderer.abi,
-};
+}
 
 function getEtherscanBaseURL(chainId: string) {
-  return `https://${chainId !== "1" ? "goerli." : ""}etherscan.io`;
+  return `https://${chainId !== "1" ? "goerli." : ""}etherscan.io`
 }
 
 function getOpenSeaLink(tokenId: string | number) {
-  const development = process.env.NODE_ENV === "development";
-  return `https://${development ? "testnets." : ""}opensea.io/assets/${
-    development ? "goerli/" : ""
-  }${deployments.contracts.SolarSystems.address}/${tokenId}`;
+  const development = process.env.NODE_ENV === "development"
+  return `https://${development ? "testnets." : ""}opensea.io/assets/${development ? "goerli/" : ""}${
+    deployments.contracts.SolarSystems.address
+  }/${tokenId}`
 }
 
-const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId);
+const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId)
 
 export function LandingPage() {
-  const [mintCount, setMintCount] = useState<number>(1);
+  const [mintCount, setMintCount] = useState<number>(1)
 
-  const [mintedTokens, setMintedTokens] = useState<number[]>([]);
+  const [mintedTokens, setMintedTokens] = useState<number[]>([])
 
-  const { data: signer, isError, isLoading } = useSigner();
+  const { data: signer, isError, isLoading } = useSigner()
 
-  const addRecentTransaction = useAddRecentTransaction();
+  const addRecentTransaction = useAddRecentTransaction()
 
-  const [playbackRate, setPlaybackRate] = useState(0.75);
+  const [playbackRate, setPlaybackRate] = useState(0.75)
 
-  const [playSuccess] = useSound(successSound);
+  const [playSuccess] = useSound(successSound)
 
-  const [playGeneralClick] = useSound(generalClickSound);
+  const [playGeneralClick] = useSound(generalClickSound)
 
   // const [playSmallClickUp] = useSound()
 
   const [playSmallClick] = useSound(smallClickSound, {
     playbackRate,
     interrupt: true,
-  });
+  })
 
-  const [playMintClick] = useSound(mintClickSound);
+  const [playMintClick] = useSound(mintClickSound)
 
   const handleAmountClickUp = () => {
-    setPlaybackRate(playbackRate + 0.4);
-    playSmallClick();
-  };
+    setPlaybackRate(playbackRate + 0.4)
+    playSmallClick()
+  }
   const handleAmountClickDown = () => {
-    if (mintCount > 1) setPlaybackRate(playbackRate - 0.4);
-    playSmallClick();
-  };
+    if (mintCount > 1) setPlaybackRate(playbackRate - 0.4)
+    playSmallClick()
+  }
 
-  const [randomTokenId, setRandomTokenId] = useState<number>(
-    Math.round(Math.random() * 10000) + 1001
-  );
+  const [randomTokenId, setRandomTokenId] = useState<number>(Math.round(Math.random() * 10000) + 1001)
 
   const { data: sampleSvg, isLoading: sampleSvgLoading } = useContractRead({
     ...rendererConfig,
     functionName: "render",
     // Random number
     args: [BigNumber.from(`${randomTokenId}`)],
-  });
+  })
 
   const {
     data: mintPrice,
@@ -103,7 +101,7 @@ export function LandingPage() {
   } = useContractRead({
     ...solarSystemsConfig,
     functionName: "price",
-  });
+  })
 
   const {
     data: maxSupply,
@@ -112,7 +110,7 @@ export function LandingPage() {
   } = useContractRead({
     ...solarSystemsConfig,
     functionName: "maxSupply",
-  });
+  })
 
   const {
     data: totalSupply,
@@ -122,7 +120,7 @@ export function LandingPage() {
     ...solarSystemsConfig,
     functionName: "totalSupply",
     watch: true,
-  });
+  })
 
   const { config: mintConfig, error: mintError } = usePrepareContractWrite({
     ...solarSystemsConfig,
@@ -131,13 +129,13 @@ export function LandingPage() {
     overrides: {
       value: mintPrice?.mul(mintCount!),
     },
-  });
+  })
   const {
     write: mint,
     data: mintSignResult,
     isLoading: isMintSignLoading,
     isSuccess: isMintSignSuccess,
-  } = useContractWrite(mintConfig);
+  } = useContractWrite(mintConfig)
 
   const {
     data: mintTx,
@@ -146,7 +144,7 @@ export function LandingPage() {
   } = useWaitForTransaction({
     hash: mintSignResult?.hash,
     confirmations: 1,
-  });
+  })
 
   useEffect(() => {
     if (mintSignResult) {
@@ -154,40 +152,33 @@ export function LandingPage() {
       addRecentTransaction({
         hash: mintSignResult.hash,
         description: "Mint Solar System",
-      });
+      })
     }
-  }, [mintSignResult]);
+  }, [mintSignResult])
 
   useEffect(() => {
     // console.log("isMintSignSuccess", isMintSignSuccess)
     if (isMintSignSuccess) {
-      playMintClick();
+      playMintClick()
     }
-  }, [isMintSignSuccess]);
+  }, [isMintSignSuccess])
 
   useEffect(() => {
     // console.log("mintTx", mintTx)
     if (mintTx) {
-      playSuccess();
+      playSuccess()
       const tokenIds = mintTx.logs.map((log) => {
-        const events = SolarSystems__factory.createInterface().decodeEventLog(
-          "Transfer",
-          log.data,
-          log.topics
-        );
-        return events.tokenId.toString();
-      });
-      setMintedTokens(tokenIds);
+        const events = SolarSystems__factory.createInterface().decodeEventLog("Transfer", log.data, log.topics)
+        return events.tokenId.toString()
+      })
+      setMintedTokens(tokenIds)
     }
-  }, [mintTx]);
+  }, [mintTx])
 
   return (
     <div>
       <div className="flex justify-center alignw-screen w-screen max-w-screen overflow-hidden">
-        <img
-          src={kaleidoscopePlaceholder}
-          className="mt-[255px] w-[230px]"
-        ></img>
+        <img src={kaleidoscopePlaceholder} className="mt-[255px] w-[230px]"></img>
       </div>
       <div className="flex justify-between p-5 sm:p-10 absolute w-full top-0">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscope</h3>
@@ -201,8 +192,7 @@ export function LandingPage() {
           {isMintSignLoading ? (
             <button className={style.claimBtn}>
               <div className="flex flex-row">
-                <img src={loading} className="animate-spin w-4"></img>‎ Confirm
-                in wallet
+                <img src={loading} className="animate-spin w-4"></img>‎ Confirm in wallet
               </div>
             </button>
           ) : isMintTxLoading ? (
@@ -212,13 +202,12 @@ export function LandingPage() {
               rel="noopener noreferrer"
               className="flex justify-center"
               onClick={() => {
-                playGeneralClick();
+                playGeneralClick()
               }}
             >
               <button className={style.claimBtn}>
                 <div className="flex flex-row">
-                  <img src={loading} className="animate-spin w-4"></img>‎
-                  Transaction pending
+                  <img src={loading} className="animate-spin w-4"></img>‎ Transaction pending
                 </div>
               </button>
             </a>
@@ -227,38 +216,29 @@ export function LandingPage() {
               <button
                 className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
-                  setMintCount(Math.max(mintCount - 1, 1));
-                  handleAmountClickDown();
+                  setMintCount(Math.max(mintCount - 1, 1))
+                  handleAmountClickDown()
                 }}
               >
                 –
               </button>
               <button
                 className={style.claimBtn}
-                disabled={
-                  signer &&
-                  maxSupply &&
-                  totalSupply &&
-                  maxSupply.gt(totalSupply)
-                    ? false
-                    : true
-                }
+                disabled={signer && maxSupply && totalSupply && maxSupply.gt(totalSupply) ? false : true}
                 onClick={() => {
-                  mint?.();
-                  playGeneralClick();
+                  mint?.()
+                  playGeneralClick()
                 }}
               >
                 {maxSupply.gt(totalSupply)
-                  ? `Mint ${mintCount} for ${formatEther(
-                      mintPrice.mul(mintCount)
-                    )} Ξ`
+                  ? `Mint ${mintCount} for ${formatEther(mintPrice.mul(mintCount))} Ξ`
                   : "Sold out"}
               </button>
               <button
                 className="text-xl font-bold hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
-                  setMintCount(mintCount + 1);
-                  handleAmountClickUp();
+                  setMintCount(mintCount + 1)
+                  handleAmountClickUp()
                 }}
               >
                 +
@@ -277,7 +257,7 @@ export function LandingPage() {
                 rel="noopener noreferrer"
                 className="flex justify-center text-xs hover:text-blue-900"
                 onClick={() => {
-                  playGeneralClick();
+                  playGeneralClick()
                 }}
               >
                 View transaction
@@ -296,14 +276,14 @@ export function LandingPage() {
                       rel="noopener noreferrer"
                       className=" hover:text-blue-900"
                       onClick={() => {
-                        playGeneralClick();
+                        playGeneralClick()
                       }}
                     >
                       {tokenId}
                     </a>
                     &nbsp;
                   </span>
-                );
+                )
               })}
               ]
             </div>
@@ -324,7 +304,7 @@ export function LandingPage() {
               rel="noopener noreferrer"
               className="hover:scale-110 duration-100 ease-in-out"
               onClick={() => {
-                playGeneralClick();
+                playGeneralClick()
               }}
             >
               <img src={opensea} alt="opensea" />
@@ -335,7 +315,7 @@ export function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
-                playGeneralClick();
+                playGeneralClick()
               }}
             >
               <img src={etherscan} alt="etherscan" />
@@ -346,7 +326,7 @@ export function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
-                playGeneralClick();
+                playGeneralClick()
               }}
             >
               <img src={github} alt="github" />
@@ -357,7 +337,7 @@ export function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
-                playGeneralClick();
+                playGeneralClick()
               }}
             >
               <img src={twitter} alt="twitter" />
@@ -375,10 +355,9 @@ export function LandingPage() {
                 <span>What are Solar Systems?</span>
               </div>
               <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
-                Solar Systems is a fully on-chain NFT collection which features
-                procedurally generated planets orbiting around a star. Each
-                Solar System is unique and can be minted for the price of 0.01
-                ETH. The collection is limited to 1,000 Solar Systems.
+                Solar Systems is a fully on-chain NFT collection which features procedurally generated planets orbiting
+                around a star. Each Solar System is unique and can be minted for the price of 0.01 ETH. The collection
+                is limited to 1,000 Solar Systems.
               </p>
             </div>
 
@@ -393,30 +372,25 @@ export function LandingPage() {
                     <a
                       href={`${etherscanBaseURL}/address/${deployments.contracts.Renderer.address}`}
                       onClick={() => {
-                        playGeneralClick();
+                        playGeneralClick()
                       }}
                     >
-                      <span className=" font-bold underline hover:text-blue-900">
-                        Fully on-chain
-                      </span>
+                      <span className=" font-bold underline hover:text-blue-900">Fully on-chain</span>
                     </a>
-                    . This means that your NFT will exist for as long as the
-                    Ethereum blockchain is around.
+                    . This means that your NFT will exist for as long as the Ethereum blockchain is around.
                   </li>
                   <li>
-                    <span className="font-bold">Animated.</span> Planets orbit
-                    around a star which adds to a dynamic and lively viewing
-                    experience.
+                    <span className="font-bold">Animated.</span> Planets orbit around a star which adds to a dynamic and
+                    lively viewing experience.
                   </li>
                 </ul>
               </div>
               <div className="text-sm text-zinc-500 px-3 pt-3 ">
                 <ul className="space-y-2  md:mt-7  list-disc list-inside ml-3">
                   <li>
-                    <span className=" font-bold">Procedurally generated.</span>{" "}
-                    This means that the solar systems are generated using a set
-                    of rules or procedures, rather than being created manually
-                    or pre-designed. This makes each solar system fully unique.
+                    <span className=" font-bold">Procedurally generated.</span> This means that the solar systems are
+                    generated using a set of rules or procedures, rather than being created manually or pre-designed.
+                    This makes each solar system fully unique.
                   </li>
                 </ul>
               </div>
@@ -432,31 +406,19 @@ export function LandingPage() {
             <div className="grid  gap-4 grid-cols-1 sm:grid-cols-3  ">
               <div>
                 <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center ">
-                  <img
-                    src={noReflections}
-                    alt="Number Of Reflections"
-                    className="h-5 mr-3"
-                  ></img>
+                  <img src={noReflections} alt="Number Of Reflections" className="h-5 mr-3"></img>
                   <span>Number Of Reflections</span>
                 </div>
               </div>
               <div>
                 <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center min-h-20">
-                  <img
-                    src={maxSaturation}
-                    alt="Max Saturation"
-                    className="h-5 mr-3"
-                  ></img>
+                  <img src={maxSaturation} alt="Max Saturation" className="h-5 mr-3"></img>
                   <span>Max Color Saturation</span>
                 </div>
               </div>
               <div>
                 <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center">
-                  <img
-                    src={inputShapes}
-                    alt="Number Of Reflections"
-                    className="h-5 mr-3"
-                  ></img>
+                  <img src={inputShapes} alt="Number Of Reflections" className="h-5 mr-3"></img>
                   <span>Number Of Reflections</span>
                 </div>
               </div>
@@ -473,7 +435,7 @@ export function LandingPage() {
             className="font-bold text-blue-500 hover:text-blue-800"
             target="_blank"
             onClick={() => {
-              playGeneralClick();
+              playGeneralClick()
             }}
           >
             @npm_luko
@@ -484,7 +446,7 @@ export function LandingPage() {
             className="font-bold text-blue-500 hover:text-blue-800"
             target="_blank"
             onClick={() => {
-              playGeneralClick();
+              playGeneralClick()
             }}
           >
             @stephancill
@@ -492,5 +454,5 @@ export function LandingPage() {
         </footer>
       </div>
     </div>
-  );
+  )
 }

@@ -155,7 +155,11 @@
           })
           .join("")
 
-        const bigShapes = Math.random() > 0.5 ? randomTriangle(x, y, r, firstColor) : randomRect(x, y, r, firstColor)
+        let bigShapes
+        for (let k = 0; k < randomRange(1, 10); k++) {
+          bigShapes =
+            bigShapes + (Math.random() > 0.5 ? randomTriangle(x, y, r, firstColor) : randomRect(x, y, r, firstColor))
+        }
 
         const circles = new Array(numCircles)
           .fill(0)
@@ -177,8 +181,9 @@
         }">
                   
                 </rect>
-                ${bigShapes}  
                 ${circles}
+                ${bigShapes}  
+                
               </g>
               <g id="kaleidoscopeTile">
                 <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColor}" />

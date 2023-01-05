@@ -178,7 +178,7 @@ export function LandingPage() {
   return (
     <div>
       <div className="flex justify-center alignw-screen w-screen max-w-screen overflow-hidden">
-        <img src={kaleidoscopePlaceholder} className="mt-[255px] w-[230px]"></img>
+        <img src={kaleidoscopePlaceholder} className="mt-[220px] w-[300px]"></img>
       </div>
       <div className="flex justify-between p-5 sm:p-10 absolute w-full top-0">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscope</h3>

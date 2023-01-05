@@ -4,8 +4,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500&family=Space+Mono:wght@400;700&display=swap");
 
 :root {
-  --accent1: #c697b4;
-  --accent2: #a397c6;
+  --accent1: #ff66a8;
+  --accent2: #d65796;
 }
 
 body {
@@ -23,6 +23,5 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }

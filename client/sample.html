@@ -13,7 +13,7 @@
         let colors = []
         for (let i = 0; i < n; i++) {
           // Generate a color with a saturation and lightness value that decreases as the index increases
-          let color = `hsl(${mainHue}, ${100 - (i / n) * 50}%, ${70 - (i / n) * 40}%)`
+          let color = `hsl(${mainHue}, ${100 - (i / n) * 50}%, ${70 - (i / n) * 30}%)`
           colors.push(color)
         }
         return colors
@@ -21,26 +21,16 @@
 
       function randomRange(min, max, random) {
         random = random || Math.random()
-        return random * (max - min) + min
-      }
-
-      function randomBetaLeft(min, max) {
-        const unif = Math.random()
-        const beta = Math.pow(Math.sin((unif * pi) / 2), 2)
-        return randomRange(min, max, beta)
+        return random * (max + 1 - min) + min
       }
 
       function randomRect(x, y, r, color) {
         const width = randomRange(r / 2, r)
         const height = randomRange(r / 2, r)
 
-        const shouldAlternate = Math.random() > 0.7
-
         const duration = randomRange(5, 10)
 
-        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 0 -${y}" to="360 0 -${y}" begin="0s" dur="${Math.round(
-          randomRange(4, 10),
-        )}s" repeatCount="indefinite" />`
+        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 0 -${y}" to="360 0 -${y}" begin="0s" dur="${duration}s" repeatCount="indefinite" />`
 
         return `
           <rect rx="3" ry="3" x="0" y="-${y}" width="${width}" height="${height}" fill="${color}">
@@ -89,24 +79,23 @@
         return colors[colorIndex]
       }
 
-      function randomCircle(x, y, r, color) {
-        const x1 = randomRange(0, x)
-        const x2 = randomRange(r / 2, x)
+      function randomCircle(centerX, centerY, r, color) {
+        const x1 = randomRange(0, centerX)
+        const x2 = randomRange(r / 2, centerX)
 
-        const y1 = randomRange(0, y)
-        const y2 = randomRange(y, r)
+        const y1 = randomRange(0, centerY)
+        const y2 = randomRange(centerY, r)
 
-        const cr = randomRange(5, r / 6)
+        const radius = randomRange(5, r / 6)
 
-        const shouldAlternate = Math.random() > 0.7
+        const duration = randomRange(5, 10)
+        const alternatingClass = randomRange(0, 3)
 
         let animations = ""
 
-        const duration = randomRange(5, 10)
-
-        if (shouldAlternate) {
+        if (alternatingClass >= 2) {
           animations +=
-            Math.random() > 0.5
+            alternatingClass == 3
               ? `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${duration}s" repeatCount="indefinite"/>`
               : `<animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
                   duration / 2
@@ -119,7 +108,7 @@
         }
 
         return `
-          <circle cx="${r / 2}" cy="${r / 2}" r="${cr}" fill="${color}">
+          <circle cx="${r / 2}" cy="${r / 2}" r="${radius}" fill="${color}">
             ${animations}
           </circle>
           `
@@ -128,27 +117,29 @@
       function getSVG(canvasWidth) {
         const halfCanvasWidth = canvasWidth / 2
 
-        const n = Math.round(randomRange(3, 20))
+        const repetitions = Math.round(randomRange(3, 20))
         const r = 200
-        const angleInterval = 360 / n
+        const angleInterval = 360 / repetitions
         const angle = (((180 - angleInterval) / 2) * Math.PI) / 180
         const x = Math.cos(angle) * r
         const y = Math.sin(angle) * r
 
-        const numCircles = Math.round(randomRange(3, 10))
-        const numBigShapes = Math.round(randomRange(1, 3))
+        const numInsideArtifacts = Math.floor(randomRange(3, 10))
+        const numOutsideArtifacts = Math.floor(randomRange(1, 4))
         const hasGradient = Math.random() > 0.9
+
+        console.log("numOutsideArtifacts", numOutsideArtifacts)
 
         const hasSecondaryColor = Math.random() > 0.85
 
         const mainHue = Math.floor(Math.random() * 360)
         const secondaryHue = hasSecondaryColor ? (mainHue + 240) % 360 : mainHue
-        const primaryColors = generateColors(mainHue, numCircles + 1)
-        const secondaryColors = generateColors(secondaryHue, numCircles + 1)
-        const mainColor = `hsl(${mainHue}, 100%, 30%)`
-        const gradientSecondary = `hsl(${(mainHue + 10) % 360}, 100%, 10%)`
-        const secondaryColor = `hsl(${secondaryHue}, 100%, 70%)`
-        const backgroundColor = `hsl(${mainHue}, 100%, 10%)`
+        const [firstPrimaryColorHsl, ...primaryColorsHsl] = generateColors(mainHue, numInsideArtifacts + 1)
+        const [firstSecondaryColorHsl, ...secondaryColorsHsl] = generateColors(secondaryHue, numInsideArtifacts + 1)
+        const mainColorHsl = `hsl(${mainHue}, 100%, 30%)`
+        const darkerSecondaryHsl = `hsl(${(mainHue + 10) % 360}, 100%, 10%)`
+        const secondaryColorHsl = `hsl(${secondaryHue}, 100%, 70%)`
+        const backgroundColorHsl = `hsl(${mainHue}, 100%, 10%)`
 
         console.log("mainHue", getHueName(mainHue))
         console.log("hasGradient", hasGradient)
@@ -156,31 +147,31 @@
 
         const gradientDef = `
           <linearGradient id="gradient" gradientTransform="rotate(0)">
-            <stop offset="0%" stop-color="${mainColor}"/>
-            <stop offset="100%" stop-color="${gradientSecondary}"/>
+            <stop offset="0%" stop-color="${mainColorHsl}"/>
+            <stop offset="100%" stop-color="${darkerSecondaryHsl}"/>
           </linearGradient>
         `
 
         const path = `M0,0L${x},${y}L${x * 2},0A${r},${r},0,0,0,0,0Z`
-        const paths = new Array(n)
+        const paths = new Array(repetitions)
           .fill(0)
           .map((_, i) => {
             return `<use href="#tile" transform="rotate(${angleInterval * i},${x},${y})" />`
           })
           .join("")
 
-        const bigShapes = new Array(numBigShapes)
+        const bigShapes = new Array(numOutsideArtifacts)
           .fill(0)
           .map((_, i) => {
-            const color = i % 2 === 0 ? primaryColors[i] : secondaryColors[i]
+            const color = i % 2 === 0 ? firstPrimaryColorHsl : firstSecondaryColorHsl
             return Math.random() > 0.5 ? randomTriangle(x, y, r, color) : randomRect(x, y, r, color)
           })
           .join("")
 
-        const circles = new Array(numCircles)
+        const circles = new Array(numInsideArtifacts)
           .fill(0)
           .map((_, i) => {
-            const color = i % 2 === 0 ? primaryColors[i] : secondaryColors[i]
+            const color = i % 2 === 0 ? primaryColorsHsl[i] : secondaryColorsHsl[i]
             return randomCircle(x, y, r, color)
           })
           .join("")
@@ -194,22 +185,20 @@
               </clipPath>
               <g id="tile" clip-path="url(#clip)">
                 <rect x="0" y="-${r}" width="${r * 2}" height="${r * 2}" fill="${
-          hasGradient ? "url(#gradient)" : mainColor
+          hasGradient ? "url(#gradient)" : mainColorHsl
         }">
-                  
                 </rect>
-                ${circles}
                 ${bigShapes}  
-                
+                ${circles}                
               </g>
               <g id="kaleidoscopeTile">
-                <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColor}" />
+                <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColorHsl}" />
                 ${paths}
               </g>
             </defs>
 
           </defs>
-          <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColor}"></rect>
+          <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColorHsl}"></rect>
             <use href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
               <!--<use href="#kaleidoscopeTile"/>--!>
           </svg>

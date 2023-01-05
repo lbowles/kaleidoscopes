@@ -291,7 +291,7 @@ export function LandingPage() {
         </div>
       )}
       <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative ">
-        <p className="font-bold text-gray-100 text-center max-w-[300px]">
+        <p className="font-bold text-gray-100 text-center max-w-[300px] min-w-[300px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>
       </div>

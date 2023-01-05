@@ -6,10 +6,14 @@
       <stop offset="100%" stop-color="hsl(344, 100%, 10%)"></stop>
     </linearGradient>
 
+    <filter id="noise">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="20" />
+    </filter>
+
     <clipPath id="clip">
       <path d="M0,0L100.00000000000003,173.20508075688772L200.00000000000006,0A200,200,0,0,0,0,0Z"></path>
     </clipPath>
-    <g id="tile" clip-path="url(#clip)">
+    <g id="tile" clip-path="url(#clip)" filter="url(#noise)">
       <rect x="0" y="-200" width="400" height="400" fill="hsl(334, 100%, 30%)">
 
       </rect>

@@ -3,11 +3,6 @@
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500&family=Space+Mono:wght@400;700&display=swap");
 
-:root {
-  --accent1: #ff66a8;
-  --accent2: #d65796;
-}
-
 body {
   margin: 0;
   font-family: "Lexend";
@@ -20,6 +15,10 @@ body {
   background-repeat: no-repeat;
   background-size: 1510px;
   background-color: black;
+}
+
+a:hover {
+  color: var(--accent2);
 }
 
 code {

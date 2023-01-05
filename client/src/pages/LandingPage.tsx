@@ -184,7 +184,7 @@ export function LandingPage() {
         <h3 className="text-base font-bold text-gray-50">Kaleidoscope</h3>
         <ConnectButton />
       </div>
-      <div className="flex justify-center alignw-screen mt-24 z-1 pl-10 pr-10 z-10 relative text-gray-200">
+      <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-xs">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
       {mintPrice && maxSupply && totalSupply && (
@@ -248,14 +248,14 @@ export function LandingPage() {
         </div>
       )}
       {mintTx && mintTx.status && (
-        <div className="-mb-[62px] h-[50px]">
+        <div className="-mb-[62px] h-[50px] text-gray-100">
           <div className="flex justify-center alignw-screen mt-3 z-1 pl-10 pr-10 z-10 relative  h-4">
             <div>
               <a
                 href={`${etherscanBaseURL}/tx/${mintTx.transactionHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex justify-center text-xs hover:text-blue-900"
+                className="flex justify-center text-xs"
                 onClick={() => {
                   playGeneralClick()
                 }}
@@ -274,7 +274,6 @@ export function LandingPage() {
                       href={getOpenSeaLink(tokenId)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className=" hover:text-blue-900"
                       onClick={() => {
                         playGeneralClick()
                       }}
@@ -290,8 +289,8 @@ export function LandingPage() {
           </div>
         </div>
       )}
-      <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative ">
-        <p className="font-bold text-gray-100 text-center max-w-[300px]">
+      <div className="flex justify-center alignw-screen mt-24 z-1 pl-10 pr-10 z-10 relative ">
+        <p className="font-bold text-gray-100 text-center max-w-[300px] min-w-[300px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>
       </div>
@@ -375,7 +374,7 @@ export function LandingPage() {
                         playGeneralClick()
                       }}
                     >
-                      <span className=" font-bold underline hover:text-blue-900">Fully on-chain</span>
+                      <span className=" font-bold underline">Fully on-chain</span>
                     </a>
                     . This means that your NFT will exist for as long as the Ethereum blockchain is around.
                   </li>
@@ -432,7 +431,7 @@ export function LandingPage() {
           Made by{" "}
           <a
             href="https://twitter.com/npm_luko"
-            className="font-bold text-blue-500 hover:text-blue-800"
+            className="font-bold text-gray-500"
             target="_blank"
             onClick={() => {
               playGeneralClick()
@@ -443,7 +442,7 @@ export function LandingPage() {
           and{" "}
           <a
             href="https://twitter.com/stephancill"
-            className="font-bold text-blue-500 hover:text-blue-800"
+            className="font-bold text-gray-500"
             target="_blank"
             onClick={() => {
               playGeneralClick()

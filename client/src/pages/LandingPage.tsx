@@ -244,7 +244,7 @@ export function LandingPage() {
         <ConnectButton />
       </div>
       <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
-        <p className="text-size-xs">{`${totalSupply}/${maxSupply}`} minted</p>
+        <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
       {mintPrice && maxSupply && totalSupply && (
         <div className="flex justify-center  mt-6 z-1 pl-10 pr-10 z-10 relative">
@@ -349,7 +349,7 @@ export function LandingPage() {
         </div>
       )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
-        <p className="font-bold text-gray-100 text-center max-w-[300px] min-w-[300px]">
+        <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>
       </div>
@@ -408,7 +408,7 @@ export function LandingPage() {
       <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
         <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
           <div className="p-5">
-            <p className="font- text-xl pb-4 text-gray-100">FAQ</p>
+            <p className="font-medium text-xl pb-4 text-gray-100">FAQ</p>
             <div className=" ">
               <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
                 <span>What are Solar Systems?</span>

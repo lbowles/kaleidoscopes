@@ -49,7 +49,6 @@ describe("Kaleidoscopes", function () {
 
     // Decode base64 encoded json
     const decoded = Buffer.from(svg.split(",")[1], "base64").toString()
-    console.log(decoded)
     const json = JSON.parse(decoded)
 
     expect(json.name).to.equal(name)
@@ -120,5 +119,14 @@ describe("Kaleidoscopes", function () {
 
     // Check if supply has increased
     expect(await kaleidoscopes.totalSupply()).to.equal(1)
+  })
+
+  it("Should refund if the amount sent is greater than the price", async function () {
+    const initialBalance = await signers[0].getBalance()
+    await kaleidoscopes.mintPublic(1, { value: mintPrice.mul(10) })
+    const finalBalance = await signers[0].getBalance()
+    expect(finalBalance)
+      .to.be.lt(initialBalance.sub(mintPrice))
+      .and.gt(initialBalance.sub(mintPrice.mul(10)))
   })
 })

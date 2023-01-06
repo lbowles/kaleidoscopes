@@ -40,6 +40,9 @@ contract Kaleidoscopes is ERC721A, Ownable {
     renderer = Renderer(_renderer);
   }
 
+  /**
+   * @notice Opens public sale and allows anyone to mint tokens.
+   */
   function openPublicSale() external onlyOwner {
     publicSaleStarted = true;
   }
@@ -120,6 +123,12 @@ contract Kaleidoscopes is ERC721A, Ownable {
     require(msg.value >= price * _quantity, "Insufficient fee");
     require(totalSupply() + _quantity <= maxSupply, "Exceeds max supply");
     _mint(msg.sender, _quantity);
+
+    // Refund any extra ETH sent
+    if (msg.value > price * _quantity) {
+      (bool status, ) = payable(msg.sender).call{value: msg.value - price * _quantity}("");
+      require(status, "Refund failed");
+    }
   }
 
   /**
@@ -141,16 +150,29 @@ contract Kaleidoscopes is ERC721A, Ownable {
     require(payable(msg.sender).send(address(this).balance));
   }
 
-  // Check the Merkle proof using this function
+  /**
+   * @notice Checks if a wallet is on the allowlist given a Merkle proof.
+   * @param _wallet Wallet to check.
+   * @param _proof Merkle proof.
+   */
   function allowListed(address _wallet, bytes32[] calldata _proof) public view returns (bool) {
     return MerkleProof.verify(_proof, merkleRoot, keccak256(abi.encodePacked(_wallet)));
   }
 
+  /**
+   * @notice Mints tokens for the caller if they are on the allowlist.
+   * @param _quantity Quantity of tokens to mint.
+   * @param _proof Merkle proof.
+   */
   function mintAllowList(uint256 _quantity, bytes32[] calldata _proof) external payable {
     require(allowListed(msg.sender, _proof), "You are not on the allowlist");
     mint(_quantity);
   }
 
+  /**
+   * @notice Mints tokens for the caller if public sale has started.
+   * @param _quantity Quantity of tokens to mint.
+   */
   function mintPublic(uint256 _quantity) external payable {
     require(publicSaleStarted, "Public sale has not started yet");
     mint(_quantity);

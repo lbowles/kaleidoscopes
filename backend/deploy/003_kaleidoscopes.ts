@@ -23,18 +23,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const { deployer } = await getNamedAccounts()
 
-  let name = "SolarSystems"
-  let symbol = "SOLSYS"
+  let name = "Kaleidoscopes"
+  let symbol = "KLDSCP"
 
   if (hre.network.name !== "mainnet") {
     name = "Test"
     symbol = "TEST"
   }
 
+  const merkleRoot = "0x0000000000000000000000000000000000000000000000000000000000000000"
+
   // Prompt user to confirm if network, name, symbol are correct each on its own line
   console.log(`\nDeploying to ${hre.network.name}`)
   console.log(`Name: ${name}`)
   console.log(`Symbol: ${symbol}`)
+  console.log(`Merkle root: ${merkleRoot}`)
   if (hre.network.name !== "hardhat") {
     const confirm = await userInput("Continue? (y/n)\n> ")
     if (confirm !== "y") {
@@ -47,18 +50,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const trigonometry = await deployments.get("Trigonometry")
   const renderer = await deployments.get("Renderer")
 
-  await deploy("SolarSystems", {
+  await deploy("Kaleidoscopes", {
     from: deployer,
     log: true,
     libraries: {
-      Utilities: utilities.address,
+      utils: utilities.address,
       Trigonometry: trigonometry.address,
     },
-    args: [name, symbol, ethers.utils.parseEther("0.01"), 1000, renderer.address],
+    args: [name, symbol, ethers.utils.parseEther("0.01"), 1000, merkleRoot, renderer.address],
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-    gasPrice: ethers.utils.parseUnits("17", "gwei"),
   })
 }
 export default func
-func.tags = ["SolarSystems"]
+func.tags = ["Kaleidoscopes"]
 func.dependencies = ["Renderer", "Libraries"]

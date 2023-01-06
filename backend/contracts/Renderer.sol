@@ -92,48 +92,48 @@ contract Renderer {
   }
 
   function circleAtIndexForKaleidescope(
-    Kaleidoscope memory _kaleidescope,
+    Kaleidoscope memory _kaleidoscope,
     ColorPalette memory _palette,
     uint256 _index
   ) public pure returns (AnimatedCircle memory circle) {
     circle.x1 = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("circlex1", utils.uint2str(_index)),
       0,
-      _kaleidescope.centerX
+      _kaleidoscope.centerX
     );
     circle.x2 = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("circlex2", utils.uint2str(_index)),
       circle.radius / 2,
-      _kaleidescope.centerX
+      _kaleidoscope.centerX
     );
     circle.y1 = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("circley1", utils.uint2str(_index)),
       0,
-      _kaleidescope.centerY
+      _kaleidoscope.centerY
     );
     circle.y2 = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("circley2", utils.uint2str(_index)),
-      _kaleidescope.centerY,
+      _kaleidoscope.centerY,
       RADIUS
     );
     circle.radius = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("circleradius", utils.uint2str(_index)),
       5,
       RADIUS / 6
     );
     circle.duration = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("circleduration", utils.uint2str(_index)),
       5,
       10
     );
     circle.alternatingClass = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("circlealternatingClass", utils.uint2str(_index)),
       0,
       3
@@ -144,26 +144,26 @@ contract Renderer {
   }
 
   function rectangleAtIndexForKaleidescope(
-    Kaleidoscope memory _kaleidescope,
+    Kaleidoscope memory _kaleidoscope,
     ColorPalette memory _palette,
     uint256 _index
   ) public pure returns (AnimatedRectangle memory rectangle) {
     rectangle.width = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("width", utils.uint2str(_index)),
       RADIUS / 2,
       RADIUS
     );
     rectangle.height = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("height", utils.uint2str(_index)),
       RADIUS / 2,
       RADIUS
     );
     rectangle.x = 0;
-    rectangle.y = _kaleidescope.centerY;
+    rectangle.y = _kaleidoscope.centerY;
     rectangle.duration = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("duration", utils.uint2str(_index)),
       5,
       10
@@ -174,24 +174,24 @@ contract Renderer {
   }
 
   function triangleAtIndexForKaleidescope(
-    Kaleidoscope memory _kaleidescope,
+    Kaleidoscope memory _kaleidoscope,
     ColorPalette memory _palette,
     uint256 _index
   ) public pure returns (AnimatedTriangle memory triangle) {
     triangle.x1 = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("x1", utils.uint2str(_index)),
       0,
-      _kaleidescope.centerX
+      _kaleidoscope.centerX
     );
     triangle.y1 = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("y1", utils.uint2str(_index)),
       0,
-      _kaleidescope.centerY
+      _kaleidoscope.centerY
     );
     triangle.duration = utils.randomRange(
-      _kaleidescope.tokenId,
+      _kaleidoscope.tokenId,
       string.concat("duration", utils.uint2str(_index)),
       5,
       10
@@ -475,9 +475,9 @@ contract Renderer {
   }
 
   function render(uint256 _tokenId) public pure returns (string memory) {
-    Kaleidoscope memory kaleidescope = kaleidoscopeForTokenId(_tokenId);
-    ColorPalette memory palette = colorPaletteForKaleidescope(kaleidescope);
-    string memory svg = getKaleidoscopeSVG(kaleidescope, palette);
+    Kaleidoscope memory kaleidoscope = kaleidoscopeForTokenId(_tokenId);
+    ColorPalette memory palette = colorPaletteForKaleidescope(kaleidoscope);
+    string memory svg = getKaleidoscopeSVG(kaleidoscope, palette);
 
     return svg;
   }

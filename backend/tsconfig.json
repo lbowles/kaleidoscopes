@@ -7,6 +7,6 @@
     "outDir": "dist",
     "composite": true
   },
-  "include": ["./scripts", "./test", "./deploy", "./types"],
+  "include": ["./scripts", "./test", "./deploy", "./types", "./common"],
   "files": ["./hardhat.config.ts"]
 }

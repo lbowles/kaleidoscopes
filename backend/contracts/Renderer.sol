@@ -438,38 +438,41 @@ contract Renderer {
       '"></rect>',
       outerArtifacts,
       innerArtifacts,
-      "</g>",
-      '<g id="kaleidoscopeTile">',
-      '<circle cx="',
-      utils.uint2str(_kaleidoscope.centerX),
-      '" cy="',
-      utils.uint2str(_kaleidoscope.centerY),
-      '" r="',
-      utils.uint2str(RADIUS),
-      '" fill="'
+      "</g>"
     );
 
     svg = string.concat(
       svg,
-      utils.getHslString(_palette.primaryColorHsl),
-      '" />',
-      paths,
-      "</g>",
       "</defs>",
-      // <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColorHsl}"></rect>
       '<rect width="',
       utils.uint2str(SIZE),
       '" height="',
       utils.uint2str(SIZE),
       '" fill="',
       utils.getHslString(_palette.backgroundColorHsl),
-      // <use href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
-      '"></rect><use href="#kaleidoscopeTile" x="',
-      utils.uint2str(SIZE / 2 - _kaleidoscope.centerX),
-      '" y="'
+      '"></rect>',
+      '<g id="kaleidoscopeTile" transform="translate(',
+      utils.uint2str(SIZE / 2 - _kaleidoscope.centerX)
     );
 
-    svg = string.concat(svg, utils.uint2str(SIZE / 2 - _kaleidoscope.centerY), '" />', "</svg>");
+    svg = string.concat(
+      svg,
+      ",",
+      utils.uint2str(SIZE / 2 - _kaleidoscope.centerY),
+      ')">',
+      '<circle cx="',
+      utils.uint2str(_kaleidoscope.centerX),
+      '" cy="',
+      utils.uint2str(_kaleidoscope.centerY),
+      '" r="',
+      utils.uint2str(RADIUS),
+      '" fill="',
+      utils.getHslString(_palette.primaryColorHsl),
+      '" />',
+      paths,
+      "</g>",
+      "</svg>"
+    );
 
     return svg;
   }

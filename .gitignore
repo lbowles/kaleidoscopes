@@ -1,0 +1,8 @@
+backend/common/snapshot.json
+artifacts
+cache
+node_modules
+.DS_Store
+.env
+backend/analytics/transactions.csv
+

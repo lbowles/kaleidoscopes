@@ -4,7 +4,7 @@ import { ethers } from "hardhat"
 import readline from "readline"
 import * as fs from "fs"
 import MerkleTree from "merkletreejs"
-import { getMerkleRoot } from "../common/merkle"
+import { getMerkleRoot, getTree } from "../common/merkle"
 
 function userInput(query: string): Promise<string> {
   const rl = readline.createInterface({
@@ -28,27 +28,32 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   let name = "Kaleidoscopes"
   let symbol = "KLDSCP"
+  let merkleRoot: string
+  let addresses: string[] = [deployer]
 
   if (hre.network.name !== "mainnet") {
     name = "Test"
     symbol = "TEST"
   }
 
-  const filePath = "./common/holders-snapshot-6-jan-2022.csv"
+  if (hre.network.name !== "hardhat") {
+    const filePath = "./common/snapshot.csv"
 
-  // Read the file contents into a string
-  const fileContents = fs.readFileSync(filePath, "utf8")
+    // Read the file contents into a string
+    const fileContents = fs.readFileSync(filePath, "utf8")
 
-  // Split the string into an array of lines
-  const addresses = fileContents.split("\n").map((line) => line.trim())
+    // Split the string into an array of lines
+    addresses = fileContents.split("\n").map((line) => line.trim())
+  }
+
+  // Write the addresses to a file
+  fs.writeFileSync("./common/snapshot.json", JSON.stringify(addresses))
 
   // Create a Merkle tree from the array of addresses
-  const tree = new MerkleTree(addresses.map(ethers.utils.keccak256), ethers.utils.keccak256, {
-    sortPairs: true,
-  })
+  const tree = getTree(addresses)
 
   // Get the Merkle root
-  const merkleRoot = "0x" + getMerkleRoot(tree)
+  merkleRoot = "0x" + getMerkleRoot(tree)
 
   // Prompt user to confirm if network, name, symbol are correct each on its own line
   console.log(`\nDeploying to ${hre.network.name}`)

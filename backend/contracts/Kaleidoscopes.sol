@@ -17,7 +17,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
 
   bytes32 public merkleRoot;
 
-  bool public publicSaleStarted;
+  bool public hasPublicSaleStarted;
 
   /**
    * @dev Constructs a new instance of the contract.
@@ -44,7 +44,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
    * @notice Opens public sale and allows anyone to mint tokens.
    */
   function openPublicSale() external onlyOwner {
-    publicSaleStarted = true;
+    hasPublicSaleStarted = true;
   }
 
   /**
@@ -174,7 +174,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
    * @param _quantity Quantity of tokens to mint.
    */
   function mintPublic(uint256 _quantity) external payable {
-    require(publicSaleStarted, "Public sale has not started yet");
+    require(hasPublicSaleStarted, "Public sale has not started yet");
     mint(_quantity);
   }
 

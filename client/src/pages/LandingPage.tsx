@@ -29,6 +29,7 @@ import style from "./LandingPage.module.css"
 import { getMerkleProof, getTree } from "../../../backend/common/merkle"
 import allowlistAddresses from "../../../backend/common/snapshot.json"
 import MerkleTree from "merkletreejs"
+import { Playground } from "../components/Playground"
 
 const kaleidoscopesConfig = {
   address: deployments.contracts.Kaleidoscopes.address,
@@ -413,6 +414,7 @@ export function LandingPage() {
                 <ul className="space-y-2 mt-2  list-disc list-inside ml-3">
                   <li>
                     <a
+                      target="_blank"
                       href={`${etherscanBaseURL}/address/${deployments.contracts.Renderer.address}`}
                       onClick={() => {
                         playGeneralClick()
@@ -469,6 +471,9 @@ export function LandingPage() {
           </div>
         </div>
       </div>
+      {/* <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
+        <Playground />
+      </div> */}
 
       <div className="flex justify-center  mt-24 z-1 pl-10 pr-10 z-10 relative">
         <footer className="sticky w-full py-4  bottom-0 text-center text-gray-700 text-sm">

@@ -40,7 +40,7 @@ function App() {
         showRecentTransactions={true}
         chains={chains}
         theme={{
-          ...darkTheme({ accentColor: "#7b3fe4" }),
+          ...darkTheme({ accentColor: "#ff66a8" }),
           fonts: {
             body: "Lexend",
           },

@@ -2,32 +2,6 @@ const { Address } = require("ethereumjs-util")
 const { Transaction } = require("@ethereumjs/tx")
 const linker = require("solc/linker")
 
-// async function deployAll(vm, pk, compileResult, targetContract) {
-//   const ordered = Object.entries(compileResult.sources).sort(([, a], [, b]) => {
-//     return b.id - a.id
-//   })
-//   ordered.pop()
-//   const libraries = {}
-//   console.log("hellooo", compileResult)
-//   await Promise.all(
-//     ordered.map(async ([name]) => {
-//       const [contractName, contract] = Object.entries(compileResult.contracts[name])[0]
-//       const bytecode = contract.evm.bytecode.object
-//       const address = await deploy(vm, pk, bytecode)
-//       libraries[contractName] = address.toString()
-//     }),
-//   )
-//   console.log(libraries)
-
-//   // Deploy target with linked libraries
-//   const target = Object.values(compileResult.contracts[targetContract])[0]
-//   console.log("linkReferences", target.evm.bytecode.linkReferences)
-//   const bytecode = linker.linkBytecode(target.evm.bytecode.object, libraries)
-//   console.log(bytecode)
-//   const address = await deploy(vm, pk, bytecode)
-//   return address
-// }
-
 async function deploy(vm, pk, bytecode, compileResult) {
   // Dependencies
   const libraries = {}

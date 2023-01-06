@@ -177,18 +177,24 @@ export function LandingPage() {
 
   return (
     <div>
-      <div className="flex justify-center alignw-screen w-screen max-w-screen overflow-hidden">
+      <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
+        <div className={"block bg-zinc-800 px-3 py-2 rounded-b-lg w-100 text-sm " + style.notificationCard}>
+          Minting is live for Solar Systems owners on <a>this list</a>. Public minting available 18:00 UTC on
+          10/10/2021.
+        </div>
+      </div>
+      <div className="flex justify-center w-screen max-w-screen ">
         <img src={kaleidoscopePlaceholder} className="mt-[220px] w-[300px]"></img>
       </div>
-      <div className="flex justify-between p-5 sm:p-10 absolute w-full top-0">
-        <h3 className="text-base font-bold text-gray-50">Kaleidoscope</h3>
+      <div className="flex justify-between p-5 sm:p-10 absolute w-full top-12  md:top-2 ">
+        <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
         <ConnectButton />
       </div>
-      <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative text-gray-200">
+      <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-xs">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
       {mintPrice && maxSupply && totalSupply && (
-        <div className="flex justify-center alignw-screen mt-6 z-1 pl-10 pr-10 z-10 relative">
+        <div className="flex justify-center  mt-6 z-1 pl-10 pr-10 z-10 relative">
           {isMintSignLoading ? (
             <button className={style.claimBtn}>
               <div className="flex flex-row">
@@ -249,7 +255,7 @@ export function LandingPage() {
       )}
       {mintTx && mintTx.status && (
         <div className="-mb-[62px] h-[50px] text-gray-100">
-          <div className="flex justify-center alignw-screen mt-3 z-1 pl-10 pr-10 z-10 relative  h-4">
+          <div className="flex justify-center  mt-3 z-1 pl-10 pr-10 z-10 relative  h-4">
             <div>
               <a
                 href={`${etherscanBaseURL}/tx/${mintTx.transactionHash}`}
@@ -264,7 +270,7 @@ export function LandingPage() {
               </a>
             </div>
           </div>
-          <div className="flex justify-center alignw-screen mt-2 z-1 pl-10 pr-10 z-10 relative h-4">
+          <div className="flex justify-center  mt-2 z-1 pl-10 pr-10 z-10 relative h-4">
             <div className="text-xs">
               Minted tokens:[{" "}
               {mintedTokens.map((tokenId) => {
@@ -289,12 +295,12 @@ export function LandingPage() {
           </div>
         </div>
       )}
-      <div className="flex justify-center alignw-screen mt-24 z-1 pl-10 pr-10 z-10 relative ">
+      <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-bold text-gray-100 text-center max-w-[300px] min-w-[300px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>
       </div>
-      <div className="flex justify-center alignw-screen mt-20 z-1 pl-10 pr-10 z-10 relative ">
+      <div className="flex justify-center  mt-20 z-1 pl-10 pr-10 z-10 relative ">
         <div className="block bg-zinc-900 border border-zinc-800 rounded-lg  p-4">
           <div className=" grid  grid-flow-col gap-3">
             <a
@@ -345,7 +351,7 @@ export function LandingPage() {
         </div>
       </div>
       {/* FAQ */}
-      <div className="flex justify-center alignw-screen mt-10 z-1 pl-5 pr-5 relative">
+      <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
         <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
           <div className="p-5">
             <p className="font- text-xl pb-4 text-gray-100">FAQ</p>
@@ -398,7 +404,7 @@ export function LandingPage() {
         </div>
       </div>
       {/* Traits */}
-      <div className="flex justify-center alignw-screen mt-10 z-1 pl-5 pr-5 relative">
+      <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
         <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
           <div className="p-5">
             <p className="font- text-xl pb-4 text-gray-100">Traits</p>
@@ -412,13 +418,13 @@ export function LandingPage() {
               <div>
                 <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center min-h-20">
                   <img src={maxSaturation} alt="Max Saturation" className="h-5 mr-3"></img>
-                  <span>Max Color Saturation</span>
+                  <span>Colour/Gradients</span>
                 </div>
               </div>
               <div>
                 <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center">
                   <img src={inputShapes} alt="Number Of Reflections" className="h-5 mr-3"></img>
-                  <span>Number Of Reflections</span>
+                  <span>Input Shape Complexity</span>
                 </div>
               </div>
             </div>
@@ -426,7 +432,7 @@ export function LandingPage() {
         </div>
       </div>
 
-      <div className="flex justify-center alignw-screen mt-24 z-1 pl-10 pr-10 z-10 relative">
+      <div className="flex justify-center  mt-24 z-1 pl-10 pr-10 z-10 relative">
         <footer className="sticky w-full py-4  bottom-0 text-center text-gray-700 text-sm">
           Made by{" "}
           <a

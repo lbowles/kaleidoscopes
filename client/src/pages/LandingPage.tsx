@@ -328,7 +328,7 @@ export function LandingPage() {
               Minted tokens:[{" "}
               {mintedTokens.map((tokenId) => {
                 return (
-                  <span>
+                  <span key={tokenId}>
                     <a
                       href={getOpenSeaLink(tokenId)}
                       target="_blank"

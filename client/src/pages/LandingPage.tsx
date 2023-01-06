@@ -1,18 +1,8 @@
-import { SolarSystems, SolarSystems__factory } from "../../../backend/types"
-import style from "./LandingPage.module.css"
-import deployments from "../../src/deployments.json"
-import loading from ".././img/loading.svg"
-import opensea from ".././img/opensea.svg"
-import github from ".././img/github.svg"
-import twitter from ".././img/twitter.svg"
-import etherscan from ".././img/etherscan.svg"
-import noReflections from ".././img/noReflections.svg"
-import kaleidoscopePlaceholder from ".././img/testKaleidoscope.svg"
-import maxSaturation from ".././img/maxSaturation.svg"
-import inputShapes from ".././img/inputShapes.svg"
 import { ConnectButton, useAddRecentTransaction } from "@rainbow-me/rainbowkit"
+import { BigNumber } from "ethers"
+import { formatEther } from "ethers/lib/utils.js"
 import { useEffect, useState } from "react"
-import { prepareWriteContract, writeContract } from "@wagmi/core"
+import useSound from "use-sound"
 import {
   useAccount,
   useContractRead,
@@ -21,17 +11,28 @@ import {
   useSigner,
   useWaitForTransaction,
 } from "wagmi"
-import { BigNumber } from "ethers"
-import { formatEther } from "ethers/lib/utils.js"
-import useSound from "use-sound"
-import successSound from ".././sounds/success.mp3"
-import smallClickSound from ".././sounds/smallClick.mp3"
-import mintClickSound from ".././sounds/mintClickSound.mp3"
+import { Kaleidoscopes__factory } from "../../../backend/types"
+import deployments from "../../src/deployments.json"
+import etherscan from ".././img/etherscan.svg"
+import github from ".././img/github.svg"
+import inputShapes from ".././img/inputShapes.svg"
+import loading from ".././img/loading.svg"
+import maxSaturation from ".././img/maxSaturation.svg"
+import noReflections from ".././img/noReflections.svg"
+import opensea from ".././img/opensea.svg"
+import kaleidoscopePlaceholder from ".././img/testKaleidoscope.svg"
 import generalClickSound from ".././sounds/generalClickSound.mp3"
+import mintClickSound from ".././sounds/mintClickSound.mp3"
+import smallClickSound from ".././sounds/smallClick.mp3"
+import successSound from ".././sounds/success.mp3"
+import style from "./LandingPage.module.css"
+import { getMerkleProof, getTree } from "../../../backend/common/merkle"
+import allowlistAddresses from "../../../backend/common/snapshot.json"
+import MerkleTree from "merkletreejs"
 
-const solarSystemsConfig = {
-  address: deployments.contracts.SolarSystems.address,
-  abi: deployments.contracts.SolarSystems.abi,
+const kaleidoscopesConfig = {
+  address: deployments.contracts.Kaleidoscopes.address,
+  abi: deployments.contracts.Kaleidoscopes.abi,
 }
 
 const rendererConfig = {
@@ -46,7 +47,7 @@ function getEtherscanBaseURL(chainId: string) {
 function getOpenSeaLink(tokenId: string | number) {
   const development = process.env.NODE_ENV === "development"
   return `https://${development ? "testnets." : ""}opensea.io/assets/${development ? "goerli/" : ""}${
-    deployments.contracts.SolarSystems.address
+    deployments.contracts.Kaleidoscopes.address
   }/${tokenId}`
 }
 
@@ -87,6 +88,11 @@ export function LandingPage() {
 
   const [randomTokenId, setRandomTokenId] = useState<number>(Math.round(Math.random() * 10000) + 1001)
 
+  const { address } = useAccount()
+
+  const [merkleTree, setMerkleTree] = useState<MerkleTree>()
+  const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
+
   const { data: sampleSvg, isLoading: sampleSvgLoading } = useContractRead({
     ...rendererConfig,
     functionName: "render",
@@ -99,7 +105,7 @@ export function LandingPage() {
     isError: isMintPriceError,
     isLoading: isMintPriceLoading,
   } = useContractRead({
-    ...solarSystemsConfig,
+    ...kaleidoscopesConfig,
     functionName: "price",
   })
 
@@ -108,8 +114,17 @@ export function LandingPage() {
     isError: isMaxSupplyError,
     isLoading: isMaxSupplyLoading,
   } = useContractRead({
-    ...solarSystemsConfig,
+    ...kaleidoscopesConfig,
     functionName: "maxSupply",
+  })
+
+  const {
+    data: hasPublicSaleStarted,
+    isError: isublicSaleError,
+    isLoading: isPublicSaleLoading,
+  } = useContractRead({
+    ...kaleidoscopesConfig,
+    functionName: "hasPublicSaleStarted",
   })
 
   const {
@@ -117,25 +132,46 @@ export function LandingPage() {
     isError: isTotalSupplyError,
     isLoading: isTotalSupplyLoading,
   } = useContractRead({
-    ...solarSystemsConfig,
+    ...kaleidoscopesConfig,
     functionName: "totalSupply",
     watch: true,
   })
 
-  const { config: mintConfig, error: mintError } = usePrepareContractWrite({
-    ...solarSystemsConfig,
-    functionName: "mint",
-    args: [BigNumber.from(`${mintCount}`)],
+  const { config: mintAllowListConfig, error: mintError } = usePrepareContractWrite({
+    ...kaleidoscopesConfig,
+    functionName: "mintAllowList",
+    args: [BigNumber.from(`${mintCount}`), merkleProof || []],
     overrides: {
       value: mintPrice?.mul(mintCount!),
     },
   })
   const {
-    write: mint,
-    data: mintSignResult,
-    isLoading: isMintSignLoading,
-    isSuccess: isMintSignSuccess,
-  } = useContractWrite(mintConfig)
+    write: mintAllowList,
+    data: mintAllowListSignResult,
+    isLoading: isMintAllowListSignLoading,
+    isSuccess: isMintAllowListSignSuccess,
+  } = useContractWrite(mintAllowListConfig)
+
+  const { config: mintPublicConfig, error: mintPublicError } = usePrepareContractWrite({
+    ...kaleidoscopesConfig,
+    functionName: "mintPublic",
+    args: [BigNumber.from(`${mintCount}`)],
+    overrides: {
+      value: mintPrice?.mul(mintCount!),
+    },
+    enabled: hasPublicSaleStarted,
+  })
+  const {
+    write: mintPublic,
+    data: mintPublicSignResult,
+    isLoading: isMintPublicSignLoading,
+    isSuccess: isMintPublicSignSuccess,
+  } = useContractWrite(mintPublicConfig)
+
+  const mint = hasPublicSaleStarted ? mintPublic : mintAllowList
+  const mintSignResult = hasPublicSaleStarted ? mintPublicSignResult : mintAllowListSignResult
+  const isMintSignLoading = hasPublicSaleStarted ? isMintPublicSignLoading : isMintAllowListSignLoading
+  const isMintSignSuccess = hasPublicSaleStarted ? isMintPublicSignSuccess : isMintAllowListSignSuccess
 
   const {
     data: mintTx,
@@ -146,29 +182,42 @@ export function LandingPage() {
     confirmations: 1,
   })
 
+  // Initialization
+  useEffect(() => {
+    const tree = getTree(allowlistAddresses)
+    setMerkleTree(tree)
+  }, [])
+
+  useEffect(() => {
+    if (address && merkleTree) {
+      setMerkleProof(undefined)
+      const proof = getMerkleProof(merkleTree, address)
+      if (proof.length > 0) {
+        setMerkleProof(proof.map((p) => `0x${p}`) as `0x${string}`[])
+      }
+    }
+  }, [address, merkleTree])
+
   useEffect(() => {
     if (mintSignResult) {
-      // console.log("mintSign", mintSignResult.hash)
       addRecentTransaction({
         hash: mintSignResult.hash,
-        description: "Mint Solar System",
+        description: "Mint Kaleidoscope",
       })
     }
   }, [mintSignResult])
 
   useEffect(() => {
-    // console.log("isMintSignSuccess", isMintSignSuccess)
     if (isMintSignSuccess) {
       playMintClick()
     }
   }, [isMintSignSuccess])
 
   useEffect(() => {
-    // console.log("mintTx", mintTx)
     if (mintTx) {
       playSuccess()
       const tokenIds = mintTx.logs.map((log) => {
-        const events = SolarSystems__factory.createInterface().decodeEventLog("Transfer", log.data, log.topics)
+        const events = Kaleidoscopes__factory.createInterface().decodeEventLog("Transfer", log.data, log.topics)
         return events.tokenId.toString()
       })
       setMintedTokens(tokenIds)
@@ -177,12 +226,16 @@ export function LandingPage() {
 
   return (
     <div>
-      <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
-        <div className={"block bg-zinc-800 px-3 py-2 rounded-b-lg w-100 text-sm " + style.notificationCard}>
-          Minting is live for Solar Systems owners on <a>this list</a>. Public minting available 18:00 UTC on
-          10/10/2021.
+      {!hasPublicSaleStarted && (
+        // TODO: Update with actual details
+        <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
+          <div className={"block bg-zinc-800 px-3 py-2 rounded-b-lg w-100 text-sm " + style.notificationCard}>
+            Minting is live for Solar Systems owners on <a>this list</a>. Public minting available 18:00 UTC on
+            10/10/2021.
+          </div>
         </div>
-      </div>
+      )}
+
       <div className="flex justify-center w-screen max-w-screen ">
         <img src={kaleidoscopePlaceholder} className="mt-[220px] w-[300px]"></img>
       </div>
@@ -303,8 +356,9 @@ export function LandingPage() {
       <div className="flex justify-center  mt-20 z-1 pl-10 pr-10 z-10 relative ">
         <div className="block bg-zinc-900 border border-zinc-800 rounded-lg  p-4">
           <div className=" grid  grid-flow-col gap-3">
+            {/* TODO: Update this */}
             <a
-              href="https://opensea.io/collection/onchain-solarsystems"
+              href="https://opensea.io/collection/onchain-kaleidoscopes"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:scale-110 duration-100 ease-in-out"
@@ -316,7 +370,7 @@ export function LandingPage() {
             </a>
             <a
               className="hover:scale-110 duration-100 ease-in-out"
-              href={`${etherscanBaseURL}/address/${deployments.contracts.SolarSystems.address}`}
+              href={`${etherscanBaseURL}/address/${deployments.contracts.Kaleidoscopes.address}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => {
@@ -326,7 +380,7 @@ export function LandingPage() {
               <img src={etherscan} alt="etherscan" />
             </a>
             <a
-              href="https://github.com/lbowles/SolarNFT"
+              href="https://github.com/lbowles/kaleidoscopes"
               className="hover:scale-110 duration-100 ease-in-out"
               target="_blank"
               rel="noopener noreferrer"
@@ -336,7 +390,7 @@ export function LandingPage() {
             >
               <img src={github} alt="github" />
             </a>
-            <a
+            {/* <a
               href="https://twitter.com/SolarSystemsNFT"
               className="hover:scale-110 duration-100 ease-in-out"
               target="_blank"
@@ -346,7 +400,7 @@ export function LandingPage() {
               }}
             >
               <img src={twitter} alt="twitter" />
-            </a>
+            </a> */}
           </div>
         </div>
       </div>

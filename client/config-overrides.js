@@ -5,7 +5,10 @@ const path = require("path")
 module.exports = function override(config, env) {
   config = removeModuleScopePlugin()(config, env)
 
-  config = babelInclude([path.resolve("src"), path.resolve("../backend/types")])(config, env)
+  config = babelInclude([path.resolve("src"), path.resolve("../backend/types"), path.resolve("../backend/common")])(
+    config,
+    env,
+  )
 
   config.resolve.fallback = {
     url: require.resolve("url"),

@@ -14,13 +14,14 @@
   border: 1px var(--accent1) solid;
 }
 .claimBtn:hover {
-  background-color: #15324a;
   transition: 0.2s ease-in-out;
   color: #18181b;
   background-color: var(--accent1);
 }
 .claimBtn:disabled {
-  background-color: #4d4d55;
+  color: rgb(65, 65, 65);
+  border-color: rgb(65, 65, 65);
+  background-color: #18181b;
 }
 
 .notificationCard {

@@ -191,14 +191,12 @@
                 ${bigShapes}  
                 ${circles}                
               </g>
-              <g id="kaleidoscopeTile">
+          </defs>
+          <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColorHsl}"></rect>
+              <g id="kaleidoscopeTile" transform="translate(${canvasWidth / 2 - x}, ${canvasWidth / 2 - y})">
                 <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColorHsl}" />
                 ${paths}
               </g>
-
-          </defs>
-          <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColorHsl}"></rect>
-            <use href="#kaleidoscopeTile" x="${canvasWidth / 2 - x}" y="${canvasWidth / 2 - y}" />
           </svg>
           `
       }

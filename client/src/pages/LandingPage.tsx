@@ -55,27 +55,23 @@ const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId)
 
 export function LandingPage() {
   const [mintCount, setMintCount] = useState<number>(1)
-
   const [mintedTokens, setMintedTokens] = useState<number[]>([])
 
-  const { data: signer, isError, isLoading } = useSigner()
-
+  const { data: signer } = useSigner()
+  const { address } = useAccount()
   const addRecentTransaction = useAddRecentTransaction()
 
+  const [merkleTree, setMerkleTree] = useState<MerkleTree>()
+  const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
+
   const [playbackRate, setPlaybackRate] = useState(0.75)
-
   const [playSuccess] = useSound(successSound)
-
   const [playGeneralClick] = useSound(generalClickSound)
-
-  // const [playSmallClickUp] = useSound()
-
+  const [playMintClick] = useSound(mintClickSound)
   const [playSmallClick] = useSound(smallClickSound, {
     playbackRate,
     interrupt: true,
   })
-
-  const [playMintClick] = useSound(mintClickSound)
 
   const handleAmountClickUp = () => {
     setPlaybackRate(playbackRate + 0.4)
@@ -88,11 +84,6 @@ export function LandingPage() {
 
   const [randomTokenId, setRandomTokenId] = useState<number>(Math.round(Math.random() * 10000) + 1001)
 
-  const { address } = useAccount()
-
-  const [merkleTree, setMerkleTree] = useState<MerkleTree>()
-  const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
-
   const { data: sampleSvg, isLoading: sampleSvgLoading } = useContractRead({
     ...rendererConfig,
     functionName: "render",
@@ -100,38 +91,22 @@ export function LandingPage() {
     args: [BigNumber.from(`${randomTokenId}`)],
   })
 
-  const {
-    data: mintPrice,
-    isError: isMintPriceError,
-    isLoading: isMintPriceLoading,
-  } = useContractRead({
+  const { data: mintPrice } = useContractRead({
     ...kaleidoscopesConfig,
     functionName: "price",
   })
 
-  const {
-    data: maxSupply,
-    isError: isMaxSupplyError,
-    isLoading: isMaxSupplyLoading,
-  } = useContractRead({
+  const { data: maxSupply } = useContractRead({
     ...kaleidoscopesConfig,
     functionName: "maxSupply",
   })
 
-  const {
-    data: hasPublicSaleStarted,
-    isError: isublicSaleError,
-    isLoading: isPublicSaleLoading,
-  } = useContractRead({
+  const { data: hasPublicSaleStarted } = useContractRead({
     ...kaleidoscopesConfig,
     functionName: "hasPublicSaleStarted",
   })
 
-  const {
-    data: totalSupply,
-    isError: isTotalSupplyError,
-    isLoading: isTotalSupplyLoading,
-  } = useContractRead({
+  const { data: totalSupply } = useContractRead({
     ...kaleidoscopesConfig,
     functionName: "totalSupply",
     watch: true,
@@ -144,6 +119,7 @@ export function LandingPage() {
     overrides: {
       value: mintPrice?.mul(mintCount!),
     },
+    enabled: !hasPublicSaleStarted && (merkleProof?.length || 0) > 0,
   })
   const {
     write: mintAllowList,
@@ -173,11 +149,7 @@ export function LandingPage() {
   const isMintSignLoading = hasPublicSaleStarted ? isMintPublicSignLoading : isMintAllowListSignLoading
   const isMintSignSuccess = hasPublicSaleStarted ? isMintPublicSignSuccess : isMintAllowListSignSuccess
 
-  const {
-    data: mintTx,
-    isError: isMintTxError,
-    isLoading: isMintTxLoading,
-  } = useWaitForTransaction({
+  const { data: mintTx, isLoading: isMintTxLoading } = useWaitForTransaction({
     hash: mintSignResult?.hash,
     confirmations: 1,
   })
@@ -185,6 +157,7 @@ export function LandingPage() {
   // Initialization
   useEffect(() => {
     const tree = getTree(allowlistAddresses)
+    console.log("allowed addresses", allowlistAddresses)
     setMerkleTree(tree)
   }, [])
 
@@ -193,7 +166,7 @@ export function LandingPage() {
       setMerkleProof(undefined)
       const proof = getMerkleProof(merkleTree, address)
       if (proof.length > 0) {
-        setMerkleProof(proof.map((p) => `0x${p}`) as `0x${string}`[])
+        setMerkleProof(proof as `0x${string}`[])
       }
     }
   }, [address, merkleTree])
@@ -246,6 +219,9 @@ export function LandingPage() {
       <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
+      <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative text-gray-200">
+        <p className="text-size-xs">{hasPublicSaleStarted ? "Public sale" : "Allow list sale"}</p>
+      </div>
       {mintPrice && maxSupply && totalSupply && (
         <div className="flex justify-center  mt-6 z-1 pl-10 pr-10 z-10 relative">
           {isMintSignLoading ? (
@@ -283,7 +259,15 @@ export function LandingPage() {
               </button>
               <button
                 className={style.claimBtn}
-                disabled={signer && maxSupply && totalSupply && maxSupply.gt(totalSupply) ? false : true}
+                disabled={
+                  !signer ||
+                  !maxSupply ||
+                  !totalSupply ||
+                  !maxSupply.gt(totalSupply) ||
+                  !((!hasPublicSaleStarted && merkleProof) || hasPublicSaleStarted)
+                    ? true
+                    : false
+                }
                 onClick={() => {
                   mint?.()
                   playGeneralClick()
@@ -325,7 +309,7 @@ export function LandingPage() {
           </div>
           <div className="flex justify-center  mt-2 z-1 pl-10 pr-10 z-10 relative h-4">
             <div className="text-xs">
-              Minted tokens:[{" "}
+              Minted tokens: [{" "}
               {mintedTokens.map((tokenId) => {
                 return (
                   <span key={tokenId}>

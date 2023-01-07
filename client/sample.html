@@ -174,21 +174,24 @@
       }
 
       function randomAnimatedCircle(kaleidoscope, color) {
-        const y1 = randomRange(0, kaleidoscope.centerY)
-        const y2 = randomRange(kaleidoscope.centerY, RADIUS)
+        const y1 = randomRange(20, kaleidoscope.centerY)
+        const y2 = randomRange(Math.min(y1, RADIUS / 2), kaleidoscope.centerY + RADIUS / 8)
 
         const gradient = kaleidoscope.centerY / kaleidoscope.centerX
 
+        const radiusUB = SIZE / kaleidoscope.repetitions
+        // const radius = randomRange(radiusLB, radiusLB * 4)
+        const radius = Math.min(radiusUB * (kaleidoscope.centerY / y1), radiusUB)
+
         // x1 should be within bounds of triangular path
         const lb1 = y1 / gradient
-        const x1 = randomRange(lb1, 2 * kaleidoscope.centerX - lb1)
+        // const x1 = randomRange(lb1, 2 * kaleidoscope.centerX - lb1)
+        const x1 = lb1 - radius * 2
 
         // x2 should be within bounds of triangular path
         const lb2 = y2 / gradient
-        const x2 = randomRange(lb2, 2 * kaleidoscope.centerX - lb2)
-
-        const radiusLB = 120 / kaleidoscope.repetitions
-        const radius = randomRange(120 / kaleidoscope.repetitions, radiusLB * 4)
+        // const x2 = randomRange(lb2, 2 * kaleidoscope.centerX - lb2)
+        const x2 = 2 * kaleidoscope.centerX - lb1 + radius * 2
 
         const duration = randomRange(5, 10)
         const alternatingClass = randomRange(0, 3)
@@ -197,13 +200,36 @@
       }
 
       function getAnimatedCircleSVG(circle) {
+        // TODO: Use y1 to scale radius
+
         let animations = ""
 
-        if (circle.alternatingClass >= 2) {
-          animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+        // const r1 = circle.radius * (RADIUS / (circle.y1 * 4))
+        // animations += `<animate attributeName="r" values="${r1};${circle.radius};${r1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+
+        // if (circle.alternatingClass % 2 === 0) {
+        //   // Animation goes from top to bottom
+        //   animations += `<animate attributeName="cy" values="-${circle.radius};${
+        //     RADIUS + circle.radius
+        //   }" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+        // } else {
+        //   animations += `<animate attributeName="cy" values="${RADIUS + circle.radius};-${
+        //     circle.radius
+        //   }" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+        // }
+        // else {
+        //   // Animation goes from top
+        //   animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1}" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+        // }
+
+        if (circle.alternatingClass % 2 === 0) {
+          animations += `<animate attributeName="cx" values="${circle.x2};${circle.x1};${
+            circle.x2
+          }" calcMode="linear" dur="${circle.duration / 2}s" repeatCount="indefinite"/>`
         } else {
-          animations += `<animate attributeName="cx" values="${circle.x1};${circle.x2};${circle.x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>
-          <animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+          animations += `<animate attributeName="cx" values="${circle.x2};${circle.x1}" calcMode="linear" dur="${
+            circle.duration / 4
+          }s" begin="${circle.duration / 4}" repeatCount="indefinite"/>`
         }
 
         return `
@@ -328,7 +354,7 @@
           })
           .join("")
 
-        const outsideArtifacts = new Array(numOutsideArtifacts)
+        const outsideArtifacts = new Array(kaleidoscope.numOutsideArtifacts)
           .fill(0)
           .map((_, i) => {
             const color = i % 2 === 0 ? palette.primaryColorsHsl[0] : palette.secondaryColorsHsl[0]
@@ -338,7 +364,7 @@
           })
           .join("")
 
-        const insideArtifacts = new Array(numInsideArtifacts)
+        const insideArtifacts = new Array(kaleidoscope.numInsideArtifacts)
           .fill(0)
           .map((_, i) => {
             const color = i % 2 === 0 ? palette.primaryColorsHsl[i + 1] : palette.secondaryColorsHsl[i + 1]
@@ -365,9 +391,9 @@
                   </g>
               </defs>
               <rect width="${SIZE}" height="${SIZE}" fill="${palette.backgroundColorHsl}"></rect>
-                  <g id="kaleidoscopeTile" transform="translate(${SIZE / 2 - kaleidoscope.centerX}, ${
-          SIZE / 2 - kaleidoscope.centerY
-        })">
+                  <g id="kaleidoscopeTile" 
+                  
+        >
                     <circle cx="${kaleidoscope.centerX}" cy="${kaleidoscope.centerY}" r="${RADIUS}" fill="${
           palette.primaryColorHsl
         }" />
@@ -376,6 +402,10 @@
               </svg>
               `
       }
+
+      // transform="translate(${SIZE / 2 - kaleidoscope.centerX}, ${
+      //     SIZE / 2 - kaleidoscope.centerY
+      //   })"
 
       // Clear the canvas container
       document.getElementById("canvasContainer").innerHTML = ""

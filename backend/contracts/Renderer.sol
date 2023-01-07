@@ -78,7 +78,7 @@ contract Renderer {
 
   function kaleidoscopeForTokenId(uint256 _tokenId) public pure returns (Kaleidoscope memory kaleidoscope) {
     kaleidoscope.tokenId = _tokenId;
-    kaleidoscope.repetitions = utils.randomRange(_tokenId, "repetitions", 3, 6);
+    kaleidoscope.repetitions = utils.randomRange(_tokenId, "repetitions", 3, 20);
     kaleidoscope.numInsideArtifacts = utils.randomRange(_tokenId, "numInsideArtifacts", 3, 10);
     kaleidoscope.numOutsideArtifacts = utils.randomRange(_tokenId, "numOutsideArtifacts", 1, 4);
     kaleidoscope.hasGradient = utils.randomRange(_tokenId, "hasGradient", 1, 10) == 5;

@@ -65,9 +65,9 @@ export function LandingPage() {
   const [merkleTree, setMerkleTree] = useState<MerkleTree>()
   const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
 
-  const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000
-  const NOW_IN_MS = new Date().getTime()
-  const targetDate1 = NOW_IN_MS + THREE_DAYS_IN_MS
+  // TODO: add time
+  const awaitListDate = new Date("2023-01-15T00:00:00Z").getTime()
+  const publicDate = new Date("2023-01-15T17:00:00Z").getTime()
 
   const [playbackRate, setPlaybackRate] = useState(0.75)
   const [playSuccess] = useSound(successSound)
@@ -204,20 +204,10 @@ export function LandingPage() {
 
   return (
     <div>
-      {!hasPublicSaleStarted && (
-        // TODO: Update with actual details
-        <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
-          <div className={"block bg-zinc-800 px-3 py-2 rounded-b-lg w-100 text-sm " + style.notificationCard}>
-            Minting is live for Solar Systems owners on <a>this list</a>. Public minting available 18:00 UTC on
-            10/10/2021.
-          </div>
-        </div>
-      )}
-
       <div className="flex justify-center w-screen max-w-screen ">
         <img src={kaleidoscopePlaceholder} className="mt-[220px] w-[300px]"></img>
       </div>
-      <div className="flex justify-between p-5 sm:p-10 absolute w-full top-12  md:top-2 ">
+      <div className="flex justify-between p-5  absolute w-full top-12  md:top-2 ">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
         <ConnectButton />
       </div>
@@ -339,8 +329,17 @@ export function LandingPage() {
           </div>
         </div>
       )}
-
-      <Countdown targetDate={targetDate1} />
+      {/* ADD ! */}
+      {hasPublicSaleStarted && (
+        <Countdown targetDateA={awaitListDate} targetDateP={publicDate} />
+        // TODO: Update with actual details
+        // <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
+        //   <div className={"block bg-zinc-800 px-3 py-2 rounded-b-lg w-100 text-sm " + style.notificationCard}>
+        //     Minting is live for Solar Systems owners on <a>this list</a>. Public minting available 18:00 UTC on
+        //     10/10/2021.
+        //   </div>
+        // </div>
+      )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.

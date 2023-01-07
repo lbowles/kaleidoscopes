@@ -3,26 +3,29 @@ import { useEffect, useState } from "react"
 import { useCountdown } from "../../hooks/countdown"
 
 type ICoundown = {
-  targetDate: number
+  targetDateA: number
+  targetDateP: number
 }
-export const Countdown = ({ targetDate }: ICoundown) => {
-  const [aDays, aHours, aMinutes, aSeconds] = useCountdown(targetDate)
+export const Countdown = ({ targetDateA, targetDateP }: ICoundown) => {
+  const [aDays, aHours, aMinutes, aSeconds] = useCountdown(targetDateA)
+  const [pDays, pHours, pMinutes, pSeconds] = useCountdown(targetDateP)
+
   return (
     <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
       <div className={" bg-zinc-800 px-3 py-2 rounded-b-lg  text-sm " + style.notificationCard}>
         <div className="flex">
-          <p className="w-[101px]">
-            {`${aHours.toString().padStart(2, "0")}h | ${aMinutes.toString().padStart(2, "0")}m | ${aSeconds
+          <p className="w-[140px]">
+            {`${aDays.toString().padStart(2, "0")}d | ${aHours.toString().padStart(2, "0")}h | ${aMinutes
               .toString()
-              .padStart(2, "0")}s `}
+              .padStart(2, "0")}m | ${aSeconds.toString().padStart(2, "0")}s `}
           </p>
           <p>- Solar Systems allow list </p>
         </div>
         <div className="flex">
-          <p className="w-[101px]">
-            {`${aHours.toString().padStart(2, "0")}h | ${aMinutes.toString().padStart(2, "0")}m | ${aSeconds
+          <p className="w-[140px]">
+            {`${pDays.toString().padStart(2, "0")}d | ${pHours.toString().padStart(2, "0")}h | ${pMinutes
               .toString()
-              .padStart(2, "0")}s `}
+              .padStart(2, "0")}m | ${pSeconds.toString().padStart(2, "0")}s `}
           </p>
           <p>- Public</p>
         </div>

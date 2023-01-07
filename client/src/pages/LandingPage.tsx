@@ -13,13 +13,10 @@ import {
 } from "wagmi"
 import { Kaleidoscopes__factory } from "../../../backend/types"
 import deployments from "../../src/deployments.json"
-import etherscan from ".././img/etherscan.svg"
-import github from ".././img/github.svg"
 import inputShapes from ".././img/inputShapes.svg"
 import loading from ".././img/loading.svg"
 import maxSaturation from ".././img/maxSaturation.svg"
 import noReflections from ".././img/noReflections.svg"
-import opensea from ".././img/opensea.svg"
 import kaleidoscopePlaceholder from ".././img/testKaleidoscope.svg"
 import generalClickSound from ".././sounds/generalClickSound.mp3"
 import mintClickSound from ".././sounds/mintClickSound.mp3"
@@ -30,6 +27,7 @@ import { getMerkleProof, getTree } from "../../../backend/common/merkle"
 import allowlistAddresses from "../../../backend/common/snapshot.json"
 import MerkleTree from "merkletreejs"
 import { Countdown } from "../components/Countdown/Countdown"
+import { Links } from "../components/Links/Links"
 
 const kaleidoscopesConfig = {
   address: deployments.contracts.Kaleidoscopes.address,
@@ -77,6 +75,10 @@ export function LandingPage() {
     playbackRate,
     interrupt: true,
   })
+
+  function listenPlayGeneralClick() {
+    playGeneralClick()
+  }
 
   const handleAmountClickUp = () => {
     setPlaybackRate(playbackRate + 0.4)
@@ -330,72 +332,17 @@ export function LandingPage() {
         </div>
       )}
       {/* ADD ! */}
-      {hasPublicSaleStarted && (
-        <Countdown targetDateA={awaitListDate} targetDateP={publicDate} />
-        // TODO: Update with actual details
-        // <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
-        //   <div className={"block bg-zinc-800 px-3 py-2 rounded-b-lg w-100 text-sm " + style.notificationCard}>
-        //     Minting is live for Solar Systems owners on <a>this list</a>. Public minting available 18:00 UTC on
-        //     10/10/2021.
-        //   </div>
-        // </div>
-      )}
+      {hasPublicSaleStarted && <Countdown targetDateA={awaitListDate} targetDateP={publicDate} />}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>
       </div>
-      <div className="flex justify-center  mt-20 z-1 pl-10 pr-10 z-10 relative ">
-        <div className="block bg-zinc-900 border border-zinc-800 rounded-lg  p-4">
-          <div className=" grid  grid-flow-col gap-3">
-            {/* TODO: Update this */}
-            <a
-              href="https://opensea.io/collection/onchain-kaleidoscopes"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:scale-110 duration-100 ease-in-out"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={opensea} alt="opensea" />
-            </a>
-            <a
-              className="hover:scale-110 duration-100 ease-in-out"
-              href={`${etherscanBaseURL}/address/${deployments.contracts.Kaleidoscopes.address}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={etherscan} alt="etherscan" />
-            </a>
-            <a
-              href="https://github.com/lbowles/kaleidoscopes"
-              className="hover:scale-110 duration-100 ease-in-out"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={github} alt="github" />
-            </a>
-            {/* <a
-              href="https://twitter.com/SolarSystemsNFT"
-              className="hover:scale-110 duration-100 ease-in-out"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={twitter} alt="twitter" />
-            </a> */}
-          </div>
-        </div>
-      </div>
+      <Links
+        etherscanBaseURL={etherscanBaseURL}
+        deployAddress={deployments.contracts.Kaleidoscopes.address}
+        playGeneralClick={listenPlayGeneralClick}
+      />
       {/* FAQ */}
       <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
         <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">

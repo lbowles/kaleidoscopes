@@ -105,7 +105,7 @@ contract Renderer {
     circle.x2 = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("circlex2", utils.uint2str(_index)),
-      RADIUS / 2,
+      0,
       _kaleidoscope.centerX
     );
     circle.y1 = utils.randomRange(
@@ -380,7 +380,7 @@ contract Renderer {
 
     string memory paths = "";
     uint256 angleInterval = 360 / _kaleidoscope.repetitions;
-    for (uint256 i = 0; i < _kaleidoscope.repetitions; i++) {
+    for (uint256 i = 0; i <= _kaleidoscope.repetitions; i++) {
       paths = string.concat(
         paths,
         '<use href="#tile" transform="rotate(',
@@ -453,12 +453,14 @@ contract Renderer {
       '"></rect>',
       '<g id="kaleidoscopeTile" transform="translate(',
       utils.uint2str(SIZE / 2 - _kaleidoscope.centerX)
+      // "0"
     );
 
     svg = string.concat(
       svg,
       ",",
       utils.uint2str(SIZE / 2 - _kaleidoscope.centerY),
+      // "0",
       ')">',
       '<circle cx="',
       utils.uint2str(_kaleidoscope.centerX),

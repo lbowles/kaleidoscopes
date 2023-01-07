@@ -9,6 +9,9 @@
   <body>
     <div id="canvasContainer"></div>
     <script>
+      const SIZE = 500
+      const RADIUS = 200
+
       function generateColors(mainHue, n) {
         let colors = []
         for (let i = 0; i < n; i++) {
@@ -22,41 +25,6 @@
       function randomRange(min, max, random) {
         random = random || Math.random()
         return random * (max + 1 - min) + min
-      }
-
-      function randomRect(x, y, r, color) {
-        const width = randomRange(r / 2, r)
-        const height = randomRange(r / 2, r)
-
-        const duration = randomRange(5, 10)
-
-        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 0 -${y}" to="360 0 -${y}" begin="0s" dur="${duration}s" repeatCount="indefinite" />`
-
-        return `
-          <rect rx="3" ry="3" x="0" y="-${y}" width="${width}" height="${height}" fill="${color}">
-            ${animations}
-          </rect>
-          `
-      }
-
-      function randomTriangle(x, y, r, color) {
-        // Generate coordinates for isosceles triangle with side length r
-        const x1 = randomRange(0, x)
-        const y1 = randomRange(0, y)
-        const x2 = x1 + r
-        const y2 = y1
-
-        const duration = randomRange(5, 10)
-
-        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 ${x1} -${y1}" to="360 ${x1} -${y1}" begin="0s" dur="${Math.round(
-          randomRange(4, 10),
-        )}s" repeatCount="indefinite" />`
-
-        return `
-          <polygon points="0,${-y} ${x2},${y2} ${x1},${y2}" fill="${color}">
-            ${animations}
-          </polygon>
-          `
       }
 
       function getHueName(hue) {
@@ -79,126 +47,334 @@
         return colors[colorIndex]
       }
 
-      function randomCircle(centerX, centerY, r, color) {
-        const x1 = randomRange(0, centerX)
-        const x2 = randomRange(r / 2, centerX)
-
-        const y1 = randomRange(0, centerY)
-        const y2 = randomRange(centerY, r)
-
-        const radius = randomRange(5, r / 6)
-
-        const duration = randomRange(5, 10)
-        const alternatingClass = randomRange(0, 3)
-
-        let animations = ""
-
-        if (alternatingClass >= 2) {
-          animations +=
-            alternatingClass == 3
-              ? `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${duration}s" repeatCount="indefinite"/>`
-              : `<animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
-                  duration / 2
-                }s" repeatCount="indefinite"/>`
-        } else {
-          animations += `<animate attributeName="cx" values="${x1};${x2};${x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${duration}s" repeatCount="indefinite"/>
-                  <animate attributeName="cy" values="${y1};${y2};${y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${
-            duration / 2
-          }s" repeatCount="indefinite"/>`
-        }
-
-        return `
-          <circle cx="${r / 2}" cy="${r / 2}" r="${radius}" fill="${color}">
-            ${animations}
-          </circle>
-          `
+      // struct Kaleidoscope {
+      //   uint256 tokenId;
+      //   uint256 repetitions; // n
+      //   uint256 numInsideArtifacts; // numCircles
+      //   uint256 numOutsideArtifacts;
+      //   uint256 centerX;
+      //   uint256 centerY;
+      //   bool hasGradient;
+      //   bool hasSecondaryColor;
+      // }
+      function Kaleidoscope(
+        repetitions,
+        numInsideArtifacts,
+        numOutsideArtifacts,
+        centerX,
+        centerY,
+        hasGradient,
+        hasSecondaryColor,
+      ) {
+        this.repetitions = repetitions
+        this.numInsideArtifacts = numInsideArtifacts
+        this.numOutsideArtifacts = numOutsideArtifacts
+        this.centerX = centerX
+        this.centerY = centerY
+        this.hasGradient = hasGradient
+        this.hasSecondaryColor = hasSecondaryColor
       }
 
-      function getSVG(canvasWidth) {
-        const halfCanvasWidth = canvasWidth / 2
-
+      function randomKaleidoscope() {
         const repetitions = Math.round(randomRange(3, 20))
         const r = 200
         const angleInterval = 360 / repetitions
         const angle = (((180 - angleInterval) / 2) * Math.PI) / 180
         const x = Math.cos(angle) * r
         const y = Math.sin(angle) * r
-
         const numInsideArtifacts = Math.floor(randomRange(3, 10))
         const numOutsideArtifacts = Math.floor(randomRange(1, 4))
         const hasGradient = Math.random() > 0.9
-
-        console.log("numOutsideArtifacts", numOutsideArtifacts)
-
         const hasSecondaryColor = Math.random() > 0.85
 
-        const mainHue = Math.floor(Math.random() * 360)
-        const secondaryHue = hasSecondaryColor ? (mainHue + 240) % 360 : mainHue
-        const [firstPrimaryColorHsl, ...primaryColorsHsl] = generateColors(mainHue, numInsideArtifacts + 1)
-        const [firstSecondaryColorHsl, ...secondaryColorsHsl] = generateColors(secondaryHue, numInsideArtifacts + 1)
-        const mainColorHsl = `hsl(${mainHue}, 100%, 30%)`
-        const darkerSecondaryHsl = `hsl(${(mainHue + 10) % 360}, 100%, 10%)`
-        const secondaryColorHsl = `hsl(${secondaryHue}, 100%, 70%)`
-        const backgroundColorHsl = `hsl(${mainHue}, 100%, 10%)`
+        return new Kaleidoscope(
+          repetitions,
+          numInsideArtifacts,
+          numOutsideArtifacts,
+          x,
+          y,
+          hasGradient,
+          hasSecondaryColor,
+        )
+      }
 
-        console.log("mainHue", getHueName(mainHue))
+      // struct ColorPalette {
+      //   uint256 primaryHue;
+      //   uint256 secondaryHue;
+      //   utils.HSL primaryColorHsl;
+      //   utils.HSL secondaryColorHsl;
+      //   utils.HSL backgroundColorHsl;
+      //   utils.HSL darkerSecondaryHsl;
+      //   utils.HSL[] primaryColorsHsl;
+      //   utils.HSL[] secondaryColorsHsl;
+      // }
+      function ColorPalette(
+        primaryHue,
+        secondaryHue,
+        primaryColorHsl,
+        secondaryColorHsl,
+        backgroundColorHsl,
+        darkerSecondaryHsl,
+        primaryColorsHsl,
+        secondaryColorsHsl,
+      ) {
+        this.primaryHue = primaryHue
+        this.secondaryHue = secondaryHue
+        this.primaryColorHsl = primaryColorHsl
+        this.secondaryColorHsl = secondaryColorHsl
+        this.backgroundColorHsl = backgroundColorHsl
+        this.darkerSecondaryHsl = darkerSecondaryHsl
+        this.primaryColorsHsl = primaryColorsHsl
+        this.secondaryColorsHsl = secondaryColorsHsl
+      }
+
+      function randomColorPalette(kaleidoscope) {
+        const primaryHue = Math.floor(Math.random() * 360)
+        const secondaryHue = kaleidoscope.hasSecondaryColor ? (primaryHue + 240) % 360 : primaryHue
+        const primaryColorsHsl = generateColors(primaryHue, kaleidoscope.numInsideArtifacts + 1)
+        const secondaryColorsHsl = generateColors(secondaryHue, kaleidoscope.numInsideArtifacts + 1)
+        const primaryColorHsl = `hsl(${primaryHue}, 100%, 30%)`
+        const darkerSecondaryHsl = `hsl(${(primaryHue + 10) % 360}, 100%, 10%)`
+        const secondaryColorHsl = `hsl(${secondaryHue}, 100%, 70%)`
+        const backgroundColorHsl = `hsl(${primaryHue}, 100%, 10%)`
+
+        return new ColorPalette(
+          primaryHue,
+          secondaryHue,
+          primaryColorHsl,
+          secondaryColorHsl,
+          backgroundColorHsl,
+          darkerSecondaryHsl,
+          primaryColorsHsl,
+          secondaryColorsHsl,
+        )
+      }
+
+      // struct AnimatedCircle {
+      //   // Start position
+      //   uint256 x1;
+      //   uint256 y1;
+      //   // End position
+      //   uint256 x2;
+      //   uint256 y2;
+      //   uint256 radius;
+      //   uint256 alternatingClass;
+      //   uint256 duration;
+      //   utils.HSL color;
+      // }
+      function AnimatedCircle(x1, y1, x2, y2, radius, alternatingClass, duration, color) {
+        this.x1 = x1
+        this.y1 = y1
+        this.x2 = x2
+        this.y2 = y2
+        this.radius = radius
+        this.alternatingClass = alternatingClass
+        this.duration = duration
+        this.color = color
+      }
+
+      function randomAnimatedCircle(kaleidoscope, color) {
+        const y1 = randomRange(0, kaleidoscope.centerY)
+        const y2 = randomRange(kaleidoscope.centerY, RADIUS)
+
+        const gradient = kaleidoscope.centerY / kaleidoscope.centerX
+
+        // x1 should be within bounds of triangular path
+        const lb1 = y1 / gradient
+        const x1 = randomRange(lb1, 2 * kaleidoscope.centerX - lb1)
+
+        // x2 should be within bounds of triangular path
+        const lb2 = y2 / gradient
+        const x2 = randomRange(lb2, 2 * kaleidoscope.centerX - lb2)
+
+        const radiusLB = 120 / kaleidoscope.repetitions
+        const radius = randomRange(120 / kaleidoscope.repetitions, radiusLB * 4)
+
+        const duration = randomRange(5, 10)
+        const alternatingClass = randomRange(0, 3)
+
+        return new AnimatedCircle(x1, y1, x2, y2, radius, alternatingClass, duration, color)
+      }
+
+      function getAnimatedCircleSVG(circle) {
+        let animations = ""
+
+        if (circle.alternatingClass >= 2) {
+          animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+        } else {
+          animations += `<animate attributeName="cx" values="${circle.x1};${circle.x2};${circle.x1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
+        }
+
+        return `
+          <circle cx="${circle.x1}" cy="${circle.y1}" r="${circle.radius}" fill="${circle.color}">
+            ${animations}
+          </circle>`
+      }
+
+      // struct AnimatedTriangle {
+      //   uint256 x1;
+      //   uint256 y1;
+      //   uint256 duration;
+      //   utils.HSL color;
+      // }
+      function AnimatedTriangle(x1, y1, centerY, duration, color) {
+        this.x1 = x1
+        this.y1 = y1
+        this.centerY = centerY
+        this.duration = duration
+        this.color = color
+      }
+
+      function randomAnimatedTriangle(kaleidoscope, color) {
+        const x1 = randomRange(0, kaleidoscope.centerX)
+        const y1 = randomRange(0, kaleidoscope.centerY)
+
+        const duration = randomRange(5, 10)
+
+        return new AnimatedTriangle(x1, y1, kaleidoscope.centerY, duration, color)
+      }
+
+      function getAnimatedTriangleSVG(triangle) {
+        const x2 = triangle.x1 + RADIUS
+        const y2 = triangle.y1
+        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 ${triangle.x1} -${
+          triangle.y1
+        }" to="360 ${triangle.x1} -${triangle.y1}" begin="0s" dur="${Math.round(
+          triangle.duration,
+        )}s" repeatCount="indefinite" />`
+
+        return `
+          <polygon points="0,${-triangle.centerY} ${x2},${y2} ${triangle.x1},${y2}" fill="${triangle.color}">
+            ${animations}
+          </polygon>
+          `
+      }
+
+      // struct AnimatedRectangle {
+      //   uint256 width;
+      //   uint256 height;
+      //   uint256 x;
+      //   uint256 y;
+      //   uint256 duration;
+      //   utils.HSL color;
+      // }
+      function AnimatedRectangle(width, height, centerY, duration, color) {
+        this.width = width
+        this.height = height
+        this.centerY = centerY
+        this.duration = duration
+        this.color = color
+      }
+
+      function randomAnimatedRectangle(kaleidoscope, color) {
+        const width = randomRange(RADIUS / 2, RADIUS)
+        const height = randomRange(RADIUS / 2, RADIUS)
+
+        const duration = randomRange(5, 10)
+
+        return new AnimatedRectangle(width, height, kaleidoscope.centerY, duration, color)
+      }
+
+      function getAnimatedRectangleSVG(rectangle) {
+        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 0 -${rectangle.centerY}" to="360 0 -${rectangle.centerY}" begin="0s" dur="${rectangle.duration}s" repeatCount="indefinite" />`
+
+        return `
+          <rect rx="3" ry="3" x="0" y="-${rectangle.centerY}" width="${rectangle.width}" height="${rectangle.height}" fill="${rectangle.color}">
+            ${animations}
+          </rect>
+          `
+      }
+
+      function getSVG() {
+        const halfCanvasWidth = SIZE / 2
+
+        const kaleidoscope = randomKaleidoscope()
+        const {
+          numInsideArtifacts,
+          numOutsideArtifacts,
+          hasSecondaryColor,
+          hasGradient,
+          repetitions,
+          centerX,
+          centerY,
+        } = kaleidoscope
+        const angleInterval = 360 / repetitions
+
+        const palette = randomColorPalette(kaleidoscope)
+
+        console.log(palette)
+
+        console.log("mainHue", getHueName(palette.primaryHue))
         console.log("hasGradient", hasGradient)
         console.log("hasSecondaryColor", hasSecondaryColor)
 
         const gradientDef = `
-          <linearGradient id="gradient">
-            <stop offset="0%" stop-color="${mainColorHsl}"/>
-            <stop offset="100%" stop-color="${darkerSecondaryHsl}"/>
-          </linearGradient>
-        `
+              <linearGradient id="gradient">
+                <stop offset="0%" stop-color="${palette.primaryColorHsl}"/>
+                <stop offset="100%" stop-color="${palette.darkerSecondaryHsl}"/>
+              </linearGradient>
+            `
 
-        const path = `M0,0L${x},${y}L${x * 2},0A${r},${r},0,0,0,0,0Z`
+        const path = `M0,0L${kaleidoscope.centerX},${kaleidoscope.centerY}L${
+          kaleidoscope.centerX * 2
+        },0A${RADIUS},${RADIUS},0,0,0,0,0Z`
         const paths = new Array(repetitions)
           .fill(0)
           .map((_, i) => {
-            return `<use href="#tile" transform="rotate(${angleInterval * i},${x},${y})" />`
+            return `<use href="#tile" transform="rotate(${angleInterval * i},${kaleidoscope.centerX},${
+              kaleidoscope.centerY
+            })" />`
           })
           .join("")
 
-        const bigShapes = new Array(numOutsideArtifacts)
+        const outsideArtifacts = new Array(numOutsideArtifacts)
           .fill(0)
           .map((_, i) => {
-            const color = i % 2 === 0 ? firstPrimaryColorHsl : firstSecondaryColorHsl
-            return Math.random() > 0.5 ? randomTriangle(x, y, r, color) : randomRect(x, y, r, color)
+            const color = i % 2 === 0 ? palette.primaryColorsHsl[0] : palette.secondaryColorsHsl[0]
+            return Math.random() > 0.5
+              ? getAnimatedTriangleSVG(randomAnimatedTriangle(kaleidoscope, color))
+              : getAnimatedRectangleSVG(randomAnimatedRectangle(kaleidoscope, color))
           })
           .join("")
 
-        const circles = new Array(numInsideArtifacts)
+        const insideArtifacts = new Array(numInsideArtifacts)
           .fill(0)
           .map((_, i) => {
-            const color = i % 2 === 0 ? primaryColorsHsl[i] : secondaryColorsHsl[i]
-            return randomCircle(x, y, r, color)
+            const color = i % 2 === 0 ? palette.primaryColorsHsl[i + 1] : palette.secondaryColorsHsl[i + 1]
+            const circle = randomAnimatedCircle(kaleidoscope, color)
+            const svg = getAnimatedCircleSVG(circle)
+            return svg
           })
           .join("")
 
         return `
-          <svg width="${canvasWidth}" height="${canvasWidth}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              ${gradientDef}
-              <clipPath id="clip">
-                <path d="${path}" />
-              </clipPath>
-              <g id="tile" clip-path="url(#clip)">
-                <rect x="0" y="-${r}" width="${r * 2}" height="${r * 2}" fill="${
-          hasGradient ? "url(#gradient)" : mainColorHsl
+              <svg width="${SIZE}" height="${SIZE}" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  ${gradientDef}
+                  <clipPath id="clip">
+                    <path d="${path}" />
+                  </clipPath>
+                  <g id="tile" clip-path="url(#clip)">
+                    <rect x="0" y="-${RADIUS}" width="${RADIUS * 2}" height="${RADIUS * 2}" fill="${
+          hasGradient ? "url(#gradient)" : palette.primaryColorHsl
         }">
-                </rect>
-                ${bigShapes}  
-                ${circles}                
-              </g>
-          </defs>
-          <rect width="${canvasWidth}" height="${canvasWidth}" fill="${backgroundColorHsl}"></rect>
-              <g id="kaleidoscopeTile" transform="translate(${canvasWidth / 2 - x}, ${canvasWidth / 2 - y})">
-                <circle cx="${x}" cy="${y}" r="${r}" fill="${mainColorHsl}" />
-                ${paths}
-              </g>
-          </svg>
-          `
+                    </rect>
+                    ${outsideArtifacts}
+                    ${insideArtifacts}
+                  </g>
+              </defs>
+              <rect width="${SIZE}" height="${SIZE}" fill="${palette.backgroundColorHsl}"></rect>
+                  <g id="kaleidoscopeTile" transform="translate(${SIZE / 2 - kaleidoscope.centerX}, ${
+          SIZE / 2 - kaleidoscope.centerY
+        })">
+                    <circle cx="${kaleidoscope.centerX}" cy="${kaleidoscope.centerY}" r="${RADIUS}" fill="${
+          palette.primaryColorHsl
+        }" />
+                    ${paths}
+                  </g>
+              </svg>
+              `
       }
 
       // Clear the canvas container

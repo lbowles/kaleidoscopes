@@ -29,7 +29,7 @@ import style from "./LandingPage.module.css"
 import { getMerkleProof, getTree } from "../../../backend/common/merkle"
 import allowlistAddresses from "../../../backend/common/snapshot.json"
 import MerkleTree from "merkletreejs"
-import { Playground } from "../components/Playground"
+import { Countdown } from "../components/Countdown/Countdown"
 
 const kaleidoscopesConfig = {
   address: deployments.contracts.Kaleidoscopes.address,
@@ -64,6 +64,10 @@ export function LandingPage() {
 
   const [merkleTree, setMerkleTree] = useState<MerkleTree>()
   const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
+
+  const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000
+  const NOW_IN_MS = new Date().getTime()
+  const targetDate1 = NOW_IN_MS + THREE_DAYS_IN_MS
 
   const [playbackRate, setPlaybackRate] = useState(0.75)
   const [playSuccess] = useSound(successSound)
@@ -217,6 +221,8 @@ export function LandingPage() {
         <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
         <ConnectButton />
       </div>
+
+      {/* TODO : Update with actual details  remove !*/}
       <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
@@ -333,6 +339,8 @@ export function LandingPage() {
           </div>
         </div>
       )}
+
+      <Countdown targetDate={targetDate1} />
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
@@ -471,10 +479,6 @@ export function LandingPage() {
           </div>
         </div>
       </div>
-      {/* <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
-        <Playground />
-      </div> */}
-
       <div className="flex justify-center  mt-24 z-1 pl-10 pr-10 z-10 relative">
         <footer className="sticky w-full py-4  bottom-0 text-center text-gray-700 text-sm">
           Made by{" "}

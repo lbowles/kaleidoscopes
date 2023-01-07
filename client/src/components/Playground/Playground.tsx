@@ -1,4 +1,4 @@
-import { getSVG } from "./generateSVG"
+import { getSVG } from "./GenerateSVG"
 import { useState } from "react"
 
 export function Playground() {

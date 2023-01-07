@@ -105,7 +105,7 @@ contract Renderer {
     circle.x2 = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("circlex2", utils.uint2str(_index)),
-      circle.radius / 2,
+      RADIUS / 2,
       _kaleidoscope.centerX
     );
     circle.y1 = utils.randomRange(

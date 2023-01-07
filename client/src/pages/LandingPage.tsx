@@ -13,10 +13,7 @@ import {
 } from "wagmi"
 import { Kaleidoscopes__factory } from "../../../backend/types"
 import deployments from "../../src/deployments.json"
-import inputShapes from ".././img/inputShapes.svg"
 import loading from ".././img/loading.svg"
-import maxSaturation from ".././img/maxSaturation.svg"
-import noReflections from ".././img/noReflections.svg"
 import kaleidoscopePlaceholder from ".././img/testKaleidoscope.svg"
 import generalClickSound from ".././sounds/generalClickSound.mp3"
 import mintClickSound from ".././sounds/mintClickSound.mp3"
@@ -29,6 +26,8 @@ import MerkleTree from "merkletreejs"
 import { Countdown } from "../components/Countdown/Countdown"
 import { Links } from "../components/Links/Links"
 import { FAQ } from "../components/FAQ/FAQ"
+import { Traits } from "../components/Traits/Traits"
+import { Footer } from "../components/Footer/Footer"
 
 const kaleidoscopesConfig = {
   address: deployments.contracts.Kaleidoscopes.address,
@@ -349,61 +348,8 @@ export function LandingPage() {
         deployAddress={deployments.contracts.Kaleidoscopes.address}
         playGeneralClick={listenPlayGeneralClick}
       />
-
-      {/* Traits */}
-      <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
-        <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
-          <div className="p-5">
-            <p className="font- text-xl pb-4 text-gray-100">Traits</p>
-            <div className="grid  gap-4 grid-cols-1 sm:grid-cols-3  ">
-              <div>
-                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center ">
-                  <img src={noReflections} alt="Number Of Reflections" className="h-5 mr-3"></img>
-                  <span>Number Of Reflections</span>
-                </div>
-              </div>
-              <div>
-                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center min-h-20">
-                  <img src={maxSaturation} alt="Max Saturation" className="h-5 mr-3"></img>
-                  <span>Colour/Gradients</span>
-                </div>
-              </div>
-              <div>
-                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center">
-                  <img src={inputShapes} alt="Number Of Reflections" className="h-5 mr-3"></img>
-                  <span>Input Shape Complexity</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-center  mt-24 z-1 pl-10 pr-10 z-10 relative">
-        <footer className="sticky w-full py-4  bottom-0 text-center text-gray-700 text-sm">
-          Made by{" "}
-          <a
-            href="https://twitter.com/npm_luko"
-            className="font-bold text-gray-500"
-            target="_blank"
-            onClick={() => {
-              playGeneralClick()
-            }}
-          >
-            @npm_luko
-          </a>{" "}
-          and{" "}
-          <a
-            href="https://twitter.com/stephancill"
-            className="font-bold text-gray-500"
-            target="_blank"
-            onClick={() => {
-              playGeneralClick()
-            }}
-          >
-            @stephancill
-          </a>
-        </footer>
-      </div>
+      <Traits />
+      <Footer playGeneralClick={listenPlayGeneralClick} />
     </div>
   )
 }

@@ -66,8 +66,9 @@ export function LandingPage() {
   const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
 
   // TODO: add time
-  const awaitListDate = new Date("2023-01-15T00:00:00Z").getTime()
+  const awaitListDate = new Date("2023-01-14T17:00:00Z").getTime()
   const publicDate = new Date("2023-01-15T17:00:00Z").getTime()
+  console.log(new Date("2023-01-15T07:00:00Z"))
 
   const [playbackRate, setPlaybackRate] = useState(0.75)
   const [playSuccess] = useSound(successSound)

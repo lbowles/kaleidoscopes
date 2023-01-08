@@ -56,6 +56,8 @@ export function LandingPage() {
   const [mintCount, setMintCount] = useState<number>(1)
   const [mintedTokens, setMintedTokens] = useState<number[]>([])
 
+  const [hasAllowListStarted, setHasAllowListStarted] = useState(false)
+
   const { data: signer } = useSigner()
   const { address } = useAccount()
   const addRecentTransaction = useAddRecentTransaction()
@@ -204,6 +206,14 @@ export function LandingPage() {
     }
   }, [mintTx])
 
+  useEffect(() => {
+    if (mintedTokens.length > 0) {
+      setHasAllowListStarted(false)
+    } else {
+      setHasAllowListStarted(true)
+    }
+  }, [merkleProof])
+
   return (
     <div>
       <div className="flex justify-center w-screen max-w-screen ">
@@ -332,12 +342,13 @@ export function LandingPage() {
         </div>
       )}
       {/* ADD ! */}
-      {hasPublicSaleStarted && (
+      {!hasPublicSaleStarted && (
         <Countdown
           targetDateA={awaitListDate}
           targetDateP={publicDate}
           playGeneralClick={listenPlayGeneralClick}
           hasPublicSaleStarted={hasPublicSaleStarted}
+          hasAllowListStarted={hasAllowListStarted}
         />
       )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">

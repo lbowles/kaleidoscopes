@@ -5,8 +5,9 @@ import { useCountdown } from "../../hooks/countdown"
 type ICoundown = {
   targetDateA: number
   targetDateP: number
+  playGeneralClick: () => void
 }
-export const Countdown = ({ targetDateA, targetDateP }: ICoundown) => {
+export const Countdown = ({ targetDateA, targetDateP, playGeneralClick }: ICoundown) => {
   const [aDays, aHours, aMinutes, aSeconds] = useCountdown(targetDateA)
   const [pDays, pHours, pMinutes, pSeconds] = useCountdown(targetDateP)
 
@@ -19,7 +20,19 @@ export const Countdown = ({ targetDateA, targetDateP }: ICoundown) => {
               .toString()
               .padStart(2, "0")}m | ${aSeconds.toString().padStart(2, "0")}s `}
           </p>
-          <p>- Solar Systems allow list </p>
+          <p>
+            - Solar Systems{" "}
+            <a
+              onClick={() => {
+                playGeneralClick()
+              }}
+              href="https://github.com/lbowles/kaleidoscopes/blob/main/client/src/img/export_tokenholders_for_nft_contract_0xB6CacF825b007dB54a6ADe42.csv?raw=true"
+              target="_blank"
+              className="underline h:text-gray-500"
+            >
+              allow list{" "}
+            </a>
+          </p>
         </div>
         <div className="flex">
           <p className="w-[140px]">

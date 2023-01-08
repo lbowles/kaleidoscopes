@@ -332,7 +332,9 @@ export function LandingPage() {
         </div>
       )}
       {/* ADD ! */}
-      {hasPublicSaleStarted && <Countdown targetDateA={awaitListDate} targetDateP={publicDate} />}
+      {hasPublicSaleStarted && (
+        <Countdown targetDateA={awaitListDate} targetDateP={publicDate} playGeneralClick={listenPlayGeneralClick} />
+      )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.

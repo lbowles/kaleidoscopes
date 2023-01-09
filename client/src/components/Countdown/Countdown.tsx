@@ -1,4 +1,5 @@
 import style from "./Countdown.module.css"
+import allowlistHelpBtn from "../../img/allowlistHelpBtn.svg"
 import { useEffect, useState } from "react"
 import { useCountdown } from "../../hooks/countdown"
 import countdownLine from "../../img/countdownLine.svg"
@@ -23,14 +24,13 @@ export const Countdown = ({
 
   useEffect(() => {
     let current = new Date().getTime()
-
     let betweenAllowPublic = Math.abs(targetDateP - targetDateA)
-
     let betweenAllowCurrent = Math.abs(current - targetDateA)
 
-    console.log(betweenAllowCurrent, betweenAllowPublic)
-
     let percentBar = (betweenAllowCurrent / betweenAllowPublic) * 100
+    if (percentBar >= 100) {
+      percentBar = 100
+    }
     setPercentBar(Math.round(percentBar))
     console.log(percentBar)
   }, [pSeconds])
@@ -52,7 +52,7 @@ export const Countdown = ({
                   <img src={countdownLine} alt="countdownLine" className="py-2"></img>
                 </div>
                 <div className="flex justify-end">
-                  <div className="w-[226px] bg-none mr-[33px] -mt-[18px]">
+                  <div className="w-[226px] bg-none mr-[33px] -mt-[18px] pr-[10px]">
                     <div
                       className={`bg-white h-[10px] w-[10px] rounded-lg`}
                       // TODO: if bigger than like 97% just leave it at 97%
@@ -61,7 +61,18 @@ export const Countdown = ({
                   </div>
                 </div>
                 <div className="font-medium text-gray-100  text-sm flex justify-between">
-                  <span>Allowlist mint</span> <span>Public mint</span>
+                  <div className="flex justify-center">
+                    <span>Allowlist mint</span>
+                    <a
+                      className="pt-1 pl-2"
+                      onClick={() => {
+                        playGeneralClick()
+                      }}
+                    >
+                      <img src={allowlistHelpBtn} className="w-[13px]"></img>
+                    </a>
+                  </div>{" "}
+                  <span>Public mint</span>
                 </div>
               </div>
             </div>
@@ -81,7 +92,7 @@ export const Countdown = ({
                   <img src={countdownLine} alt="countdownLine" className="py-2"></img>
                 </div>
                 <div className="font-medium text-gray-100  text-sm flex justify-between">
-                  <span>Allowlist mint</span> <span>Public mint</span>
+                  <span>Allowlist mint </span> <span>Public mint</span>
                 </div>
               </div>
             </div>

@@ -1,10 +1,9 @@
-import { deployments, ethers } from "hardhat"
-import { expect } from "chai"
-import { Kaleidoscopes, Kaleidoscopes__factory } from "../types"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
+import { expect } from "chai"
 import { BigNumber } from "ethers"
-import MerkleTree from "merkletreejs"
-import { getMerkleRoot } from "../common/merkle"
+import { deployments, ethers } from "hardhat"
+import { Kaleidoscopes, Kaleidoscopes__factory } from "../types"
+import { waitForBlocks } from "./helpers"
 
 describe("Kaleidoscopes", function () {
   let signers: SignerWithAddress[]
@@ -17,7 +16,12 @@ describe("Kaleidoscopes", function () {
     const Kaleidoscopes = await deployments.get("Kaleidoscopes")
     kaleidoscopes = Kaleidoscopes__factory.connect(Kaleidoscopes.address, signers[0]) as Kaleidoscopes
     mintPrice = await kaleidoscopes.price()
-    await kaleidoscopes.openPublicSale()
+
+    // Fast forward to public sale start
+    const currentBlock = await ethers.provider.getBlockNumber()
+    const startBlock = await kaleidoscopes.allowListMintStartBlock()
+    const publicOffset = await kaleidoscopes.publicMintOffsetBlocks()
+    await waitForBlocks(startBlock.sub(currentBlock).add(publicOffset))
   })
 
   it("Should have the correct price set in the constructor", async function () {

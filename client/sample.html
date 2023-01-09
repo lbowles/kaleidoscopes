@@ -162,20 +162,23 @@
       //   uint256 duration;
       //   utils.HSL color;
       // }
-      function AnimatedCircle(x1, y1, x2, y2, radius, alternatingClass, duration, color) {
+      function AnimatedCircle(x1, y1, x2, y2, radius1, radius2, alternatingClass, duration, color) {
         this.x1 = x1
         this.y1 = y1
         this.x2 = x2
         this.y2 = y2
-        this.radius = radius
+        this.radius1 = radius1
+        this.radius2 = radius2
         this.alternatingClass = alternatingClass
         this.duration = duration
         this.color = color
       }
 
       function randomAnimatedCircle(kaleidoscope, color) {
-        let y1 = randomRange(20, kaleidoscope.centerY + RADIUS / 8)
-        let y2 = randomRange(20, kaleidoscope.centerY + RADIUS / 8)
+        const yUpperBound = kaleidoscope.centerY + RADIUS / 8
+
+        let y1 = randomRange(20, yUpperBound)
+        let y2 = randomRange(20, yUpperBound)
 
         const alternatingClass = randomRange(0, 3)
 
@@ -184,61 +187,48 @@
           y1 = y2
           y2 = temp
         }
-        const minY = Math.max(y1, y2)
+        const minY = Math.min(y1, y2) // y1 is closer to edge
 
         const gradient = kaleidoscope.centerY / kaleidoscope.centerX
 
-        const radiusUB = (SIZE / kaleidoscope.repetitions) * 1
-        const radius = Math.min(radiusUB * (kaleidoscope.centerY / minY), radiusUB)
+        const radiusUB = kaleidoscope.centerX * 2
+        const radius1 = Math.min(radiusUB * (1 - y1 / yUpperBound), radiusUB)
+        const radius2 = Math.min(radiusUB * (1 - y2 / yUpperBound), radiusUB)
+        // console.log("radiusUB scaled by", minY / kaleidoscope.centerY)
 
         // x1 should be within bounds of triangular path
         const lb1 = y1 / gradient
-        const x1 = lb1 - radius * 2
+        const x1 = lb1 - radius1 * 2
 
         // x2 should be within bounds of triangular path
         const lb2 = y2 / gradient
-        const x2 = 2 * kaleidoscope.centerX - lb1 + radius * 2
+        const x2 = 2 * kaleidoscope.centerX - lb2 + radius2 * 2
 
         const duration = randomRange(3, 7)
 
-        return new AnimatedCircle(x1, y1, x2, y2, radius, alternatingClass, duration, color)
+        return new AnimatedCircle(x1, y1, x2, y2, radius1, radius2, alternatingClass, duration, color)
       }
 
       function getAnimatedCircleSVG(circle) {
-        // TODO: Use y1 to scale radius
-
         let animations = ""
-
-        // const r1 = circle.radius * (RADIUS / (circle.y1 * 4))
-        // animations += `<animate attributeName="r" values="${r1};${circle.radius};${r1}" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
-
-        // if (circle.alternatingClass % 2 === 0) {
-        //   // Animation goes from top to bottom
-        //   animations += `<animate attributeName="cy" values="-${circle.radius};${
-        //     RADIUS + circle.radius
-        //   }" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
-        // } else {
-        //   animations += `<animate attributeName="cy" values="${RADIUS + circle.radius};-${
-        //     circle.radius
-        //   }" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
-        // }
-        // else {
-        //   // Animation goes from top
-        //   animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1}" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
-        // }
 
         const startingX = (circle.x1 + circle.x2) / 2
         const startingY = (circle.y1 + circle.y2) / 2
+        const startingRadius = (circle.radius1 + circle.radius2) / 2
 
-        animations += `<animate attributeName="cy" values="${startingY};${circle.y2};${
-          circle.y1
-        };${startingY}" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
-        animations += `<animate attributeName="cx" values="${startingX};${circle.x2};${
-          circle.x1
-        };${startingX}" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
+        animations += `<animate attributeName="r" values="${circle.radius1};${circle.radius2};${circle.radius1};${
+          circle.radius2
+        }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
+
+        animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1};${
+          circle.y2
+        }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
+        animations += `<animate attributeName="cx" values="${circle.x1};${circle.x2};${circle.x1};${
+          circle.x2
+        }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
 
         return `
-          <circle cx="${circle.x1}" cy="${circle.y1}" r="${circle.radius}" fill="${circle.color}">
+          <circle cx="${startingX}" cy="${startingY}" r="${startingRadius}" fill="${circle.color}">
             ${animations}
           </circle>`
       }

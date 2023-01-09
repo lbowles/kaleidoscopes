@@ -24,8 +24,8 @@ contract Renderer {
 
   struct Kaleidoscope {
     uint256 tokenId;
-    uint256 repetitions; // n
-    uint256 numInsideArtifacts; // numCircles
+    uint256 repetitions;
+    uint256 numInsideArtifacts;
     uint256 numOutsideArtifacts;
     uint256 centerX_precise;
     uint256 centerY_precise;
@@ -84,8 +84,7 @@ contract Renderer {
 
   function kaleidoscopeForTokenId(uint256 _tokenId) public pure returns (Kaleidoscope memory kaleidoscope) {
     kaleidoscope.tokenId = _tokenId;
-    // kaleidoscope.repetitions = utils.randomRange(_tokenId, "repetitions", 3, 10);
-    kaleidoscope.repetitions = 10;
+    kaleidoscope.repetitions = utils.randomRange(_tokenId, "repetitions", 3, 10);
     kaleidoscope.numInsideArtifacts = utils.randomRange(_tokenId, "numInsideArtifacts", 3, 10);
     kaleidoscope.numOutsideArtifacts = utils.randomRange(_tokenId, "numOutsideArtifacts", 1, 4);
     kaleidoscope.hasGradient = utils.randomRange(_tokenId, "hasGradient", 1, 10) == 5;
@@ -107,39 +106,6 @@ contract Renderer {
     ColorPalette memory _palette,
     uint256 _index
   ) public pure returns (AnimatedCircle memory circle) {
-    // -- JavaScript start
-    // const yUpperBound = kaleidoscope.centerY + RADIUS / 8
-
-    // let y1 = randomRange(20, yUpperBound)
-    // let y2 = randomRange(20, yUpperBound)
-
-    // const alternatingClass = randomRange(0, 3)
-
-    // if (y1 > y2 && alternatingClass % 2 == 0) {
-    //   const temp = y1
-    //   y1 = y2
-    //   y2 = temp
-    // }
-    // const minY = Math.min(y1, y2) // y1 is closer to edge
-
-    // const gradient = kaleidoscope.centerY / kaleidoscope.centerX
-
-    // const radiusUB = kaleidoscope.centerX * 2
-    // const radius1 = Math.min(radiusUB * (1 - y1 / yUpperBound), radiusUB)
-    // const radius2 = Math.min(radiusUB * (1 - y2 / yUpperBound), radiusUB)
-
-    // // x1 should be within bounds of triangular path
-    // const lb1 = y1 / gradient
-    // const x1 = lb1 - radius1 * 2
-
-    // // x2 should be within bounds of triangular path
-    // const lb2 = y2 / gradient
-    // const x2 = 2 * kaleidoscope.centerX - lb2 + radius2 * 2
-
-    // const duration = randomRange(3, 7)
-    // -- JavaScript end
-
-    // -- Solidity start
     uint256 yUpperBound = (_kaleidoscope.centerY_precise / PRECISION) + RADIUS / 8;
 
     circle.y1 = int256(
@@ -184,7 +150,6 @@ contract Renderer {
 
     circle.color = _index % 2 == 0 ? _palette.primaryColorsHsl[_index + 1] : _palette.secondaryColorsHsl[_index + 1];
 
-    // -- Solidity end
     return circle;
   }
 
@@ -219,32 +184,6 @@ contract Renderer {
   }
 
   function getCircleSVG(AnimatedCircle memory _circle) public pure returns (string memory) {
-    // -- JavaScript start
-    // let animations = ""
-
-    // const startingX = (circle.x1 + circle.x2) / 2
-    // const startingY = (circle.y1 + circle.y2) / 2
-    // const startingRadius = (circle.radius1 + circle.radius2) / 2
-
-    // animations += `<animate attributeName="r" values="${circle.radius1};${circle.radius2};${circle.radius1};${
-    //   circle.radius2
-    // }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
-
-    // animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1};${
-    //   circle.y2
-    // }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
-    // animations += `<animate attributeName="cx" values="${circle.x1};${circle.x2};${circle.x1};${
-    //   circle.x2
-    // }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
-
-    // return `
-    //   <circle cx="${startingX}" cy="${startingY}" r="${startingRadius}" fill="${circle.color}">
-    //     ${animations}
-    //   </circle>`
-    // -- JavaScript end
-
-    // -- Solidity start
-
     string memory animations = string.concat(
       '<animate attributeName="r" values="',
       utils.uint2str(_circle.radius1),
@@ -303,13 +242,9 @@ contract Renderer {
         animations,
         "</circle>"
       );
-
-    // -- Solidity end
   }
 
   function getRectangleSVG(AnimatedRectangle memory _rectangle) public pure returns (string memory) {
-    // -- JavaScript start
-
     string memory animations = string.concat(
       '<animateTransform attributeName="transform" type="rotate" from="0 0 -',
       utils.uint2str(_rectangle.y),
@@ -385,7 +320,6 @@ contract Renderer {
     }
 
     string memory clipPath = string.concat(
-      // `M0,0L${x},${y}L${x * 2},0A${r},${r},0,0,0,0,0Z`
       '<clipPath id="clip">',
       '<path d="M0,0L',
       utils.uint2floatstr(_kaleidoscope.centerX_precise, PRECISION_DEGREE),

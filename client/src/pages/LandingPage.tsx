@@ -343,13 +343,13 @@ export function LandingPage() {
         </div>
       )}
       {/* ADD ! */}
-      {!hasPublicSaleStarted && (
+      {hasPublicSaleStarted && (
         <Countdown
           targetDateA={awaitListDate}
           targetDateP={publicDate}
           playGeneralClick={listenPlayGeneralClick}
           hasPublicSaleStarted={hasPublicSaleStarted}
-          hasAllowListStarted={hasAllowListStarted}
+          hasAllowListStarted={!hasAllowListStarted}
         />
       )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">

@@ -66,9 +66,8 @@ export function LandingPage() {
   const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
 
   // TODO: add time
-  const awaitListDate = new Date("2023-01-14T17:00:00Z").getTime()
-  const publicDate = new Date("2023-01-15T17:00:00Z").getTime()
-  console.log(new Date("2023-01-15T07:00:00Z"))
+  const awaitListDate = new Date("2023-01-09T12:00:00Z").getTime()
+  const publicDate = new Date("2023-01-09T13:22:00Z").getTime()
 
   const [playbackRate, setPlaybackRate] = useState(0.75)
   const [playSuccess] = useSound(successSound)
@@ -343,13 +342,13 @@ export function LandingPage() {
         </div>
       )}
       {/* ADD ! */}
-      {!hasPublicSaleStarted && (
+      {hasPublicSaleStarted && (
         <Countdown
           targetDateA={awaitListDate}
           targetDateP={publicDate}
           playGeneralClick={listenPlayGeneralClick}
           hasPublicSaleStarted={hasPublicSaleStarted}
-          hasAllowListStarted={hasAllowListStarted}
+          hasAllowListStarted={!hasAllowListStarted}
         />
       )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">

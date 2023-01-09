@@ -13,88 +13,110 @@
       <rect x="0" y="-200" width="400" height="400" fill="url(#gradient)">
       </rect>
 
-      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="185.37089414397158" height="179.8584823985213"
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="111.15470954618928" height="180.74002158972957"
         fill="hsl(334, 100%, 70%)">
         <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
-          to="360 0 -173.20508075688772" begin="0s" dur="7.430311293510414s" repeatCount="indefinite">
+          to="-360 0 -173.20508075688772" begin="0s" dur="6.52281026236899s" repeatCount="indefinite">
         </animateTransform>
       </rect>
 
-      <polygon points="0,-173.20508075688772 285.2845544157885,144.08664619356784 85.28455441578846,144.08664619356784"
-        fill="hsl(334, 100%, 70%)">
-        <animateTransform attributeName="transform" type="rotate" from="0 85.28455441578846 -144.08664619356784"
-          to="360 85.28455441578846 -144.08664619356784" begin="0s" dur="5s" repeatCount="indefinite">
-        </animateTransform>
-      </polygon>
-
-      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="159.448105825061" height="187.9272683987615"
-        fill="hsl(334, 100%, 70%)">
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="155.90008252946134" height="268.1926327701849"
+        fill="hsl(334, 95.45454545454545%, 67.27272727272727%)">
         <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
-          to="360 0 -173.20508075688772" begin="0s" dur="7.151500041823102s" repeatCount="indefinite">
+          to="-360 0 -173.20508075688772" begin="0s" dur="5.496782050375058s" repeatCount="indefinite">
+        </animateTransform>
+      </rect>
+
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="164.00030778966817" height="346.45969491583116"
+        fill="hsl(334, 90.9090909090909%, 64.54545454545455%)">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
+          to="-360 0 -173.20508075688772" begin="0s" dur="10.4181629595983s" repeatCount="indefinite">
+        </animateTransform>
+      </rect>
+
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="144.1797169186834" height="353.987488545116"
+        fill="hsl(334, 86.36363636363636%, 61.81818181818182%)">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
+          to="-360 0 -173.20508075688772" begin="0s" dur="6.293880795548689s" repeatCount="indefinite">
         </animateTransform>
       </rect>
 
 
-      <circle cx="100" cy="100" r="31.00682755886196" fill="hsl(334, 95.45454545454545%, 67.27272727272727%)">
-        <animate attributeName="cy" values="61.787456690324234;176.96529152720828;61.787456690324234" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="5.282818380463009s" repeatCount="indefinite"></animate>
+      <circle cx="-114.70226081707618" cy="90.00499111662005" r="83.33333333333333"
+        fill="hsl(334, 95.45454545454545%, 67.27272727272727%)">
+        <animate attributeName="cy" values="81.90329314157304;73.80159516652603;90.00499111662005;81.90329314157304"
+          calcMode="linear" dur="9.55527238031974s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100;314.7022608170762;-114.70226081707618;100" calcMode="linear"
+          dur="9.55527238031974s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="6.625918112639539" fill="hsl(334, 90.9090909090909%, 64.54545454545455%)">
-        <animate attributeName="cy" values="10.304217487136718;183.7610768951058;10.304217487136718" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="3.8563452167953303s" repeatCount="indefinite"></animate>
+      <circle cx="-90.99020352100031" cy="131.07547910540774" r="83.33333333333333"
+        fill="hsl(334, 90.9090909090909%, 64.54545454545455%)">
+        <animate attributeName="cy" values="141.90603704484838;152.736594984289;131.07547910540774;141.90603704484838"
+          calcMode="linear" dur="9.30951961653894s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100.00000000000003;290.99020352100035;-90.99020352100031;100.00000000000003"
+          calcMode="linear" dur="9.30951961653894s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="20.20767931796161" fill="hsl(334, 86.36363636363636%, 61.81818181818182%)">
-        <animate attributeName="cy" values="97.77682282788237;179.12525690050285;97.77682282788237" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="5.2142529491900635s" repeatCount="indefinite"></animate>
+      <circle cx="-72.66378442815066" cy="162.81776809502364" r="83.33333333333333"
+        fill="hsl(334, 86.36363636363636%, 61.81818181818182%)">
+        <animate attributeName="cy" values="115.75981254637665;68.70185699772966;162.81776809502364;115.75981254637665"
+          calcMode="linear" dur="9.931315005718458s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100.00000000000003;272.66378442815073;-72.66378442815066;100.00000000000003"
+          calcMode="linear" dur="9.931315005718458s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="8.941207564436255" fill="hsl(334, 81.81818181818181%, 59.09090909090909%)">
-        <animate attributeName="cy" values="99.79185409012976;182.83876756811048;99.79185409012976" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="3.1229385062594632s" repeatCount="indefinite"></animate>
+      <circle cx="-127.61135416631595" cy="67.64578555608728" r="83.33333333333333"
+        fill="hsl(334, 81.81818181818181%, 59.09090909090909%)">
+        <animate attributeName="cy" values="94.45014573119981;121.25450590631235;67.64578555608728;94.45014573119981"
+          calcMode="linear" dur="12.833323496360089s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100.00000000000003;327.611354166316;-127.61135416631595;100.00000000000003"
+          calcMode="linear" dur="12.833323496360089s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="26.508750794992142" fill="hsl(334, 77.27272727272728%, 56.36363636363636%)">
-        <animate attributeName="cy" values="132.182153023741;191.2756769983894;132.182153023741" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="5.224856838623292s" repeatCount="indefinite"></animate>
+      <circle cx="-122.26412402433698" cy="76.90745984175862" r="83.33333333333333"
+        fill="hsl(334, 77.27272727272728%, 56.36363636363636%)">
+        <animate attributeName="cy" values="120.35263633692117;163.7978128320837;76.90745984175862;120.35263633692117"
+          calcMode="linear" dur="10.920771916826936s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx"
+          values="100.00000000000003;322.26412402433704;-122.26412402433698;100.00000000000003" calcMode="linear"
+          dur="10.920771916826936s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="10.634242779287" fill="hsl(334, 72.72727272727273%, 53.63636363636364%)">
-        <animate attributeName="cx" values="96.21061054569903;100.43739655316651;96.21061054569903" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="9.3028360509525s" repeatCount="indefinite"></animate>
-        <animate attributeName="cy" values="84.34353594657628;182.68747200737513;84.34353594657628" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="4.65141802547625s" repeatCount="indefinite"></animate>
+      <circle cx="-128.0638413571962" cy="37.917809794916735" r="74.9778495246862"
+        fill="hsl(334, 72.72727272727273%, 53.63636363636364%)">
+        <animate attributeName="cy" values="115.21237723123328;192.50694466754982;37.917809794916735;115.21237723123328"
+          calcMode="linear" dur="13.476953138242662s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100.00000000000001;328.0638413571962;-128.0638413571962;100.00000000000001"
+          calcMode="linear" dur="13.476953138242662s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="8.07743419683311" fill="hsl(334, 68.18181818181819%, 50.90909090909091%)">
-        <animate attributeName="cx" values="1.8241854785965055;100.44578640683105;1.8241854785965055" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="8.074694801198739s" repeatCount="indefinite"></animate>
-        <animate attributeName="cy" values="76.85714628888557;187.02357675647556;76.85714628888557" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="4.037347400599369s" repeatCount="indefinite"></animate>
+      <circle cx="-80.43414508630647" cy="117.73099107549044" r="74.20308223785116"
+        fill="hsl(334, 68.18181818181819%, 50.90909090909091%)">
+        <animate attributeName="cy" values="156.12396711628801;194.5169431570856;117.73099107549044;156.12396711628801"
+          calcMode="linear" dur="9.417269884830208s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100.00000000000004;280.43414508630656;-80.43414508630647;100.00000000000004"
+          calcMode="linear" dur="9.417269884830208s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="6.927561296172038" fill="hsl(334, 63.63636363636363%, 48.18181818181818%)">
-        <animate attributeName="cy" values="110.19990123658897;185.27707075720423;110.19990123658897" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="5.205221866925533s" repeatCount="indefinite"></animate>
+      <circle cx="-39.95583718585006" cy="191.6655478866296" r="75.3069964262864"
+        fill="hsl(334, 63.63636363636363%, 48.18181818181818%)">
+        <animate attributeName="cy" values="130.49063434960584;69.31572081258204;191.6655478866296;130.49063434960584"
+          calcMode="linear" dur="14.694049632966594s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100.00000000000003;239.9558371858501;-39.95583718585006;100.00000000000003"
+          calcMode="linear" dur="14.694049632966594s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="9.48743103311699" fill="hsl(334, 59.090909090909086%, 45.45454545454545%)">
-        <animate attributeName="cx" values="60.89173103246491;100.01195744116121;60.89173103246491" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="6.906736180135846s" repeatCount="indefinite"></animate>
-        <animate attributeName="cy" values="68.25623733764068;175.2831287212864;68.25623733764068" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="3.453368090067923s" repeatCount="indefinite"></animate>
+      <circle cx="-93.79245769119414" cy="126.22183250691026" r="83.33333333333333"
+        fill="hsl(334, 59.090909090909086%, 45.45454545454545%)">
+        <animate attributeName="cy" values="113.14532250642199;100.0688125059337;126.22183250691026;113.14532250642199"
+          calcMode="linear" dur="7.393172397429787s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="100.00000000000003;293.7924576911942;-93.79245769119414;100.00000000000003"
+          calcMode="linear" dur="7.393172397429787s" repeatCount="indefinite"></animate>
       </circle>
-
-      <circle cx="100" cy="100" r="8.532763887584064" fill="hsl(334, 54.54545454545455%, 42.72727272727273%)">
-        <animate attributeName="cx" values="18.159157577113614;100.67639501433847;18.159157577113614" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="9.112220553129426s" repeatCount="indefinite"></animate>
-        <animate attributeName="cy" values="127.57093265625457;193.22917170992852;127.57093265625457" keyTimes="0;0.5;1"
-          calcMode="linear" begin="0s" dur="4.556110276564713s" repeatCount="indefinite"></animate>
+      <circle cx="-107.91421500231347" cy="93.8869726036924" r="81.05994195422716"
+        fill="hsl(334, 54.54545454545455%, 42.72727272727273%)">
+        <animate attributeName="cy" values="135.9748646976701;178.06275679164784;93.8869726036924;135.9748646976701"
+          calcMode="linear" dur="15.693037992177489s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx"
+          values="100.00000000000003;307.91421500231354;-107.91421500231347;100.00000000000003" calcMode="linear"
+          dur="15.693037992177489s" repeatCount="indefinite"></animate>
       </circle>
-
     </g>
   </defs>
+
   <g id="kaleidoscopeTile" transform="translate(149.99999999999997, 76.79491924311228)">
     <circle cx="100.00000000000003" cy="173.20508075688772" r="200" fill="hsl(334, 100%, 30%)"></circle>
     <use href="#tile" transform="rotate(0,100.00000000000003,173.20508075688772)"></use>

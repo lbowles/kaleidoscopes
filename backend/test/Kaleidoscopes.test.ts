@@ -21,7 +21,11 @@ describe("Kaleidoscopes", function () {
     const currentBlock = await ethers.provider.getBlockNumber()
     const startBlock = await kaleidoscopes.allowListMintStartBlock()
     const publicOffset = await kaleidoscopes.publicMintOffsetBlocks()
-    await waitForBlocks(startBlock.sub(currentBlock).add(publicOffset))
+
+    let blocksToWait = startBlock.sub(currentBlock).add(publicOffset)
+    if (blocksToWait.gt(0)) {
+      await waitForBlocks(blocksToWait)
+    }
   })
 
   it("Should have the correct price set in the constructor", async function () {
@@ -49,15 +53,17 @@ describe("Kaleidoscopes", function () {
     const tokenId = 1
     const name = "Kaleidoscope #" + tokenId
     const description = "Fully on-chain, procedurally generated, animated kaleidoscopes."
-    const svg = await kaleidoscopes.tokenURI(tokenId)
+    const metadata = await kaleidoscopes.tokenURI(tokenId)
 
     // Decode base64 encoded json
-    const decoded = Buffer.from(svg.split(",")[1], "base64").toString()
+    const decoded = Buffer.from(metadata.split(",")[1], "base64").toString()
     const json = JSON.parse(decoded)
 
     expect(json.name).to.equal(name)
     expect(json.description).to.equal(description)
     expect(json.image).to.contain("data:image/svg+xml;base64")
+
+    console.log(json.image)
 
     expect(json.attributes.length).to.be.greaterThanOrEqual(5)
 

@@ -60,6 +60,22 @@ contract Kaleidoscopes is ERC721A, Ownable {
   }
 
   /**
+   * @notice Sets the block at which the allowlist mint starts.
+   * @param _allowListMintStartBlock Block at which the allowlist mint starts.
+   */
+  function setAllowListMintStartBlock(uint256 _allowListMintStartBlock) external onlyOwner {
+    allowListMintStartBlock = _allowListMintStartBlock;
+  }
+
+  /**
+   * @notice Sets the number of blocks after which the public sale starts.
+   * @param _publicMintOffsetBlocks Number of blocks.
+   */
+  function setPublicMintOffsetBlocks(uint256 _publicMintOffsetBlocks) external onlyOwner {
+    publicMintOffsetBlocks = _publicMintOffsetBlocks;
+  }
+
+  /**
    * @notice Sets the price of each token in wei.
    * @param _price Price of each token in wei.
    */

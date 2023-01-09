@@ -21,9 +21,17 @@ function userInput(query: string): Promise<string> {
   )
 }
 
-async function futureBlockToDate(blockNumber: number): Promise<Date> {
+async function getBlockTime(n: number = 100): Promise<number> {
+  const block = await ethers.provider.getBlock("latest")
+  const previousBlock = await ethers.provider.getBlock(block.number - n)
+  return (block.timestamp - previousBlock.timestamp) / n
+}
+
+async function futureBlockToDate(blockNumber: number, blockTime: number = 12): Promise<Date> {
   const latestBlock = await ethers.provider.getBlock("latest")
-  const targetBlockTimestamp = latestBlock.timestamp + blockNumber * 12
+  const { number: latestBlockNumber } = latestBlock
+  const blocksUntilTarget = blockNumber - latestBlockNumber
+  const targetBlockTimestamp = latestBlock.timestamp + blocksUntilTarget * blockTime
   return new Date(targetBlockTimestamp * 1000)
 }
 
@@ -34,21 +42,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts()
   const signers = await ethers.getSigners()
 
+  const blockTime = await getBlockTime()
+
   let name = "Kaleidoscopes"
   let symbol = "KLDSCP"
   let merkleRoot: string
   let addresses: string[] = signers.slice(0, 2).map((signer) => signer.address)
   let allowListStartBlockNumber = 16399100 // 6pm UTC+2, 13 January 2023
+  let publicMintOffsetBlocks = (3 * 60 * 60) / blockTime // 3 hours
+
+  const currentBlock = await ethers.provider.getBlockNumber()
 
   if (hre.network.name !== "mainnet") {
     name = "Test"
     symbol = "TEST"
+    allowListStartBlockNumber = currentBlock
+    publicMintOffsetBlocks = Math.ceil((1 * 60) / blockTime) // 1 minute
   }
 
   if (hre.network.name !== "hardhat") {
-    const { number: latestBlockNumber } = await ethers.provider.getBlock("latest")
-    allowListStartBlockNumber = latestBlockNumber
-
     const filePath = "./common/snapshot.csv"
 
     // Read the file contents into a string
@@ -67,14 +79,25 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // Get the Merkle root
   merkleRoot = "0x" + getMerkleRoot(tree)
 
-  const allowListSaleBlockDate = await futureBlockToDate(allowListStartBlockNumber)
+  console.log(`Current block: ${currentBlock}`)
+  console.log(`Block time: ${blockTime}s`)
+  console.log(`Allowlist start block: ${allowListStartBlockNumber}`)
+  console.log(`Public mint offset blocks: ${publicMintOffsetBlocks}`)
+
+  const allowListSaleBlockDate = await futureBlockToDate(allowListStartBlockNumber, blockTime)
+  const publicSaleBlockDate = await futureBlockToDate(allowListStartBlockNumber + publicMintOffsetBlocks, blockTime)
 
   // Prompt user to confirm if network, name, symbol are correct each on its own line
   console.log(`\nDeploying to ${hre.network.name}`)
   console.log(`Name: ${name}`)
   console.log(`Symbol: ${symbol}`)
   console.log(`Merkle root: ${merkleRoot} (${addresses.length} addresses)`)
-  console.log(`Allowlist sale block date: ${allowListSaleBlockDate.toDateString()}}`)
+  console.log(
+    `Allowlist sale block date: ${allowListSaleBlockDate.toDateString()}, ${allowListSaleBlockDate.toTimeString()} @ ${blockTime}s block time`,
+  )
+  console.log(
+    `Public sale block date: ${publicSaleBlockDate.toDateString()}, ${publicSaleBlockDate.toTimeString()} @ ${blockTime}s block time`,
+  )
   if (hre.network.name !== "hardhat") {
     const confirm = await userInput("Continue? (y/n)\n> ")
     if (confirm !== "y") {
@@ -101,7 +124,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       1000,
       merkleRoot,
       allowListStartBlockNumber,
-      allowListStartBlockNumber + 900, // 3 hours
+      publicMintOffsetBlocks, // 3 hours
       renderer.address,
     ],
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks

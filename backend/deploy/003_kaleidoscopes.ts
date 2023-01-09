@@ -1,11 +1,11 @@
 import * as fs from "fs"
-import { ethers } from "hardhat"
 import { DeployFunction } from "hardhat-deploy/types"
 import { HardhatRuntimeEnvironment } from "hardhat/types"
 import readline from "readline"
 import { getMerkleRoot, getTree } from "../common/merkle"
 import { waitForBlocks } from "../test/helpers"
 import { Kaleidoscopes__factory } from "../types"
+import { getBlockTime, futureBlockToDate } from "./../common/blocktime"
 
 function userInput(query: string): Promise<string> {
   const rl = readline.createInterface({
@@ -19,20 +19,6 @@ function userInput(query: string): Promise<string> {
       resolve(ans)
     }),
   )
-}
-
-async function getBlockTime(n: number = 100): Promise<number> {
-  const block = await ethers.provider.getBlock("latest")
-  const previousBlock = await ethers.provider.getBlock(block.number - n)
-  return (block.timestamp - previousBlock.timestamp) / n
-}
-
-async function futureBlockToDate(blockNumber: number, blockTime: number = 12): Promise<Date> {
-  const latestBlock = await ethers.provider.getBlock("latest")
-  const { number: latestBlockNumber } = latestBlock
-  const blocksUntilTarget = blockNumber - latestBlockNumber
-  const targetBlockTimestamp = latestBlock.timestamp + blocksUntilTarget * blockTime
-  return new Date(targetBlockTimestamp * 1000)
 }
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

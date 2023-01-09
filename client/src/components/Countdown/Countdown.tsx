@@ -5,35 +5,50 @@ import { useCountdown } from "../../hooks/countdown"
 import countdownLine from "../../img/countdownLine.svg"
 
 type ICoundown = {
-  targetDateA: number
-  targetDateP: number
+  allowlistTime: number
+  publicTime: number
   playGeneralClick: () => void
-  hasPublicSaleStarted: boolean | undefined
-  hasAllowListStarted: boolean | undefined
 }
-export const Countdown = ({
-  targetDateA,
-  targetDateP,
-  playGeneralClick,
-  hasPublicSaleStarted,
-  hasAllowListStarted,
-}: ICoundown) => {
-  const [aDays, aHours, aMinutes, aSeconds] = useCountdown(targetDateA)
-  const [pDays, pHours, pMinutes, pSeconds] = useCountdown(targetDateP)
+
+function formatTimeString(days: number, hours: number, minutes: number, seconds: number) {
+  return `${days.toString().padStart(2, "0")} day${days != 1 && "s"}, ${hours.toString().padStart(2, "0")} hour${
+    hours != 1 && "s"
+  }, ${minutes.toString().padStart(2, "0")} minute${minutes != 1 && "s"}, ${seconds
+    .toString()
+    .padStart(2, "0")} second${seconds != 1 && "s"}`
+}
+
+export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoundown) => {
+  const [targetTime, setTargetTime] = useState(allowlistTime)
+
+  const [days, hours, minutes, seconds] = useCountdown(targetTime)
+
   const [percentBar, setPercentBar] = useState(0)
+  const [currentTime, setCurrentTime] = useState(new Date().getTime())
+
+  const hasAllowListStarted = currentTime > allowlistTime
+  const hasPublicSaleStarted = currentTime > publicTime
 
   useEffect(() => {
     let current = new Date().getTime()
-    let betweenAllowPublic = Math.abs(targetDateP - targetDateA)
-    let betweenAllowCurrent = Math.abs(current - targetDateA)
+    setCurrentTime(current)
+    let betweenAllowPublic = Math.abs(publicTime - allowlistTime)
+    let betweenAllowCurrent = Math.abs(current - allowlistTime)
 
     let percentBar = (betweenAllowCurrent / betweenAllowPublic) * 100
     if (percentBar >= 100) {
       percentBar = 100
     }
     setPercentBar(Math.round(percentBar))
-    console.log(percentBar)
-  }, [pSeconds])
+  }, [seconds])
+
+  useEffect(() => {
+    if (hasAllowListStarted) {
+      setTargetTime(publicTime)
+    } else {
+      setTargetTime(allowlistTime)
+    }
+  }, [hasPublicSaleStarted, hasAllowListStarted])
 
   return (
     <div className="flex justify-center text-center mt-[90px] z-1 pl-10 pr-10 z-10  ">
@@ -41,10 +56,8 @@ export const Countdown = ({
         {/* TODO: remove ! */}
         {!hasAllowListStarted ? (
           <>
-            <p className="font-medium text-gray-100 text-center text-sm">
-              {`${pHours.toString().padStart(2, "0")} hours, ${pMinutes.toString().padStart(2, "0")} minutes, ${pSeconds
-                .toString()
-                .padStart(2, "0")} seconds left`}
+            <p className="text-gray-100 text-center text-sm">
+              {`Starts in ${formatTimeString(days, hours, minutes, seconds)}`}
             </p>
             <div className="flex justify-center">
               <div className="w-[290px]">
@@ -60,7 +73,7 @@ export const Countdown = ({
                     ></div>
                   </div>
                 </div>
-                <div className="font-medium text-gray-100  text-sm flex justify-between">
+                <div className="text-gray-100  text-sm flex justify-between">
                   <div className="flex justify-center">
                     <span>Allowlist mint</span>
                     <a
@@ -78,25 +91,23 @@ export const Countdown = ({
             </div>
           </>
         ) : (
-          <>
-            <p className="font-medium text-gray-100 text-center text-sm">
-              {`Starts in ${aDays.toString().padStart(2, "0")} days, ${aHours
-                .toString()
-                .padStart(2, "0")} hours, ${aMinutes.toString().padStart(2, "0")} minutes, ${aSeconds
-                .toString()
-                .padStart(2, "0")} seconds left`}
-            </p>
-            <div className="flex justify-center">
-              <div className="w-[290px]">
-                <div className="flex">
-                  <img src={countdownLine} alt="countdownLine" className="py-2"></img>
-                </div>
-                <div className="font-medium text-gray-100  text-sm flex justify-between">
-                  <span>Allowlist mint </span> <span>Public mint</span>
+          !hasPublicSaleStarted && (
+            <>
+              <p className="text-gray-100 text-center text-sm">
+                {`Starts in ${formatTimeString(days, hours, minutes, seconds)}`}
+              </p>
+              <div className="flex justify-center">
+                <div className="w-[290px]">
+                  <div className="flex">
+                    <img src={countdownLine} alt="countdownLine" className="py-2"></img>
+                  </div>
+                  <div className="text-gray-100  text-sm flex justify-between">
+                    <span>Allowlist mint </span> <span>Public mint</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
+            </>
+          )
         )}
       </div>
     </div>

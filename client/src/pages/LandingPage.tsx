@@ -1,16 +1,21 @@
 import { ConnectButton, useAddRecentTransaction } from "@rainbow-me/rainbowkit"
-import { BigNumber } from "ethers"
+import { BigNumber, ethers } from "ethers"
 import { formatEther } from "ethers/lib/utils.js"
+import MerkleTree from "merkletreejs"
 import { useEffect, useState } from "react"
 import useSound from "use-sound"
 import {
   useAccount,
+  useBlockNumber,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useProvider,
   useSigner,
   useWaitForTransaction,
 } from "wagmi"
+import { getMerkleProof, getTree } from "../../../backend/common/merkle"
+import allowlistAddresses from "../../../backend/common/snapshot.json"
 import { Kaleidoscopes__factory } from "../../../backend/types"
 import deployments from "../../src/deployments.json"
 import loading from ".././img/loading.svg"
@@ -19,15 +24,12 @@ import generalClickSound from ".././sounds/generalClickSound.mp3"
 import mintClickSound from ".././sounds/mintClickSound.mp3"
 import smallClickSound from ".././sounds/smallClick.mp3"
 import successSound from ".././sounds/success.mp3"
-import style from "./LandingPage.module.css"
-import { getMerkleProof, getTree } from "../../../backend/common/merkle"
-import allowlistAddresses from "../../../backend/common/snapshot.json"
-import MerkleTree from "merkletreejs"
 import { Countdown } from "../components/Countdown/Countdown"
-import { Links } from "../components/Links/Links"
 import { FAQ } from "../components/FAQ/FAQ"
-import { Traits } from "../components/Traits/Traits"
 import { Footer } from "../components/Footer/Footer"
+import { Links } from "../components/Links/Links"
+import { Traits } from "../components/Traits/Traits"
+import style from "./LandingPage.module.css"
 
 const kaleidoscopesConfig = {
   address: deployments.contracts.Kaleidoscopes.address,
@@ -50,24 +52,36 @@ function getOpenSeaLink(tokenId: string | number) {
   }/${tokenId}`
 }
 
+async function getBlockTime(provider: ethers.providers.BaseProvider, samples: number = 100): Promise<number> {
+  const block = await provider.getBlock("latest")
+  const previousBlock = await provider.getBlock(block.number - samples)
+  return (block.timestamp - previousBlock.timestamp) / samples
+}
+async function futureBlockToDate(
+  provider: ethers.providers.BaseProvider,
+  blockNumber: number,
+  blockTime: number = 12,
+): Promise<Date> {
+  const latestBlock = await provider.getBlock("latest")
+  const { number: latestBlockNumber } = latestBlock
+  const blocksUntilTarget = blockNumber - latestBlockNumber
+  const targetBlockTimestamp = latestBlock.timestamp + blocksUntilTarget * blockTime
+  return new Date(targetBlockTimestamp * 1000)
+}
+
 const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId)
 
 export function LandingPage() {
-  const [mintCount, setMintCount] = useState<number>(1)
-  const [mintedTokens, setMintedTokens] = useState<number[]>([])
-
-  const [hasAllowListStarted, setHasAllowListStarted] = useState(false)
+  // Blockchain
 
   const { data: signer } = useSigner()
   const { address } = useAccount()
+
+  const provider = useProvider()
+  const { data: latestBlockNumber } = useBlockNumber()
   const addRecentTransaction = useAddRecentTransaction()
 
-  const [merkleTree, setMerkleTree] = useState<MerkleTree>()
-  const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
-
-  // TODO: add time
-  const awaitListDate = new Date("2023-01-09T12:00:00Z").getTime()
-  const publicDate = new Date("2023-01-09T13:22:00Z").getTime()
+  // Sound
 
   const [playbackRate, setPlaybackRate] = useState(0.75)
   const [playSuccess] = useSound(successSound)
@@ -78,9 +92,18 @@ export function LandingPage() {
     interrupt: true,
   })
 
-  function listenPlayGeneralClick() {
-    playGeneralClick()
-  }
+  // State variables
+
+  const [mintCount, setMintCount] = useState<number>(1)
+  const [mintedTokens, setMintedTokens] = useState<number[]>([])
+
+  const [merkleTree, setMerkleTree] = useState<MerkleTree>()
+  const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
+
+  const [allowListDate, setAllowListDate] = useState<number>()
+  const [publicDate, setPublicDate] = useState<number>()
+
+  const [canMint, setCanMint] = useState<boolean>(false)
 
   const handleAmountClickUp = () => {
     setPlaybackRate(playbackRate + 0.4)
@@ -92,6 +115,8 @@ export function LandingPage() {
   }
 
   const [randomTokenId, setRandomTokenId] = useState<number>(Math.round(Math.random() * 10000) + 1001)
+
+  // Contract reads
 
   const { data: sampleSvg, isLoading: sampleSvgLoading } = useContractRead({
     ...rendererConfig,
@@ -110,16 +135,36 @@ export function LandingPage() {
     functionName: "maxSupply",
   })
 
-  const { data: hasPublicSaleStarted } = useContractRead({
-    ...kaleidoscopesConfig,
-    functionName: "hasPublicSaleStarted",
-  })
-
   const { data: totalSupply } = useContractRead({
     ...kaleidoscopesConfig,
     functionName: "totalSupply",
     watch: true,
   })
+
+  const { data: allowlistMintBlock } = useContractRead({
+    ...kaleidoscopesConfig,
+    functionName: "allowListMintStartBlock",
+  })
+
+  const { data: publicMintBlockOffset } = useContractRead({
+    ...kaleidoscopesConfig,
+    functionName: "publicMintOffsetBlocks",
+  })
+
+  const hasAllowListStarted =
+    allowlistMintBlock !== undefined &&
+    latestBlockNumber !== undefined &&
+    latestBlockNumber > allowlistMintBlock?.toNumber()
+  const hasPublicSaleStarted =
+    allowlistMintBlock !== undefined &&
+    publicMintBlockOffset !== undefined &&
+    latestBlockNumber !== undefined &&
+    latestBlockNumber > allowlistMintBlock.add(publicMintBlockOffset).toNumber()
+
+  // const hasAllowListStarted = true
+  // const hasPublicSaleStarted = true
+
+  // Contract writes
 
   const { config: mintAllowListConfig, error: mintError } = usePrepareContractWrite({
     ...kaleidoscopesConfig,
@@ -153,7 +198,7 @@ export function LandingPage() {
     isSuccess: isMintPublicSignSuccess,
   } = useContractWrite(mintPublicConfig)
 
-  const mint = hasPublicSaleStarted ? mintPublic : mintAllowList
+  const mint = merkleProof ? mintAllowList : mintPublic
   const mintSignResult = hasPublicSaleStarted ? mintPublicSignResult : mintAllowListSignResult
   const isMintSignLoading = hasPublicSaleStarted ? isMintPublicSignLoading : isMintAllowListSignLoading
   const isMintSignSuccess = hasPublicSaleStarted ? isMintPublicSignSuccess : isMintAllowListSignSuccess
@@ -163,12 +208,33 @@ export function LandingPage() {
     confirmations: 1,
   })
 
-  // Initialization
+  // Effects
   useEffect(() => {
+    // Allowlist
     const tree = getTree(allowlistAddresses)
-    console.log("allowed addresses", allowlistAddresses)
+    // console.log("allowed addresses", allowlistAddresses)
     setMerkleTree(tree)
   }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      // Convert allowlist block to Date
+      if (!allowlistMintBlock || !publicMintBlockOffset) {
+        return
+      }
+
+      const blockTime = await getBlockTime(provider)
+      const allowlistDate = await futureBlockToDate(provider, allowlistMintBlock.toNumber(), blockTime)
+      const publicDate = await futureBlockToDate(
+        provider,
+        allowlistMintBlock.add(publicMintBlockOffset).toNumber(),
+        blockTime,
+      )
+
+      setAllowListDate(allowlistDate.getTime())
+      setPublicDate(publicDate.getTime())
+    })()
+  }, [allowlistMintBlock, publicMintBlockOffset])
 
   useEffect(() => {
     if (address && merkleTree) {
@@ -176,6 +242,7 @@ export function LandingPage() {
       const proof = getMerkleProof(merkleTree, address)
       if (proof.length > 0) {
         setMerkleProof(proof as `0x${string}`[])
+        console.log("proof", proof)
       }
     }
   }, [address, merkleTree])
@@ -206,13 +273,38 @@ export function LandingPage() {
     }
   }, [mintTx])
 
+  // useEffect(() => {
+  //   if (mintedTokens.length > 0) {
+  //     setHasAllowListStarted(false)
+  //   } else {
+  //     setHasAllowListStarted(true)
+  //   }
+  // }, [merkleProof])
+
   useEffect(() => {
-    if (mintedTokens.length > 0) {
-      setHasAllowListStarted(false)
-    } else {
-      setHasAllowListStarted(true)
+    let _canMint = true
+    if (!signer || !maxSupply || !totalSupply) {
+      // Variables not loaded yet
+      _canMint = false
+      console.log("variables not loaded yet")
+    } else if (maxSupply.lte(totalSupply)) {
+      _canMint = false
+      console.log("max supply reached")
     }
-  }, [merkleProof])
+
+    if (_canMint) {
+      _canMint = false
+      if (hasAllowListStarted && merkleProof) {
+        _canMint = true
+        console.log("allowlist started and wallet eligible")
+      } else if (hasPublicSaleStarted) {
+        _canMint = true
+      }
+      setCanMint(_canMint)
+    } else {
+      setCanMint(_canMint)
+    }
+  }, [signer, maxSupply, totalSupply, hasAllowListStarted, merkleProof, hasPublicSaleStarted])
 
   return (
     <div>
@@ -268,15 +360,7 @@ export function LandingPage() {
               </button>
               <button
                 className={style.claimBtn}
-                disabled={
-                  !signer ||
-                  !maxSupply ||
-                  !totalSupply ||
-                  !maxSupply.gt(totalSupply) ||
-                  !((!hasPublicSaleStarted && merkleProof) || hasPublicSaleStarted)
-                    ? true
-                    : false
-                }
+                disabled={!canMint}
                 onClick={() => {
                   mint?.()
                   playGeneralClick()
@@ -341,15 +425,8 @@ export function LandingPage() {
           </div>
         </div>
       )}
-      {/* ADD ! */}
-      {hasPublicSaleStarted && (
-        <Countdown
-          targetDateA={awaitListDate}
-          targetDateP={publicDate}
-          playGeneralClick={listenPlayGeneralClick}
-          hasPublicSaleStarted={hasPublicSaleStarted}
-          hasAllowListStarted={!hasAllowListStarted}
-        />
+      {allowListDate && publicDate && (
+        <Countdown allowlistTime={allowListDate} publicTime={publicDate} playGeneralClick={playGeneralClick} />
       )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
@@ -359,15 +436,15 @@ export function LandingPage() {
       <Links
         etherscanBaseURL={etherscanBaseURL}
         deployAddress={deployments.contracts.Kaleidoscopes.address}
-        playGeneralClick={listenPlayGeneralClick}
+        playGeneralClick={playGeneralClick}
       />
       <FAQ
         etherscanBaseURL={etherscanBaseURL}
         deployAddress={deployments.contracts.Kaleidoscopes.address}
-        playGeneralClick={listenPlayGeneralClick}
+        playGeneralClick={playGeneralClick}
       />
       <Traits />
-      <Footer playGeneralClick={listenPlayGeneralClick} />
+      <Footer playGeneralClick={playGeneralClick} />
     </div>
   )
 }

@@ -118,4 +118,23 @@ describe("KaleidoscopesAllowList", function () {
       "Transfer",
     )
   })
+
+  it("Should have special trait if minted from allowlist", async function () {
+    const currentBlock = await ethers.provider.getBlockNumber()
+    const startBlock = await kaleidoscopes.allowListMintStartBlock()
+
+    await waitForBlocks(startBlock.sub(currentBlock))
+
+    const merkleProof = getMerkleProof(tree, allowListSigners[0].address)
+    await kaleidoscopes.connect(allowListSigners[0]).mintAllowList(5, merkleProof, { value: mintPrice.mul(5) })
+
+    const publicMintOffsetBlocks = await kaleidoscopes.publicMintOffsetBlocks()
+    await waitForBlocks(publicMintOffsetBlocks.add(1))
+
+    await kaleidoscopes.connect(signers[0]).mintPublic(5, { value: mintPrice.mul(5) })
+
+    expect(await kaleidoscopes.hasSpecialTrait(1)).to.equal(true)
+    expect(await kaleidoscopes.hasSpecialTrait(5)).to.equal(true)
+    expect(await kaleidoscopes.hasSpecialTrait(6)).to.equal(false)
+  })
 })

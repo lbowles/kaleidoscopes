@@ -31,6 +31,7 @@ contract Renderer {
     uint256 centerY_precise;
     bool hasGradient;
     bool hasSecondaryColor;
+    bool hasSpecialTrait;
   }
 
   struct AnimatedCircle {
@@ -381,31 +382,44 @@ contract Renderer {
       // "0"
     );
 
+    string memory backgroundCircleBase = string.concat(
+      '<circle cx="',
+      utils.uint2floatstr(_kaleidoscope.centerX_precise, PRECISION_DEGREE),
+      '" cy="',
+      utils.uint2floatstr(_kaleidoscope.centerY_precise, PRECISION_DEGREE),
+      '" r="'
+    );
+
+    string memory specialTrait = string.concat(
+      backgroundCircleBase,
+      utils.uint2str(RADIUS + 8),
+      '" fill="none"',
+      _kaleidoscope.hasSpecialTrait ? '" stroke="#EBA947" stroke-width="4"' : "",
+      '" />'
+    );
+
     svg = string.concat(
       svg,
       ",",
       utils.uint2str(SIZE / 2 - _kaleidoscope.centerY_precise / PRECISION),
       // "0",
       ')">',
-      '<circle cx="',
-      utils.uint2floatstr(_kaleidoscope.centerX_precise, PRECISION_DEGREE),
-      '" cy="',
-      utils.uint2floatstr(_kaleidoscope.centerY_precise, PRECISION_DEGREE),
-      '" r="',
+      backgroundCircleBase,
       utils.uint2str(RADIUS),
       '" fill="',
       utils.getHslString(_palette.primaryColorHsl),
       '" />',
-      paths,
-      "</g>",
-      "</svg>"
+      _kaleidoscope.hasSpecialTrait ? specialTrait : ""
     );
+
+    svg = string.concat(svg, paths, "</g>", "</svg>");
 
     return svg;
   }
 
   function render(uint256 _tokenId) public pure returns (string memory) {
     Kaleidoscope memory kaleidoscope = kaleidoscopeForTokenId(_tokenId);
+    kaleidoscope.hasSpecialTrait = true;
     ColorPalette memory palette = colorPaletteForKaleidescope(kaleidoscope);
     string memory svg = getKaleidoscopeSVG(kaleidoscope, palette);
 

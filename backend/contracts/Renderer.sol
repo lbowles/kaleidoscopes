@@ -3,10 +3,13 @@ pragma solidity ^0.8.12;
 
 import "./Trigonometry.sol";
 import "./Utilities.sol";
+import "hardhat/console.sol";
 
 contract Renderer {
   uint256 constant SIZE = 500;
   uint256 constant RADIUS = 200;
+  uint256 constant PRECISION_DEGREE = 7;
+  uint256 constant PRECISION = 10**PRECISION_DEGREE;
 
   struct ColorPalette {
     uint256 primaryHue;
@@ -24,20 +27,21 @@ contract Renderer {
     uint256 repetitions; // n
     uint256 numInsideArtifacts; // numCircles
     uint256 numOutsideArtifacts;
-    uint256 centerX;
-    uint256 centerY;
+    uint256 centerX_precise;
+    uint256 centerY_precise;
     bool hasGradient;
     bool hasSecondaryColor;
   }
 
   struct AnimatedCircle {
     // Start position
-    uint256 x1;
-    uint256 y1;
+    int256 x1;
+    int256 y1;
     // End position
-    uint256 x2;
-    uint256 y2;
-    uint256 radius;
+    int256 x2;
+    int256 y2;
+    uint256 radius1;
+    uint256 radius2;
     uint256 alternatingClass;
     uint256 duration;
     utils.HSL color;
@@ -80,95 +84,107 @@ contract Renderer {
 
   function kaleidoscopeForTokenId(uint256 _tokenId) public pure returns (Kaleidoscope memory kaleidoscope) {
     kaleidoscope.tokenId = _tokenId;
-    kaleidoscope.repetitions = utils.randomRange(_tokenId, "repetitions", 3, 20);
+    // kaleidoscope.repetitions = utils.randomRange(_tokenId, "repetitions", 3, 10);
+    kaleidoscope.repetitions = 10;
     kaleidoscope.numInsideArtifacts = utils.randomRange(_tokenId, "numInsideArtifacts", 3, 10);
     kaleidoscope.numOutsideArtifacts = utils.randomRange(_tokenId, "numOutsideArtifacts", 1, 4);
     kaleidoscope.hasGradient = utils.randomRange(_tokenId, "hasGradient", 1, 10) == 5;
     kaleidoscope.hasSecondaryColor = utils.randomRange(_tokenId, "secondaryColor", 1, 8) == 8;
 
     uint256 angle = (((180 - 360 / kaleidoscope.repetitions) / 2) * Trigonometry.PI) / 180;
-    kaleidoscope.centerX = uint256((int256(RADIUS) * Trigonometry.cos(angle)) / 1e18);
-    kaleidoscope.centerY = uint256((int256(RADIUS) * Trigonometry.sin(angle)) / 1e18);
+    kaleidoscope.centerX_precise = uint256(
+      (int256(RADIUS) * Trigonometry.cos(angle)) / int256(10**(18 - PRECISION_DEGREE))
+    );
+    kaleidoscope.centerY_precise = uint256(
+      (int256(RADIUS) * Trigonometry.sin(angle)) / int256(10**(18 - PRECISION_DEGREE))
+    );
 
     return kaleidoscope;
   }
 
-  // function randomAnimatedCircle(kaleidoscope, color) {
-  //       const y1 = randomRange(0, kaleidoscope.centerY)
-  //       const y2 = randomRange(kaleidoscope.centerY, RADIUS)
-
-  //       const gradient = kaleidoscope.centerY / kaleidoscope.centerX
-
-  //       // x1 should be within bounds of triangular path
-  //       const lb1 = y1 / gradient
-  //       const x1 = randomRange(lb1, 2 * kaleidoscope.centerX - lb1)
-
-  //       // x2 should be within bounds of triangular path
-  //       const lb2 = y2 / gradient
-  //       const x2 = randomRange(lb2, 2 * kaleidoscope.centerX - lb2)
-
-  //       const radiusLB = 120 / kaleidoscope.repetitions
-  //       const radius = randomRange(120 / kaleidoscope.repetitions, radiusLB * 4)
-
-  //       const duration = randomRange(5, 10)
-  //       const alternatingClass = randomRange(0, 3)
-
-  //       return new AnimatedCircle(x1, y1, x2, y2, radius, alternatingClass, duration, color)
-  //     }
   function circleAtIndexForKaleidescope(
     Kaleidoscope memory _kaleidoscope,
     ColorPalette memory _palette,
     uint256 _index
   ) public pure returns (AnimatedCircle memory circle) {
-    uint256 gradient = (_kaleidoscope.centerY * 1000) / _kaleidoscope.centerX;
+    // -- JavaScript start
+    // const yUpperBound = kaleidoscope.centerY + RADIUS / 8
 
-    circle.y1 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circley1", utils.uint2str(_index)),
-      0,
-      _kaleidoscope.centerY
+    // let y1 = randomRange(20, yUpperBound)
+    // let y2 = randomRange(20, yUpperBound)
+
+    // const alternatingClass = randomRange(0, 3)
+
+    // if (y1 > y2 && alternatingClass % 2 == 0) {
+    //   const temp = y1
+    //   y1 = y2
+    //   y2 = temp
+    // }
+    // const minY = Math.min(y1, y2) // y1 is closer to edge
+
+    // const gradient = kaleidoscope.centerY / kaleidoscope.centerX
+
+    // const radiusUB = kaleidoscope.centerX * 2
+    // const radius1 = Math.min(radiusUB * (1 - y1 / yUpperBound), radiusUB)
+    // const radius2 = Math.min(radiusUB * (1 - y2 / yUpperBound), radiusUB)
+
+    // // x1 should be within bounds of triangular path
+    // const lb1 = y1 / gradient
+    // const x1 = lb1 - radius1 * 2
+
+    // // x2 should be within bounds of triangular path
+    // const lb2 = y2 / gradient
+    // const x2 = 2 * kaleidoscope.centerX - lb2 + radius2 * 2
+
+    // const duration = randomRange(3, 7)
+    // -- JavaScript end
+
+    // -- Solidity start
+    uint256 yUpperBound = (_kaleidoscope.centerY_precise / PRECISION) + RADIUS / 8;
+
+    circle.y1 = int256(
+      utils.randomRange(_kaleidoscope.tokenId, string.concat("y1", utils.uint2str(_index)), 20, yUpperBound)
     );
-    circle.y2 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circley2", utils.uint2str(_index)),
-      _kaleidoscope.centerY,
-      RADIUS
+    circle.y2 = int256(
+      utils.randomRange(_kaleidoscope.tokenId, string.concat("y2", utils.uint2str(_index)), 20, yUpperBound)
     );
 
-    circle.x1 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circlex1", utils.uint2str(_index)),
-      0,
-      _kaleidoscope.centerX
-    );
-
-    circle.x2 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circlex2", utils.uint2str(_index)),
-      _kaleidoscope.centerX,
-      RADIUS
-    );
-
-    circle.radius = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circleradius", utils.uint2str(_index)),
-      RADIUS / _kaleidoscope.repetitions,
-      (RADIUS / _kaleidoscope.repetitions) * 4
-    );
-    circle.duration = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circleduration", utils.uint2str(_index)),
-      5,
-      10
-    );
     circle.alternatingClass = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("alternatingClass", utils.uint2str(_index)),
       0,
       3
     );
+
+    if (circle.y1 > circle.y2 && circle.alternatingClass % 2 == 0) {
+      int256 temp = circle.y1;
+      circle.y1 = circle.y2;
+      circle.y2 = temp;
+    }
+
+    int256 gradient_1000 = int256((_kaleidoscope.centerY_precise * 1000) / _kaleidoscope.centerX_precise);
+
+    uint256 radiusUB = (_kaleidoscope.centerX_precise / PRECISION) * 2;
+    circle.radius1 = uint256(
+      utils.min((radiusUB * (1000 - (uint256(circle.y1) * 1000) / yUpperBound)) / 1000, radiusUB)
+    );
+    circle.radius2 = uint256(
+      utils.min((radiusUB * (1000 - (uint256(circle.y2) * 1000) / yUpperBound)) / 1000, radiusUB)
+    );
+
+    // x1 should be within bounds of triangular path
+    int256 lb1 = (circle.y1 * 1000) / gradient_1000;
+    circle.x1 = int256(lb1 - int256(circle.radius1) * 2);
+
+    // x2 should be within bounds of triangular path
+    int256 lb2 = (circle.y2 * 1000) / gradient_1000;
+    circle.x2 = int256(2 * int256(_kaleidoscope.centerX_precise / PRECISION) - lb2 + int256(circle.radius2) * 2);
+
+    circle.duration = utils.randomRange(_kaleidoscope.tokenId, string.concat("duration", utils.uint2str(_index)), 3, 7);
+
     circle.color = _index % 2 == 0 ? _palette.primaryColorsHsl[_index + 1] : _palette.secondaryColorsHsl[_index + 1];
 
+    // -- Solidity end
     return circle;
   }
 
@@ -180,17 +196,17 @@ contract Renderer {
     rectangle.width = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("rectwidth", utils.uint2str(_index)),
-      RADIUS / 2,
-      RADIUS
+      (_kaleidoscope.centerY_precise / PRECISION) / 2,
+      (_kaleidoscope.centerY_precise / PRECISION)
     );
     rectangle.height = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("rectheight", utils.uint2str(_index)),
-      RADIUS / 2,
-      RADIUS
+      (_kaleidoscope.centerY_precise / PRECISION),
+      _kaleidoscope.centerY_precise * 2 + RADIUS / 8
     );
     rectangle.x = 0;
-    rectangle.y = _kaleidoscope.centerY;
+    rectangle.y = _kaleidoscope.centerY_precise / PRECISION;
     rectangle.duration = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("rectduration", utils.uint2str(_index)),
@@ -202,148 +218,102 @@ contract Renderer {
     return rectangle;
   }
 
-  function triangleAtIndexForKaleidescope(
-    Kaleidoscope memory _kaleidoscope,
-    ColorPalette memory _palette,
-    uint256 _index
-  ) public pure returns (AnimatedTriangle memory triangle) {
-    triangle.x1 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("trianglex1", utils.uint2str(_index)),
-      0,
-      _kaleidoscope.centerX
-    );
-    triangle.y1 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("triangley1", utils.uint2str(_index)),
-      0,
-      _kaleidoscope.centerY
-    );
-    triangle.centerX = _kaleidoscope.centerX;
-    triangle.centerY = _kaleidoscope.centerY;
-    triangle.duration = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("triangleduration", utils.uint2str(_index)),
-      5,
-      10
-    );
-    triangle.color = _index % 2 == 0 ? _palette.primaryColorsHsl[0] : _palette.secondaryColorsHsl[0];
-
-    return triangle;
-  }
-
   function getCircleSVG(AnimatedCircle memory _circle) public pure returns (string memory) {
-    string memory animations = "";
+    // -- JavaScript start
+    // let animations = ""
 
-    if (_circle.alternatingClass >= 2) {
-      animations = _circle.alternatingClass == 3
-        ? string.concat(
-          animations,
-          '<animate attributeName="cx" values="',
-          utils.uint2str(_circle.x1),
-          ";",
-          utils.uint2str(_circle.x2),
-          ";",
-          utils.uint2str(_circle.x1),
-          '" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="',
-          utils.uint2str(_circle.duration),
-          's" repeatCount="indefinite"/>'
-        )
-        : string.concat(
-          animations,
-          '<animate attributeName="cy" values="',
-          utils.uint2str(_circle.y1),
-          ";",
-          utils.uint2str(_circle.y2),
-          ";",
-          utils.uint2str(_circle.y1),
-          '" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="',
-          utils.uint2str(_circle.duration / 2),
-          's" repeatCount="indefinite"/>'
-        );
-    } else {
-      animations = string.concat(
-        animations,
-        '<animate attributeName="cx" values="',
-        utils.uint2str(_circle.x1),
-        ";",
-        utils.uint2str(_circle.x2),
-        ";",
-        utils.uint2str(_circle.x1),
-        '" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="',
-        utils.uint2str(_circle.duration),
-        's" repeatCount="indefinite"/>',
-        '<animate attributeName="cy" values="',
-        utils.uint2str(_circle.y1),
-        ";",
-        utils.uint2str(_circle.y2),
-        ";",
-        utils.uint2str(_circle.y1),
-        '" keyTimes="0;0.5;1" calcMode="linear" begin="0s" dur="',
-        utils.uint2str(_circle.duration / 2),
-        's" repeatCount="indefinite"/>'
-      );
-    }
+    // const startingX = (circle.x1 + circle.x2) / 2
+    // const startingY = (circle.y1 + circle.y2) / 2
+    // const startingRadius = (circle.radius1 + circle.radius2) / 2
+
+    // animations += `<animate attributeName="r" values="${circle.radius1};${circle.radius2};${circle.radius1};${
+    //   circle.radius2
+    // }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
+
+    // animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1};${
+    //   circle.y2
+    // }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
+    // animations += `<animate attributeName="cx" values="${circle.x1};${circle.x2};${circle.x1};${
+    //   circle.x2
+    // }" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
+
+    // return `
+    //   <circle cx="${startingX}" cy="${startingY}" r="${startingRadius}" fill="${circle.color}">
+    //     ${animations}
+    //   </circle>`
+    // -- JavaScript end
+
+    // -- Solidity start
+
+    string memory animations = string.concat(
+      '<animate attributeName="r" values="',
+      utils.uint2str(_circle.radius1),
+      ";",
+      utils.uint2str(_circle.radius2),
+      ";",
+      utils.uint2str(_circle.radius1),
+      ";",
+      utils.uint2str(_circle.radius2),
+      '" calcMode="linear" dur="',
+      utils.uint2str(_circle.duration * 2),
+      's" repeatCount="indefinite"/>'
+    );
+
+    animations = string.concat(
+      animations,
+      '<animate attributeName="cy" values="',
+      utils.int2str(_circle.y1),
+      ";",
+      utils.int2str(_circle.y2),
+      ";",
+      utils.int2str(_circle.y1),
+      ";",
+      utils.int2str(_circle.y2),
+      '" calcMode="linear" dur="',
+      utils.uint2str(_circle.duration * 2),
+      's" repeatCount="indefinite"/>'
+    );
+
+    animations = string.concat(
+      animations,
+      '<animate attributeName="cx" values="',
+      utils.int2str(_circle.x1),
+      ";",
+      utils.int2str(_circle.x2),
+      ";",
+      utils.int2str(_circle.x1),
+      ";",
+      utils.int2str(_circle.x2),
+      '" calcMode="linear" dur="',
+      utils.uint2str(_circle.duration * 2),
+      's" repeatCount="indefinite"/>'
+    );
 
     return
       string.concat(
         '<circle cx="',
-        utils.uint2str(RADIUS / 2),
+        utils.int2str((_circle.x1 + _circle.x2) / 2),
         '" cy="',
-        utils.uint2str(RADIUS / 2),
+        utils.int2str((_circle.y1 + _circle.y2) / 2),
         '" r="',
-        utils.uint2str(_circle.radius),
+        utils.uint2str((_circle.radius1 + _circle.radius2) / 2),
         '" fill="',
         utils.getHslString(_circle.color),
         '">',
         animations,
         "</circle>"
       );
-  }
 
-  function getTriangleSVG(AnimatedTriangle memory _triangle) public pure returns (string memory) {
-    uint256 x2 = _triangle.x1 + RADIUS;
-    uint256 y2 = _triangle.y1;
-
-    string memory animations = string.concat(
-      '<animateTransform attributeName="transform" type="rotate" from="0 ',
-      utils.uint2str(_triangle.x1),
-      " -",
-      utils.uint2str(_triangle.y1),
-      '" to="360 ',
-      utils.uint2str(_triangle.x1),
-      " -",
-      utils.uint2str(_triangle.y1),
-      '" begin="0s" dur="',
-      utils.uint2str(_triangle.duration),
-      's" repeatCount="indefinite" />'
-    );
-
-    return
-      string.concat(
-        '<polygon points="0,-',
-        utils.uint2str(_triangle.centerY),
-        " ",
-        utils.uint2str(x2),
-        ",",
-        utils.uint2str(y2),
-        " ",
-        utils.uint2str(_triangle.x1),
-        ",",
-        utils.uint2str(y2),
-        '" fill="',
-        utils.getHslString(_triangle.color),
-        '">',
-        animations,
-        "</polygon>"
-      );
+    // -- Solidity end
   }
 
   function getRectangleSVG(AnimatedRectangle memory _rectangle) public pure returns (string memory) {
+    // -- JavaScript start
+
     string memory animations = string.concat(
       '<animateTransform attributeName="transform" type="rotate" from="0 0 -',
       utils.uint2str(_rectangle.y),
-      '" to="360 0 -',
+      '" to="-360 0 -',
       utils.uint2str(_rectangle.y),
       '" begin="0s" dur="',
       utils.uint2str(_rectangle.duration),
@@ -388,22 +358,9 @@ contract Renderer {
     // Get outer artifacts
     string memory outerArtifacts = "";
     for (uint256 i = 0; i < _kaleidoscope.numOutsideArtifacts; i++) {
-      bool isTriangle = utils.randomRange(
-        _kaleidoscope.tokenId,
-        string.concat("isTriangle", utils.uint2str(i)),
-        1,
-        10
-      ) %
-        2 ==
-        0;
-      if (isTriangle) {
-        AnimatedTriangle memory triangle = triangleAtIndexForKaleidescope(_kaleidoscope, _palette, i);
-        outerArtifacts = string.concat(outerArtifacts, getTriangleSVG(triangle));
-      } else {
-        // Rectangle
-        AnimatedRectangle memory rectangle = rectangleAtIndexForKaleidescope(_kaleidoscope, _palette, i);
-        outerArtifacts = string.concat(outerArtifacts, getRectangleSVG(rectangle));
-      }
+      // Rectangle
+      AnimatedRectangle memory rectangle = rectangleAtIndexForKaleidescope(_kaleidoscope, _palette, i);
+      outerArtifacts = string.concat(outerArtifacts, getRectangleSVG(rectangle));
     }
 
     string memory innerArtifacts = "";
@@ -413,16 +370,16 @@ contract Renderer {
     }
 
     string memory paths = "";
-    uint256 angleInterval = 360 / _kaleidoscope.repetitions;
-    for (uint256 i = 0; i <= _kaleidoscope.repetitions; i++) {
+    uint256 angleInterval = (360 * 10**7) / _kaleidoscope.repetitions;
+    for (uint256 i = 0; i < _kaleidoscope.repetitions; i++) {
       paths = string.concat(
         paths,
         '<use href="#tile" transform="rotate(',
-        utils.uint2str(angleInterval * i),
+        utils.uint2floatstr(angleInterval * i, PRECISION_DEGREE),
         ",",
-        utils.uint2str(_kaleidoscope.centerX),
+        utils.uint2floatstr(_kaleidoscope.centerX_precise, PRECISION_DEGREE),
         ",",
-        utils.uint2str(_kaleidoscope.centerY),
+        utils.uint2floatstr(_kaleidoscope.centerY_precise, PRECISION_DEGREE),
         ')" />'
       );
     }
@@ -431,16 +388,16 @@ contract Renderer {
       // `M0,0L${x},${y}L${x * 2},0A${r},${r},0,0,0,0,0Z`
       '<clipPath id="clip">',
       '<path d="M0,0L',
-      utils.uint2str(_kaleidoscope.centerX),
+      utils.uint2floatstr(_kaleidoscope.centerX_precise, PRECISION_DEGREE),
       ",",
-      utils.uint2str(_kaleidoscope.centerY),
+      utils.uint2floatstr(_kaleidoscope.centerY_precise, PRECISION_DEGREE),
       "L",
-      utils.uint2str(_kaleidoscope.centerX * 2),
+      utils.uint2floatstr(_kaleidoscope.centerX_precise * 2, PRECISION_DEGREE),
       ",0A",
       utils.uint2str(RADIUS),
       ",",
       utils.uint2str(RADIUS),
-      ',0,0,0,0,0Z"',
+      ',0,0,0,0,0Z" ',
       "</clipPath>"
     );
 
@@ -486,20 +443,20 @@ contract Renderer {
       utils.getHslString(_palette.backgroundColorHsl),
       '"></rect>',
       '<g id="kaleidoscopeTile" transform="translate(',
-      // utils.uint2str(SIZE / 2 - _kaleidoscope.centerX)
-      "0"
+      utils.uint2str(SIZE / 2 - _kaleidoscope.centerX_precise / PRECISION)
+      // "0"
     );
 
     svg = string.concat(
       svg,
       ",",
-      // utils.uint2str(SIZE / 2 - _kaleidoscope.centerY),
-      "0",
+      utils.uint2str(SIZE / 2 - _kaleidoscope.centerY_precise / PRECISION),
+      // "0",
       ')">',
       '<circle cx="',
-      utils.uint2str(_kaleidoscope.centerX),
+      utils.uint2floatstr(_kaleidoscope.centerX_precise, PRECISION_DEGREE),
       '" cy="',
-      utils.uint2str(_kaleidoscope.centerY),
+      utils.uint2floatstr(_kaleidoscope.centerY_precise, PRECISION_DEGREE),
       '" r="',
       utils.uint2str(RADIUS),
       '" fill="',

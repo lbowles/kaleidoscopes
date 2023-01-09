@@ -15,7 +15,8 @@ async function main() {
     const { result: compileResult, targetContract } = compile(SOURCE)
     const { abi, bytecode } = targetContract
     const address = await deploy(vm, pk, bytecode, compileResult)
-    const tokenId = Math.floor(Math.random() * 10_000)
+    // const tokenId = Math.floor(Math.random() * 10_000)
+    const tokenId = 3125
 
     // struct Kaleidoscope {
     //   uint256 tokenId;

@@ -17,7 +17,8 @@ contract Kaleidoscopes is ERC721A, Ownable {
 
   bytes32 public merkleRoot;
 
-  bool public hasPublicSaleStarted;
+  uint256 public allowListMintStartBlock;
+  uint256 public publicMintOffsetBlocks; // 3 hours
 
   /**
    * @dev Constructs a new instance of the contract.
@@ -32,19 +33,30 @@ contract Kaleidoscopes is ERC721A, Ownable {
     uint256 _price,
     uint256 _maxSupply,
     bytes32 _merkleRoot,
+    uint256 _allowListMintStartBlock,
+    uint256 _publicMintOffsetBlocks,
     address _renderer
   ) ERC721A(_name, _symbol) {
     price = _price;
     maxSupply = _maxSupply;
     merkleRoot = _merkleRoot;
+    allowListMintStartBlock = _allowListMintStartBlock;
+    publicMintOffsetBlocks = _publicMintOffsetBlocks;
     renderer = Renderer(_renderer);
   }
 
   /**
-   * @notice Opens public sale and allows anyone to mint tokens.
+   * @notice Checks if public sale has started.
    */
-  function openPublicSale() external onlyOwner {
-    hasPublicSaleStarted = true;
+  function hasPublicSaleStarted() public view returns (bool) {
+    return block.number >= allowListMintStartBlock + publicMintOffsetBlocks;
+  }
+
+  /**
+   * @notice Checks if allow list sale has started.
+   */
+  function hasAllowlistSaleStarted() public view returns (bool) {
+    return block.number >= allowListMintStartBlock;
   }
 
   /**
@@ -166,6 +178,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
    */
   function mintAllowList(uint256 _quantity, bytes32[] calldata _proof) external payable {
     require(allowListed(msg.sender, _proof), "You are not on the allowlist");
+    require(hasAllowlistSaleStarted(), "Allowlist sale has not started yet");
     mint(_quantity);
   }
 
@@ -174,7 +187,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
    * @param _quantity Quantity of tokens to mint.
    */
   function mintPublic(uint256 _quantity) external payable {
-    require(hasPublicSaleStarted, "Public sale has not started yet");
+    require(hasPublicSaleStarted(), "Public sale has not started yet");
     mint(_quantity);
   }
 

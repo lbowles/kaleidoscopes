@@ -27,6 +27,10 @@ library utils {
     return a < b ? a : b;
   }
 
+  function max(uint256 a, uint256 b) internal pure returns (uint256) {
+    return a > b ? a : b;
+  }
+
   function generateColors(uint256 _hue, uint256 _numColors) public pure returns (HSL[] memory) {
     HSL[] memory colors = new HSL[](_numColors);
 

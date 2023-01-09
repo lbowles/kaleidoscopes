@@ -174,27 +174,32 @@
       }
 
       function randomAnimatedCircle(kaleidoscope, color) {
-        const y1 = randomRange(20, kaleidoscope.centerY)
-        const y2 = randomRange(Math.min(y1, RADIUS / 2), kaleidoscope.centerY + RADIUS / 8)
+        let y1 = randomRange(20, kaleidoscope.centerY + RADIUS / 8)
+        let y2 = randomRange(20, kaleidoscope.centerY + RADIUS / 8)
+
+        const alternatingClass = randomRange(0, 3)
+
+        if (y1 > y2 && alternatingClass % 2 == 0) {
+          const temp = y1
+          y1 = y2
+          y2 = temp
+        }
+        const minY = Math.max(y1, y2)
 
         const gradient = kaleidoscope.centerY / kaleidoscope.centerX
 
-        const radiusUB = SIZE / kaleidoscope.repetitions
-        // const radius = randomRange(radiusLB, radiusLB * 4)
-        const radius = Math.min(radiusUB * (kaleidoscope.centerY / y1), radiusUB)
+        const radiusUB = (SIZE / kaleidoscope.repetitions) * 1
+        const radius = Math.min(radiusUB * (kaleidoscope.centerY / minY), radiusUB)
 
         // x1 should be within bounds of triangular path
         const lb1 = y1 / gradient
-        // const x1 = randomRange(lb1, 2 * kaleidoscope.centerX - lb1)
         const x1 = lb1 - radius * 2
 
         // x2 should be within bounds of triangular path
         const lb2 = y2 / gradient
-        // const x2 = randomRange(lb2, 2 * kaleidoscope.centerX - lb2)
         const x2 = 2 * kaleidoscope.centerX - lb1 + radius * 2
 
-        const duration = randomRange(5, 10)
-        const alternatingClass = randomRange(0, 3)
+        const duration = randomRange(3, 7)
 
         return new AnimatedCircle(x1, y1, x2, y2, radius, alternatingClass, duration, color)
       }
@@ -222,15 +227,15 @@
         //   animations += `<animate attributeName="cy" values="${circle.y1};${circle.y2};${circle.y1}" calcMode="linear" begin="0s" dur="${circle.duration}s" repeatCount="indefinite"/>`
         // }
 
-        if (circle.alternatingClass % 2 === 0) {
-          animations += `<animate attributeName="cx" values="${circle.x2};${circle.x1};${
-            circle.x2
-          }" calcMode="linear" dur="${circle.duration / 2}s" repeatCount="indefinite"/>`
-        } else {
-          animations += `<animate attributeName="cx" values="${circle.x2};${circle.x1}" calcMode="linear" dur="${
-            circle.duration / 4
-          }s" begin="${circle.duration / 4}" repeatCount="indefinite"/>`
-        }
+        const startingX = (circle.x1 + circle.x2) / 2
+        const startingY = (circle.y1 + circle.y2) / 2
+
+        animations += `<animate attributeName="cy" values="${startingY};${circle.y2};${
+          circle.y1
+        };${startingY}" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
+        animations += `<animate attributeName="cx" values="${startingX};${circle.x2};${
+          circle.x1
+        };${startingX}" calcMode="linear" dur="${circle.duration * 2}s" repeatCount="indefinite"/>`
 
         return `
           <circle cx="${circle.x1}" cy="${circle.y1}" r="${circle.radius}" fill="${circle.color}">
@@ -266,7 +271,7 @@
         const y2 = triangle.y1
         const animations = `<animateTransform attributeName="transform" type="rotate" from="0 ${triangle.x1} -${
           triangle.y1
-        }" to="360 ${triangle.x1} -${triangle.y1}" begin="0s" dur="${Math.round(
+        }" to="-360 ${triangle.x1} -${triangle.y1}" begin="0s" dur="${Math.round(
           triangle.duration,
         )}s" repeatCount="indefinite" />`
 
@@ -294,8 +299,8 @@
       }
 
       function randomAnimatedRectangle(kaleidoscope, color) {
-        const width = randomRange(RADIUS / 2, RADIUS)
-        const height = randomRange(RADIUS / 2, RADIUS)
+        const width = randomRange(kaleidoscope.centerY / 2, kaleidoscope.centerY)
+        const height = randomRange(kaleidoscope.centerY, kaleidoscope.centerY * 2 + RADIUS / 8)
 
         const duration = randomRange(5, 10)
 
@@ -303,7 +308,7 @@
       }
 
       function getAnimatedRectangleSVG(rectangle) {
-        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 0 -${rectangle.centerY}" to="360 0 -${rectangle.centerY}" begin="0s" dur="${rectangle.duration}s" repeatCount="indefinite" />`
+        const animations = `<animateTransform attributeName="transform" type="rotate" from="0 0 -${rectangle.centerY}" to="-360 0 -${rectangle.centerY}" begin="0s" dur="${rectangle.duration}s" repeatCount="indefinite" />`
 
         return `
           <rect rx="3" ry="3" x="0" y="-${rectangle.centerY}" width="${rectangle.width}" height="${rectangle.height}" fill="${rectangle.color}">
@@ -357,10 +362,11 @@
         const outsideArtifacts = new Array(kaleidoscope.numOutsideArtifacts)
           .fill(0)
           .map((_, i) => {
-            const color = i % 2 === 0 ? palette.primaryColorsHsl[0] : palette.secondaryColorsHsl[0]
-            return Math.random() > 0.5
-              ? getAnimatedTriangleSVG(randomAnimatedTriangle(kaleidoscope, color))
-              : getAnimatedRectangleSVG(randomAnimatedRectangle(kaleidoscope, color))
+            const color = i % 2 === 0 ? palette.primaryColorsHsl[i] : palette.secondaryColorsHsl[i]
+            // return Math.random() > 0.5
+            //   ? getAnimatedTriangleSVG(randomAnimatedTriangle(kaleidoscope, color))
+            //   : getAnimatedRectangleSVG(randomAnimatedRectangle(kaleidoscope, color))
+            return getAnimatedRectangleSVG(randomAnimatedRectangle(kaleidoscope, color))
           })
           .join("")
 
@@ -391,8 +397,8 @@
                   </g>
               </defs>
               <rect width="${SIZE}" height="${SIZE}" fill="${palette.backgroundColorHsl}"></rect>
-                  <g id="kaleidoscopeTile" 
-                  
+                  <g id="kaleidoscopeTile"  
+                  transform="translate(${SIZE / 2 - kaleidoscope.centerX}, ${SIZE / 2 - kaleidoscope.centerY})"
         >
                     <circle cx="${kaleidoscope.centerX}" cy="${kaleidoscope.centerY}" r="${RADIUS}" fill="${
           palette.primaryColorHsl

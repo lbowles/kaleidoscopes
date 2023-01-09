@@ -16,7 +16,33 @@ async function main() {
     const { abi, bytecode } = targetContract
     const address = await deploy(vm, pk, bytecode, compileResult)
     const tokenId = Math.floor(Math.random() * 10_000)
-    const result = await call(vm, address, abi, "render", [tokenId])
+
+    // struct Kaleidoscope {
+    //   uint256 tokenId;
+    //   uint256 repetitions; // n
+    //   uint256 numInsideArtifacts; // numCircles
+    //   uint256 numOutsideArtifacts;
+    //   uint256 centerX;
+    //   uint256 centerY;
+    //   bool hasGradient;
+    //   bool hasSecondaryColor;
+    // }
+    const kaleidoscopeNames = [
+      "tokenId",
+      "repetitions",
+      "numInsideArtifacts",
+      "numOutsideArtifacts",
+      "centerX",
+      "centerY",
+      "hasGradient",
+      "hasSecondaryColor",
+    ]
+    const kaleidoscopeTypes = ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "bool", "bool"]
+    const kaleidoscope = await call(vm, address, abi, "metadata", [tokenId], kaleidoscopeTypes)
+    console.log(kaleidoscope.map((x, i) => `${kaleidoscopeNames[i]}: ${x.toString()}`))
+
+    const [result] = await call(vm, address, abi, "render", [tokenId])
+
     return result
   }
 

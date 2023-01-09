@@ -46,6 +46,8 @@ contract Renderer {
   struct AnimatedTriangle {
     uint256 x1;
     uint256 y1;
+    uint256 centerX;
+    uint256 centerY;
     uint256 duration;
     utils.HSL color;
   }
@@ -91,23 +93,35 @@ contract Renderer {
     return kaleidoscope;
   }
 
+  // function randomAnimatedCircle(kaleidoscope, color) {
+  //       const y1 = randomRange(0, kaleidoscope.centerY)
+  //       const y2 = randomRange(kaleidoscope.centerY, RADIUS)
+
+  //       const gradient = kaleidoscope.centerY / kaleidoscope.centerX
+
+  //       // x1 should be within bounds of triangular path
+  //       const lb1 = y1 / gradient
+  //       const x1 = randomRange(lb1, 2 * kaleidoscope.centerX - lb1)
+
+  //       // x2 should be within bounds of triangular path
+  //       const lb2 = y2 / gradient
+  //       const x2 = randomRange(lb2, 2 * kaleidoscope.centerX - lb2)
+
+  //       const radiusLB = 120 / kaleidoscope.repetitions
+  //       const radius = randomRange(120 / kaleidoscope.repetitions, radiusLB * 4)
+
+  //       const duration = randomRange(5, 10)
+  //       const alternatingClass = randomRange(0, 3)
+
+  //       return new AnimatedCircle(x1, y1, x2, y2, radius, alternatingClass, duration, color)
+  //     }
   function circleAtIndexForKaleidescope(
     Kaleidoscope memory _kaleidoscope,
     ColorPalette memory _palette,
     uint256 _index
   ) public pure returns (AnimatedCircle memory circle) {
-    circle.x1 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circlex1", utils.uint2str(_index)),
-      0,
-      _kaleidoscope.centerX
-    );
-    circle.x2 = utils.randomRange(
-      _kaleidoscope.tokenId,
-      string.concat("circlex2", utils.uint2str(_index)),
-      0,
-      _kaleidoscope.centerX
-    );
+    uint256 gradient = (_kaleidoscope.centerY * 1000) / _kaleidoscope.centerX;
+
     circle.y1 = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("circley1", utils.uint2str(_index)),
@@ -120,11 +134,26 @@ contract Renderer {
       _kaleidoscope.centerY,
       RADIUS
     );
+
+    circle.x1 = utils.randomRange(
+      _kaleidoscope.tokenId,
+      string.concat("circlex1", utils.uint2str(_index)),
+      0,
+      _kaleidoscope.centerX
+    );
+
+    circle.x2 = utils.randomRange(
+      _kaleidoscope.tokenId,
+      string.concat("circlex2", utils.uint2str(_index)),
+      _kaleidoscope.centerX,
+      RADIUS
+    );
+
     circle.radius = utils.randomRange(
       _kaleidoscope.tokenId,
       string.concat("circleradius", utils.uint2str(_index)),
-      5,
-      RADIUS / 6
+      RADIUS / _kaleidoscope.repetitions,
+      (RADIUS / _kaleidoscope.repetitions) * 4
     );
     circle.duration = utils.randomRange(
       _kaleidoscope.tokenId,
@@ -134,7 +163,7 @@ contract Renderer {
     );
     circle.alternatingClass = utils.randomRange(
       _kaleidoscope.tokenId,
-      string.concat("circlealternatingClass", utils.uint2str(_index)),
+      string.concat("alternatingClass", utils.uint2str(_index)),
       0,
       3
     );
@@ -150,13 +179,13 @@ contract Renderer {
   ) public pure returns (AnimatedRectangle memory rectangle) {
     rectangle.width = utils.randomRange(
       _kaleidoscope.tokenId,
-      string.concat("width", utils.uint2str(_index)),
+      string.concat("rectwidth", utils.uint2str(_index)),
       RADIUS / 2,
       RADIUS
     );
     rectangle.height = utils.randomRange(
       _kaleidoscope.tokenId,
-      string.concat("height", utils.uint2str(_index)),
+      string.concat("rectheight", utils.uint2str(_index)),
       RADIUS / 2,
       RADIUS
     );
@@ -164,7 +193,7 @@ contract Renderer {
     rectangle.y = _kaleidoscope.centerY;
     rectangle.duration = utils.randomRange(
       _kaleidoscope.tokenId,
-      string.concat("duration", utils.uint2str(_index)),
+      string.concat("rectduration", utils.uint2str(_index)),
       5,
       10
     );
@@ -180,19 +209,21 @@ contract Renderer {
   ) public pure returns (AnimatedTriangle memory triangle) {
     triangle.x1 = utils.randomRange(
       _kaleidoscope.tokenId,
-      string.concat("x1", utils.uint2str(_index)),
+      string.concat("trianglex1", utils.uint2str(_index)),
       0,
       _kaleidoscope.centerX
     );
     triangle.y1 = utils.randomRange(
       _kaleidoscope.tokenId,
-      string.concat("y1", utils.uint2str(_index)),
+      string.concat("triangley1", utils.uint2str(_index)),
       0,
       _kaleidoscope.centerY
     );
+    triangle.centerX = _kaleidoscope.centerX;
+    triangle.centerY = _kaleidoscope.centerY;
     triangle.duration = utils.randomRange(
       _kaleidoscope.tokenId,
-      string.concat("duration", utils.uint2str(_index)),
+      string.concat("triangleduration", utils.uint2str(_index)),
       5,
       10
     );
@@ -207,6 +238,7 @@ contract Renderer {
     if (_circle.alternatingClass >= 2) {
       animations = _circle.alternatingClass == 3
         ? string.concat(
+          animations,
           '<animate attributeName="cx" values="',
           utils.uint2str(_circle.x1),
           ";",
@@ -218,6 +250,7 @@ contract Renderer {
           's" repeatCount="indefinite"/>'
         )
         : string.concat(
+          animations,
           '<animate attributeName="cy" values="',
           utils.uint2str(_circle.y1),
           ";",
@@ -230,6 +263,7 @@ contract Renderer {
         );
     } else {
       animations = string.concat(
+        animations,
         '<animate attributeName="cx" values="',
         utils.uint2str(_circle.x1),
         ";",
@@ -288,7 +322,7 @@ contract Renderer {
     return
       string.concat(
         '<polygon points="0,-',
-        utils.uint2str(_triangle.y1),
+        utils.uint2str(_triangle.centerY),
         " ",
         utils.uint2str(x2),
         ",",
@@ -452,15 +486,15 @@ contract Renderer {
       utils.getHslString(_palette.backgroundColorHsl),
       '"></rect>',
       '<g id="kaleidoscopeTile" transform="translate(',
-      utils.uint2str(SIZE / 2 - _kaleidoscope.centerX)
-      // "0"
+      // utils.uint2str(SIZE / 2 - _kaleidoscope.centerX)
+      "0"
     );
 
     svg = string.concat(
       svg,
       ",",
-      utils.uint2str(SIZE / 2 - _kaleidoscope.centerY),
-      // "0",
+      // utils.uint2str(SIZE / 2 - _kaleidoscope.centerY),
+      "0",
       ')">',
       '<circle cx="',
       utils.uint2str(_kaleidoscope.centerX),
@@ -485,5 +519,10 @@ contract Renderer {
     string memory svg = getKaleidoscopeSVG(kaleidoscope, palette);
 
     return svg;
+  }
+
+  function metadata(uint256 _tokenId) public pure returns (Kaleidoscope memory) {
+    Kaleidoscope memory kaleidoscope = kaleidoscopeForTokenId(_tokenId);
+    return kaleidoscope;
   }
 }

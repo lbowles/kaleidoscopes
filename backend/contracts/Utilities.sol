@@ -23,11 +23,15 @@ library utils {
     return (rand % (upper - lower + 1)) + lower;
   }
 
+  function min(int256 a, int256 b) internal pure returns (int256) {
+    return a < b ? a : b;
+  }
+
   function min(uint256 a, uint256 b) internal pure returns (uint256) {
     return a < b ? a : b;
   }
 
-  function max(uint256 a, uint256 b) internal pure returns (uint256) {
+  function max(int256 a, int256 b) internal pure returns (int256) {
     return a > b ? a : b;
   }
 
@@ -65,6 +69,18 @@ library utils {
 
   function getHslString(HSL memory _hsl) public pure returns (string memory) {
     return string(abi.encodePacked("hsl(", uint2str(_hsl.h), ",", uint2str(_hsl.s), "%,", uint2str(_hsl.l), "%)"));
+  }
+
+  function uint2floatstr(uint256 _i_scaled, uint256 _decimals) internal pure returns (string memory) {
+    return string.concat(uint2str(_i_scaled / (10**_decimals)), ".", uint2str(_i_scaled % (10**_decimals)));
+  }
+
+  function int2str(int256 _i) internal pure returns (string memory _uintAsString) {
+    if (_i < 0) {
+      return string.concat("-", uint2str(uint256(-_i)));
+    } else {
+      return uint2str(uint256(_i));
+    }
   }
 
   // converts an unsigned integer to a string

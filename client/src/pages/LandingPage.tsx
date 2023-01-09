@@ -13,13 +13,7 @@ import {
 } from "wagmi"
 import { Kaleidoscopes__factory } from "../../../backend/types"
 import deployments from "../../src/deployments.json"
-import etherscan from ".././img/etherscan.svg"
-import github from ".././img/github.svg"
-import inputShapes from ".././img/inputShapes.svg"
 import loading from ".././img/loading.svg"
-import maxSaturation from ".././img/maxSaturation.svg"
-import noReflections from ".././img/noReflections.svg"
-import opensea from ".././img/opensea.svg"
 import kaleidoscopePlaceholder from ".././img/testKaleidoscope.svg"
 import generalClickSound from ".././sounds/generalClickSound.mp3"
 import mintClickSound from ".././sounds/mintClickSound.mp3"
@@ -29,7 +23,11 @@ import style from "./LandingPage.module.css"
 import { getMerkleProof, getTree } from "../../../backend/common/merkle"
 import allowlistAddresses from "../../../backend/common/snapshot.json"
 import MerkleTree from "merkletreejs"
-import { Playground } from "../components/Playground"
+import { Countdown } from "../components/Countdown/Countdown"
+import { Links } from "../components/Links/Links"
+import { FAQ } from "../components/FAQ/FAQ"
+import { Traits } from "../components/Traits/Traits"
+import { Footer } from "../components/Footer/Footer"
 
 const kaleidoscopesConfig = {
   address: deployments.contracts.Kaleidoscopes.address,
@@ -58,12 +56,19 @@ export function LandingPage() {
   const [mintCount, setMintCount] = useState<number>(1)
   const [mintedTokens, setMintedTokens] = useState<number[]>([])
 
+  const [hasAllowListStarted, setHasAllowListStarted] = useState(false)
+
   const { data: signer } = useSigner()
   const { address } = useAccount()
   const addRecentTransaction = useAddRecentTransaction()
 
   const [merkleTree, setMerkleTree] = useState<MerkleTree>()
   const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
+
+  // TODO: add time
+  const awaitListDate = new Date("2023-01-14T17:00:00Z").getTime()
+  const publicDate = new Date("2023-01-15T17:00:00Z").getTime()
+  console.log(new Date("2023-01-15T07:00:00Z"))
 
   const [playbackRate, setPlaybackRate] = useState(0.75)
   const [playSuccess] = useSound(successSound)
@@ -73,6 +78,10 @@ export function LandingPage() {
     playbackRate,
     interrupt: true,
   })
+
+  function listenPlayGeneralClick() {
+    playGeneralClick()
+  }
 
   const handleAmountClickUp = () => {
     setPlaybackRate(playbackRate + 0.4)
@@ -198,25 +207,25 @@ export function LandingPage() {
     }
   }, [mintTx])
 
+  useEffect(() => {
+    if (mintedTokens.length > 0) {
+      setHasAllowListStarted(false)
+    } else {
+      setHasAllowListStarted(true)
+    }
+  }, [merkleProof])
+
   return (
     <div>
-      {!hasPublicSaleStarted && (
-        // TODO: Update with actual details
-        <div className="flex justify-center  w-screen max-w-screen absolute z-100 top-0 text-center">
-          <div className={"block bg-zinc-800 px-3 py-2 rounded-b-lg w-100 text-sm " + style.notificationCard}>
-            Minting is live for Solar Systems owners on <a>this list</a>. Public minting available 18:00 UTC on
-            10/10/2021.
-          </div>
-        </div>
-      )}
-
       <div className="flex justify-center w-screen max-w-screen ">
         <img src={kaleidoscopePlaceholder} className="mt-[220px] w-[300px]"></img>
       </div>
-      <div className="flex justify-between p-5 sm:p-10 absolute w-full top-12  md:top-2 ">
+      <div className="flex justify-between p-5  absolute w-full top-12  md:top-2 ">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
         <ConnectButton />
       </div>
+
+      {/* TODO : Update with actual details  remove !*/}
       <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
@@ -333,174 +342,33 @@ export function LandingPage() {
           </div>
         </div>
       )}
+      {/* ADD ! */}
+      {!hasPublicSaleStarted && (
+        <Countdown
+          targetDateA={awaitListDate}
+          targetDateP={publicDate}
+          playGeneralClick={listenPlayGeneralClick}
+          hasPublicSaleStarted={hasPublicSaleStarted}
+          hasAllowListStarted={hasAllowListStarted}
+        />
+      )}
       <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>
       </div>
-      <div className="flex justify-center  mt-20 z-1 pl-10 pr-10 z-10 relative ">
-        <div className="block bg-zinc-900 border border-zinc-800 rounded-lg  p-4">
-          <div className=" grid  grid-flow-col gap-3">
-            {/* TODO: Update this */}
-            <a
-              href="https://opensea.io/collection/onchain-kaleidoscopes"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:scale-110 duration-100 ease-in-out"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={opensea} alt="opensea" />
-            </a>
-            <a
-              className="hover:scale-110 duration-100 ease-in-out"
-              href={`${etherscanBaseURL}/address/${deployments.contracts.Kaleidoscopes.address}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={etherscan} alt="etherscan" />
-            </a>
-            <a
-              href="https://github.com/lbowles/kaleidoscopes"
-              className="hover:scale-110 duration-100 ease-in-out"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={github} alt="github" />
-            </a>
-            {/* <a
-              href="https://twitter.com/SolarSystemsNFT"
-              className="hover:scale-110 duration-100 ease-in-out"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                playGeneralClick()
-              }}
-            >
-              <img src={twitter} alt="twitter" />
-            </a> */}
-          </div>
-        </div>
-      </div>
-      {/* FAQ */}
-      <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
-        <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
-          <div className="p-5">
-            <p className="font-medium text-xl pb-4 text-gray-100">FAQ</p>
-            <div className=" ">
-              <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
-                <span>What are Solar Systems?</span>
-              </div>
-              <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
-                Solar Systems is a fully on-chain NFT collection which features procedurally generated planets orbiting
-                around a star. Each Solar System is unique and can be minted for the price of 0.01 ETH. The collection
-                is limited to 1,000 Solar Systems.
-              </p>
-            </div>
-
-            <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
-              <span>Features</span>
-            </div>
-            <div className="grid grid-cols- md:grid-cols-2">
-              <div className="text-sm text-zinc-500 px-3 pt-3 col-span-1">
-                Each Solar System is
-                <ul className="space-y-2 mt-2  list-disc list-inside ml-3">
-                  <li>
-                    <a
-                      target="_blank"
-                      href={`${etherscanBaseURL}/address/${deployments.contracts.Renderer.address}`}
-                      onClick={() => {
-                        playGeneralClick()
-                      }}
-                    >
-                      <span className=" font-bold underline">Fully on-chain</span>
-                    </a>
-                    . This means that your NFT will exist for as long as the Ethereum blockchain is around.
-                  </li>
-                  <li>
-                    <span className="font-bold">Animated.</span> Planets orbit around a star which adds to a dynamic and
-                    lively viewing experience.
-                  </li>
-                </ul>
-              </div>
-              <div className="text-sm text-zinc-500 px-3 pt-3 ">
-                <ul className="space-y-2  md:mt-7  list-disc list-inside ml-3">
-                  <li>
-                    <span className=" font-bold">Procedurally generated.</span> This means that the solar systems are
-                    generated using a set of rules or procedures, rather than being created manually or pre-designed.
-                    This makes each solar system fully unique.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Traits */}
-      <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
-        <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
-          <div className="p-5">
-            <p className="font- text-xl pb-4 text-gray-100">Traits</p>
-            <div className="grid  gap-4 grid-cols-1 sm:grid-cols-3  ">
-              <div>
-                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center ">
-                  <img src={noReflections} alt="Number Of Reflections" className="h-5 mr-3"></img>
-                  <span>Number Of Reflections</span>
-                </div>
-              </div>
-              <div>
-                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center min-h-20">
-                  <img src={maxSaturation} alt="Max Saturation" className="h-5 mr-3"></img>
-                  <span>Colour/Gradients</span>
-                </div>
-              </div>
-              <div>
-                <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center">
-                  <img src={inputShapes} alt="Number Of Reflections" className="h-5 mr-3"></img>
-                  <span>Input Shape Complexity</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
-        <Playground />
-      </div> */}
-
-      <div className="flex justify-center  mt-24 z-1 pl-10 pr-10 z-10 relative">
-        <footer className="sticky w-full py-4  bottom-0 text-center text-gray-700 text-sm">
-          Made by{" "}
-          <a
-            href="https://twitter.com/npm_luko"
-            className="font-bold text-gray-500"
-            target="_blank"
-            onClick={() => {
-              playGeneralClick()
-            }}
-          >
-            @npm_luko
-          </a>{" "}
-          and{" "}
-          <a
-            href="https://twitter.com/stephancill"
-            className="font-bold text-gray-500"
-            target="_blank"
-            onClick={() => {
-              playGeneralClick()
-            }}
-          >
-            @stephancill
-          </a>
-        </footer>
-      </div>
+      <Links
+        etherscanBaseURL={etherscanBaseURL}
+        deployAddress={deployments.contracts.Kaleidoscopes.address}
+        playGeneralClick={listenPlayGeneralClick}
+      />
+      <FAQ
+        etherscanBaseURL={etherscanBaseURL}
+        deployAddress={deployments.contracts.Kaleidoscopes.address}
+        playGeneralClick={listenPlayGeneralClick}
+      />
+      <Traits />
+      <Footer playGeneralClick={listenPlayGeneralClick} />
     </div>
   )
 }

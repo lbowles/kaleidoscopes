@@ -12,9 +12,9 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
           <p className="font-medium text-xl pb-4 text-gray-100">FAQ</p>
           <div className=" ">
             <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
-              <span>What are Solar Systems?</span>
+              <span>What are Solar Kaleidoscopes?</span>
             </div>
-            <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
+            <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
               Solar Systems is a fully on-chain NFT collection which features procedurally generated planets orbiting
               around a star. Each Solar System is unique and can be minted for the price of 0.01 ETH. The collection is
               limited to 1,000 Solar Systems.

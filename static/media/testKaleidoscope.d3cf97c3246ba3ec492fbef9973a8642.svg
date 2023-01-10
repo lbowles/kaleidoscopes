@@ -1,0 +1,102 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+
+    <linearGradient id="gradient">
+      <stop offset="0%" stop-color="hsl(334, 100%, 30%)"></stop>
+      <stop offset="100%" stop-color="hsl(344, 100%, 10%)"></stop>
+    </linearGradient>
+
+    <clipPath id="clip">
+      <path d="M0,0L100.00000000000003,173.20508075688772L200.00000000000006,0A200,200,0,0,0,0,0Z"></path>
+    </clipPath>
+    <g id="tile" clip-path="url(#clip)">
+      <rect x="0" y="-200" width="400" height="400" fill="url(#gradient)">
+      </rect>
+
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="127.36442372195451" height="291.022715239342"
+        fill="hsl(334, 100%, 70%)">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
+          to="-360 0 -173.20508075688772" begin="0s" dur="9.100866775654193s" repeatCount="indefinite">
+        </animateTransform>
+      </rect>
+
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="148.72818127851795" height="213.1637295011767"
+        fill="hsl(334, 91.66666666666667%, 65%)">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
+          to="-360 0 -173.20508075688772" begin="0s" dur="9.454176584822093s" repeatCount="indefinite">
+        </animateTransform>
+      </rect>
+
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="170.93456690640525" height="184.35147550981236"
+        fill="hsl(334, 83.33333333333334%, 60%)">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
+          to="-360 0 -173.20508075688772" begin="0s" dur="8.631077565651736s" repeatCount="indefinite">
+        </animateTransform>
+      </rect>
+
+      <rect rx="3" ry="3" x="0" y="-173.20508075688772" width="95.22266717128102" height="331.27829798026767"
+        fill="hsl(334, 75%, 55%)">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 -173.20508075688772"
+          to="-360 0 -173.20508075688772" begin="0s" dur="5.193660392452543s" repeatCount="indefinite">
+        </animateTransform>
+      </rect>
+
+
+      <circle cx="7.17883434668525" cy="120.06327573444821" r="78.849446970823"
+        fill="hsl(334, 91.66666666666667%, 65%)">
+        <animate attributeName="r" values="114.93617900931893;42.76271493232705;114.93617900931893;42.76271493232705"
+          calcMode="linear" dur="13.03668404260789s" repeatCount="indefinite"></animate>
+        <animate attributeName="cy" values="84.30040754473694;155.82614392415948;84.30040754473694;155.82614392415948"
+          calcMode="linear" dur="13.03668404260789s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="-181.2014950298888;195.5591637232593;-181.2014950298888;195.5591637232593"
+          calcMode="linear" dur="13.03668404260789s" repeatCount="indefinite"></animate>
+      </circle>
+      <circle cx="182.750895684586" cy="65.87828747568763" r="133.52512738410385"
+        fill="hsl(334, 83.33333333333334%, 60%)">
+        <animate attributeName="r" values="101.35348444580445;165.69677032240327;101.35348444580445;165.69677032240327"
+          calcMode="linear" dur="9.796412849200587s" repeatCount="indefinite"></animate>
+        <animate attributeName="cy" values="97.76120290902458;33.99537204235068;97.76120290902458;33.99537204235068"
+          calcMode="linear" dur="9.796412849200587s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="-146.26451207578194;511.7663034449539;-146.26451207578194;511.7663034449539"
+          calcMode="linear" dur="9.796412849200587s" repeatCount="indefinite"></animate>
+      </circle>
+      <circle cx="104.99347971246272" cy="32.776338503385" r="166.92684326938377" fill="hsl(334, 75%, 55%)">
+        <animate attributeName="r" values="164.98549332990615;168.8681932088614;164.98549332990615;168.8681932088614"
+          calcMode="linear" dur="12.89083502715424s" repeatCount="indefinite"></animate>
+        <animate attributeName="cy" values="34.70026561104271;30.852411395727284;34.70026561104271;30.852411395727284"
+          calcMode="linear" dur="12.89083502715424s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx" values="-309.93677896832526;519.9237383932507;-309.93677896832526;519.9237383932507"
+          calcMode="linear" dur="12.89083502715424s" repeatCount="indefinite"></animate>
+      </circle>
+      <circle cx="105.79675116267532" cy="138.28419670005383" r="60.46351973220207"
+        fill="hsl(334, 66.66666666666667%, 50%)">
+        <animate attributeName="r" values="58.20987634786225;62.71716311654189;58.20987634786225;62.71716311654189"
+          calcMode="linear" dur="14.185608141202676s" repeatCount="indefinite"></animate>
+        <animate attributeName="cy" values="140.5176145450053;136.05077885510232;140.5176145450053;136.05077885510232"
+          calcMode="linear" dur="14.185608141202676s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx"
+          values="-35.291870112281586;246.88537243763224;-35.291870112281586;246.88537243763224" calcMode="linear"
+          dur="14.185608141202676s" repeatCount="indefinite"></animate>
+      </circle>
+      <circle cx="-27.646528221643734" cy="123.46212809070879" r="75.41981505293134"
+        fill="hsl(334, 58.33333333333333%, 45%)">
+        <animate attributeName="r" values="125.0458462189628;25.793783886899888;125.0458462189628;25.793783886899888"
+          calcMode="linear" dur="9.463835838222293s" repeatCount="indefinite"></animate>
+        <animate attributeName="cy" values="74.28147051617336;172.64278566524422;74.28147051617336;172.64278566524422"
+          calcMode="linear" dur="9.463835838222293s" repeatCount="indefinite"></animate>
+        <animate attributeName="cx"
+          values="-207.20526543961165;151.91220899632418;-207.20526543961165;151.91220899632418" calcMode="linear"
+          dur="9.463835838222293s" repeatCount="indefinite"></animate>
+      </circle>
+    </g>
+  </defs>
+  <g id="kaleidoscopeTile" transform="translate(149.99999999999997, 76.79491924311228)">
+    <circle cx="100.00000000000003" cy="173.20508075688772" r="200" fill="hsl(334, 100%, 30%)"></circle>
+    <use href="#tile" transform="rotate(0,100.00000000000003,173.20508075688772)"></use>
+    <use href="#tile" transform="rotate(60,100.00000000000003,173.20508075688772)"></use>
+    <use href="#tile" transform="rotate(120,100.00000000000003,173.20508075688772)"></use>
+    <use href="#tile" transform="rotate(180,100.00000000000003,173.20508075688772)"></use>
+    <use href="#tile" transform="rotate(240,100.00000000000003,173.20508075688772)"></use>
+    <use href="#tile" transform="rotate(300,100.00000000000003,173.20508075688772)"></use>
+  </g>
+</svg>

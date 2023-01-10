@@ -91,6 +91,11 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
                     ></div>
                   </div>
                 </div>
+                <div className="flex justify-end">
+                  <div className="w-[226px] bg-none mr-[33px] -mt-[18px] pr-[10px]">
+                    <div className={`bg-white h-[10px] w-[10px] rounded-lg ml-[0]`}></div>
+                  </div>
+                </div>
                 <div className="text-gray-100  text-sm flex justify-between">
                   <div className="flex justify-center">
                     <span>Allowlist mint</span>

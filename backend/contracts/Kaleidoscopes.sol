@@ -12,6 +12,7 @@ import "svgnft/contracts/Base64.sol";
 contract Kaleidoscopes is ERC721A, Ownable {
   uint256 public price;
   uint256 public maxSupply;
+  uint256 public constant maxMintPerWallet = 20;
 
   Renderer public renderer;
 
@@ -160,6 +161,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
   function mint(uint256 _quantity) internal {
     require(msg.value >= price * _quantity, "Insufficient fee");
     require(totalSupply() + _quantity <= maxSupply, "Exceeds max supply");
+    require(_numberMinted(msg.sender) + _quantity <= 20, "Exceeds max quantity");
     _mint(msg.sender, _quantity);
 
     // Refund any extra ETH sent

@@ -139,4 +139,11 @@ describe("Kaleidoscopes", function () {
       .to.be.lt(initialBalance.sub(mintPrice))
       .and.gt(initialBalance.sub(mintPrice.mul(10)))
   })
+
+  it("Should not allow minting more than the max per wallet", async function () {
+    const maxPerWallet = await kaleidoscopes.maxMintPerWallet()
+    console.log(maxPerWallet.toString())
+    await kaleidoscopes.mintPublic(maxPerWallet.sub(5), { value: mintPrice.mul(maxPerWallet.sub(5)) })
+    await expect(kaleidoscopes.mintPublic(6, { value: mintPrice.mul(6) })).to.be.revertedWith("Exceeds max quantity")
+  })
 })

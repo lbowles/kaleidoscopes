@@ -187,7 +187,7 @@ export function LandingPage() {
     overrides: {
       value: mintPrice?.mul(mintCount!),
     },
-    enabled: !hasPublicSaleStarted && (merkleProof?.length || 0) > 0,
+    enabled: hasAllowListStarted && (merkleProof?.length || 0) > 0,
   })
   const {
     write: mintAllowList,
@@ -212,10 +212,16 @@ export function LandingPage() {
     isSuccess: isMintPublicSignSuccess,
   } = useContractWrite(mintPublicConfig)
 
-  const mint = merkleProof ? mintAllowList : mintPublic
-  const mintSignResult = hasPublicSaleStarted ? mintPublicSignResult : mintAllowListSignResult
-  const isMintSignLoading = hasPublicSaleStarted ? isMintPublicSignLoading : isMintAllowListSignLoading
-  const isMintSignSuccess = hasPublicSaleStarted ? isMintPublicSignSuccess : isMintAllowListSignSuccess
+  const mint = () => {
+    if (merkleProof) {
+      mintAllowList?.()
+    } else {
+      mintPublic?.()
+    }
+  }
+  const mintSignResult = mintPublicSignResult || mintAllowListSignResult
+  const isMintSignLoading = isMintPublicSignLoading || isMintAllowListSignLoading
+  const isMintSignSuccess = isMintPublicSignSuccess || isMintAllowListSignSuccess
 
   const { data: mintTx, isLoading: isMintTxLoading } = useWaitForTransaction({
     hash: mintSignResult?.hash,

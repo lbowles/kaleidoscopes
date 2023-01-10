@@ -343,11 +343,6 @@ export function LandingPage() {
     }
   }, [signer, maxSupply, totalSupply, hasAllowListStarted, merkleProof, hasPublicSaleStarted])
 
-  useEffect(() => {
-    console.log("allowlist date", allowListDate)
-    console.log("publicDate", publicDate)
-  }, [allowListDate, publicDate])
-
   return (
     <div>
       <div className="flex justify-center w-screen max-w-screen ">
@@ -363,9 +358,11 @@ export function LandingPage() {
         <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>
       <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative text-gray-200">
-        <p className="text-size-xs">{hasPublicSaleStarted ? "Public sale" : "Allow list sale"}</p>
+        <p className="text-size-xs">
+          {!hasAllowListStarted ? "Sale not started" : !hasPublicSaleStarted ? "Allowlist Mint" : "Public Mint"}
+        </p>
       </div>
-      {mintPrice && maxSupply && totalSupply && (
+      {mintPrice && maxSupply && totalSupply !== undefined && (
         <div className="flex justify-center  mt-6 z-1 pl-10 pr-10 z-10 relative">
           {isMintSignLoading ? (
             <button className={style.claimBtn}>

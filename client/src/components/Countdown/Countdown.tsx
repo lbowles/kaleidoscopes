@@ -78,6 +78,11 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
                 <div className="flex">
                   <img src={countdownLine} alt="countdownLine" className="py-2"></img>
                 </div>
+                <div className="flex ml-[43px] absolute top-[819px]">
+                  <div className="w-[204px]">
+                    <div className="bg-white h-[2px]" style={{ width: percentBar + "%" }}></div>
+                  </div>
+                </div>
                 <div className="flex justify-end">
                   <div className="w-[226px] bg-none mr-[33px] -mt-[18px] pr-[10px]">
                     <div

@@ -2,6 +2,8 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { expect } from "chai"
 import { BigNumber } from "ethers"
 import { deployments, ethers } from "hardhat"
+import { getMerkleProof, getTree } from "../common/merkle"
+import holders from "../common/snapshot.json"
 import { Kaleidoscopes, Kaleidoscopes__factory } from "../types"
 import { waitForBlocks } from "./helpers"
 
@@ -38,6 +40,21 @@ describe("Kaleidoscopes", function () {
     const finalSupply = await kaleidoscopes.totalSupply()
     expect(finalSupply).to.equal(initialSupply.add(1))
     expect(await kaleidoscopes.ownerOf(finalSupply)).to.equal(signers[0].address)
+  })
+
+  it("Should increase the total supply", async function () {
+    let initialSupply = await kaleidoscopes.totalSupply()
+    await kaleidoscopes.connect(signers[1]).mintPublic(20, { value: mintPrice.mul(20) })
+
+    expect(await kaleidoscopes.totalSupply()).to.equal(initialSupply.add(20))
+
+    initialSupply = await kaleidoscopes.totalSupply()
+
+    const tree = getTree(holders)
+    const merkleProof = getMerkleProof(tree, signers[0].address)
+    await kaleidoscopes.connect(signers[0]).mintAllowList(20, merkleProof, { value: mintPrice.mul(20) })
+
+    expect(await kaleidoscopes.totalSupply()).to.equal(initialSupply.add(20))
   })
 
   it("Should not allow minting more NFTs than the max supply", async function () {

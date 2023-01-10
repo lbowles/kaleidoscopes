@@ -80,8 +80,6 @@ describe("KaleidoscopesAllowList", function () {
     const currentBlock = await ethers.provider.getBlockNumber()
     const startBlock = await kaleidoscopes.allowListMintStartBlock()
 
-    console.log(startBlock.sub(BigNumber.from(currentBlock)))
-
     await waitForBlocks(startBlock.sub(BigNumber.from(currentBlock)))
 
     for (const signer of allowListSigners) {
@@ -119,22 +117,38 @@ describe("KaleidoscopesAllowList", function () {
     )
   })
 
-  it("Should have special trait if minted from allowlist", async function () {
+  it("Should have special trait only for first 100 mints", async function () {
     const currentBlock = await ethers.provider.getBlockNumber()
     const startBlock = await kaleidoscopes.allowListMintStartBlock()
 
     await waitForBlocks(startBlock.sub(currentBlock))
 
-    const merkleProof = getMerkleProof(tree, allowListSigners[0].address)
-    await kaleidoscopes.connect(allowListSigners[0]).mintAllowList(5, merkleProof, { value: mintPrice.mul(5) })
+    // Mint 120 tokens
+    await Promise.all(
+      allowListSigners.slice(0, 6).map(async (signer, index) => {
+        const merkleProof = getMerkleProof(tree, signer.address)
+        const amount = 20
+        await kaleidoscopes.connect(signer).mintAllowList(amount, merkleProof, { value: mintPrice.mul(amount) })
+      }),
+    )
 
-    const publicMintOffsetBlocks = await kaleidoscopes.publicMintOffsetBlocks()
-    await waitForBlocks(publicMintOffsetBlocks.add(1))
+    // Check that 5 random tokens in the first 100 have special trait
+    for (let _ = 1; _ <= 5; _++) {
+      const i = Math.floor(Math.random() * 100) + 1
+      const tokenURI = await kaleidoscopes.tokenURI(i)
+      const json = JSON.parse(atob(tokenURI.split(",")[1]))
+      // Expect one of the traits to be Special
+      const trait = json.attributes.find((trait: any) => trait.trait_type === "Special")
+      expect(trait).to.not.be.undefined
+    }
 
-    await kaleidoscopes.connect(signers[0]).mintPublic(5, { value: mintPrice.mul(5) })
-
-    expect(await kaleidoscopes.hasSpecialTrait(1)).to.equal(true)
-    expect(await kaleidoscopes.hasSpecialTrait(5)).to.equal(true)
-    expect(await kaleidoscopes.hasSpecialTrait(6)).to.equal(false)
+    // Check that the rest of the tokens do not have special trait
+    for (let i = 101; i <= 105; i++) {
+      const tokenURI = await kaleidoscopes.tokenURI(i)
+      const json = JSON.parse(atob(tokenURI.split(",")[1]))
+      // Expect one of the traits to be Special
+      const trait = json.attributes.find((trait: any) => trait.trait_type === "Special")
+      expect(trait).to.be.undefined
+    }
   })
 })

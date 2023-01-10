@@ -21,9 +21,6 @@ contract Kaleidoscopes is ERC721A, Ownable {
   uint256 public allowListMintStartBlock;
   uint256 public publicMintOffsetBlocks; // 3 hours
 
-  // Pre mint map
-  mapping(uint256 => bool) public hasSpecialTrait;
-
   /**
    * @dev Constructs a new instance of the contract.
    * @param _name Name of the ERC721 token.
@@ -98,7 +95,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
     string memory name = string(abi.encodePacked("Kaleidoscope #", utils.uint2str(_tokenId)));
     string memory description = "Fully on-chain, procedurally generated, animated kaleidoscopes.";
     Renderer.Kaleidoscope memory kaleidoscope = renderer.kaleidoscopeForTokenId(_tokenId);
-    kaleidoscope.hasSpecialTrait = hasSpecialTrait[_tokenId];
+    kaleidoscope.hasSpecialTrait = _tokenId <= 100;
 
     Renderer.ColorPalette memory palette = renderer.colorPaletteForKaleidescope(kaleidoscope);
     string memory svg = renderer.getKaleidoscopeSVG(kaleidoscope, palette);
@@ -122,7 +119,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
       '"}'
     );
 
-    if (kaleidoscope.hasSecondaryColor) {
+    if (kaleidoscope.hasSpecialTrait) {
       attributes = string.concat(
         attributes,
         ',{"trait_type": "Secondary Color", "value": "',
@@ -131,8 +128,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
       );
     }
 
-    if (hasSpecialTrait[_tokenId]) {
-      kaleidoscope.hasGradient = true;
+    if (_tokenId <= 100) {
       attributes = string.concat(attributes, ',{"trait_type": "Special", "value": "Yes"}');
     }
 
@@ -207,11 +203,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
   function mintAllowList(uint256 _quantity, bytes32[] calldata _proof) external payable {
     require(allowListed(msg.sender, _proof), "You are not on the allowlist");
     require(hasAllowlistSaleStarted(), "Allowlist sale has not started yet");
-    uint256 indexBefore = totalSupply() + _startTokenId();
     mint(_quantity);
-    for (uint256 i = 0; i < _quantity; i++) {
-      hasSpecialTrait[indexBefore + i] = true;
-    }
   }
 
   /**

@@ -325,7 +325,7 @@ export function LandingPage() {
       <div className="flex justify-center w-screen max-w-screen ">
         <img src={kaleidoscopePlaceholder} className="mt-[220px] w-[300px]"></img>
       </div>
-      <div className="flex justify-between p-5  absolute w-full top-12  md:top-2 ">
+      <div className="flex justify-between py-5 px-7  absolute w-full top-2 ">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
         <ConnectButton />
       </div>

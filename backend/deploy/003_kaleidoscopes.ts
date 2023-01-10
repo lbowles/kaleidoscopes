@@ -5,7 +5,7 @@ import readline from "readline"
 import { getMerkleRoot, getTree } from "../common/merkle"
 import { waitForBlocks } from "../test/helpers"
 import { Kaleidoscopes__factory } from "../types"
-import { getBlockTime, futureBlockToDate, futureDateToBlock } from "./../common/blocktime"
+import { futureBlockToDate, futureDateToBlock, getBlockTime } from "./../common/blocktime"
 
 function userInput(query: string): Promise<string> {
   const rl = readline.createInterface({
@@ -30,9 +30,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   let blockTime: number
   if (hre.network.name === "hardhat") {
-    blockTime = await getBlockTime(2)
+    blockTime = await getBlockTime(ethers.provider, 2)
   } else {
-    blockTime = await getBlockTime()
+    blockTime = await getBlockTime(ethers.provider)
   }
 
   let name = "Kaleidoscopes"
@@ -47,9 +47,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (hre.network.name !== "mainnet") {
     name = "Test"
     symbol = "TEST"
+  }
+
+  // Set allowlist mint times for different networks
+
+  if (hre.network.name === "hardhat") {
     const threeMinutesInTheFuture = new Date(new Date().getTime() + 3 * 60 * 1000)
-    allowListStartBlockNumber = await futureDateToBlock(threeMinutesInTheFuture, blockTime)
+    allowListStartBlockNumber = await futureDateToBlock(ethers.provider, threeMinutesInTheFuture, blockTime)
     publicMintOffsetBlocks = Math.ceil((1 * 60) / blockTime) // 1 minute
+  } else if (hre.network.name === "goerli") {
+    allowListStartBlockNumber = 8304455 // "2023-01-13T18:00:00Z"
+    publicMintOffsetBlocks = 4 // 1 minute
   }
 
   if (hre.network.name !== "hardhat") {
@@ -76,8 +84,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`Allowlist start block: ${allowListStartBlockNumber}`)
   console.log(`Public mint offset blocks: ${publicMintOffsetBlocks}`)
 
-  const allowListSaleBlockDate = await futureBlockToDate(allowListStartBlockNumber, blockTime)
-  const publicSaleBlockDate = await futureBlockToDate(allowListStartBlockNumber + publicMintOffsetBlocks, blockTime)
+  const allowListSaleBlockDate = await futureBlockToDate(ethers.provider, allowListStartBlockNumber, blockTime)
+  const publicSaleBlockDate = await futureBlockToDate(
+    ethers.provider,
+    allowListStartBlockNumber + publicMintOffsetBlocks,
+    blockTime,
+  )
 
   // Prompt user to confirm if network, name, symbol are correct each on its own line
   console.log(`\nDeploying to ${hre.network.name}`)

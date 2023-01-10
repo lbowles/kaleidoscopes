@@ -8,6 +8,8 @@ import { Kaleidoscopes, Kaleidoscopes__factory } from "../types"
 import { waitForBlocks } from "./helpers"
 
 const setupTest = deployments.createFixture(async ({ deployments, getNamedAccounts, ethers, tasks }, options) => {
+  await ethers.provider.send("evm_setAutomine", [true])
+
   await deployments.fixture() // ensure you start from a fresh deployments
   const { deployer } = await getNamedAccounts()
 

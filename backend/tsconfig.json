@@ -8,6 +8,6 @@
     "composite": true,
     "resolveJsonModule": true
   },
-  "include": ["./scripts", "./test", "./deploy", "./types", "./common"],
+  "include": ["./scripts", "./test", "./deploy", "./types", "./common", "./tasks"],
   "files": ["./hardhat.config.ts", "./common/snapshot.json"]
 }

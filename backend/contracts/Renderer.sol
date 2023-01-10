@@ -394,8 +394,8 @@ contract Renderer {
       backgroundCircleBase,
       utils.uint2str(RADIUS + 8),
       '" fill="none"',
-      _kaleidoscope.hasSpecialTrait ? '" stroke="#EBA947" stroke-width="4"' : "",
-      '" />'
+      _kaleidoscope.hasSpecialTrait ? ' stroke="#EBA947" stroke-width="4"' : "",
+      "/>"
     );
 
     svg = string.concat(

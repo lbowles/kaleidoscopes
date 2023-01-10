@@ -57,16 +57,22 @@ async function getBlockTime(provider: ethers.providers.BaseProvider, samples: nu
   const previousBlock = await provider.getBlock(block.number - samples)
   return (block.timestamp - previousBlock.timestamp) / samples
 }
-async function futureBlockToDate(
+async function blockToDate(
   provider: ethers.providers.BaseProvider,
   blockNumber: number,
   blockTime: number = 12,
 ): Promise<Date> {
   const latestBlock = await provider.getBlock("latest")
   const { number: latestBlockNumber } = latestBlock
-  const blocksUntilTarget = blockNumber - latestBlockNumber
-  const targetBlockTimestamp = latestBlock.timestamp + blocksUntilTarget * blockTime
-  return new Date(targetBlockTimestamp * 1000)
+
+  if (blockNumber > latestBlockNumber) {
+    const blocksUntilTarget = blockNumber - latestBlockNumber
+    const targetBlockTimestamp = latestBlock.timestamp + blocksUntilTarget * blockTime
+    return new Date(targetBlockTimestamp * 1000)
+  } else {
+    const block = await provider.getBlock(blockNumber)
+    return new Date(block.timestamp * 1000)
+  }
 }
 
 const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId)
@@ -102,6 +108,9 @@ export function LandingPage() {
 
   const [allowListDate, setAllowListDate] = useState<Date>()
   const [publicDate, setPublicDate] = useState<Date>()
+
+  const [hasAllowListStarted, setHasAllowListStarted] = useState(false)
+  const [hasPublicSaleStarted, setHasPublicStarted] = useState(false)
 
   const [canMint, setCanMint] = useState<boolean>(false)
 
@@ -172,16 +181,6 @@ export function LandingPage() {
     enabled: address !== undefined,
   })
 
-  const hasAllowListStarted =
-    allowlistMintBlock !== undefined &&
-    latestBlockNumber !== undefined &&
-    latestBlockNumber > allowlistMintBlock?.toNumber()
-  const hasPublicSaleStarted =
-    allowlistMintBlock !== undefined &&
-    publicMintBlockOffset !== undefined &&
-    latestBlockNumber !== undefined &&
-    latestBlockNumber > allowlistMintBlock.add(publicMintBlockOffset).toNumber()
-
   // const hasAllowListStarted = true
   // const hasPublicSaleStarted = true
 
@@ -246,20 +245,23 @@ export function LandingPage() {
   useEffect(() => {
     ;(async () => {
       // Convert allowlist block to Date
-      if (!allowlistMintBlock || !publicMintBlockOffset) {
+      if (!allowlistMintBlock || !publicMintBlockOffset || !latestBlockNumber) {
         return
       }
 
       const blockTime = await getBlockTime(provider, 5)
-      const allowlistDate = await futureBlockToDate(provider, allowlistMintBlock.toNumber(), blockTime)
-      const publicDate = await futureBlockToDate(
+      const estimatedAllowlistDate = await blockToDate(provider, allowlistMintBlock.toNumber(), blockTime)
+      const estimatedPublicDate = await blockToDate(
         provider,
         allowlistMintBlock.add(publicMintBlockOffset).toNumber(),
         blockTime,
       )
 
-      setAllowListDate(allowlistDate)
-      setPublicDate(publicDate)
+      setHasAllowListStarted(latestBlockNumber > allowlistMintBlock?.toNumber())
+      setHasPublicStarted(latestBlockNumber > allowlistMintBlock.add(publicMintBlockOffset).toNumber())
+
+      setAllowListDate(estimatedAllowlistDate)
+      setPublicDate(estimatedPublicDate)
     })()
   }, [allowlistMintBlock, publicMintBlockOffset, latestBlockNumber])
 
@@ -340,6 +342,11 @@ export function LandingPage() {
       setCanMint(_canMint)
     }
   }, [signer, maxSupply, totalSupply, hasAllowListStarted, merkleProof, hasPublicSaleStarted])
+
+  useEffect(() => {
+    console.log("allowlist date", allowListDate)
+    console.log("publicDate", publicDate)
+  }, [allowListDate, publicDate])
 
   return (
     <div>
@@ -459,7 +466,11 @@ export function LandingPage() {
         </div>
       )}
       {allowListDate && publicDate && !hasPublicSaleStarted && (
-        <Countdown allowlistTime={allowListDate} publicTime={publicDate} playGeneralClick={playGeneralClick} />
+        <Countdown
+          allowlistTime={allowListDate.getTime()}
+          publicTime={publicDate.getTime()}
+          playGeneralClick={playGeneralClick}
+        />
       )}
       <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative pt-[90px]">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">

@@ -1,12 +1,11 @@
-import style from "./Countdown.module.css"
-import allowlistHelpBtn from "../../img/allowlistHelpBtn.svg"
 import { useEffect, useState } from "react"
 import { useCountdown } from "../../hooks/countdown"
+import allowlistHelpBtn from "../../img/allowlistHelpBtn.svg"
 import countdownLine from "../../img/countdownLine.svg"
 
 type ICoundown = {
-  allowlistTime: Date
-  publicTime: Date
+  allowlistTime: number
+  publicTime: number
   playGeneralClick: () => void
 }
 
@@ -29,27 +28,24 @@ function formatTimeString(days: number, hours: number, minutes: number, seconds:
 }
 
 export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoundown) => {
-  // const tempAllowListTime = allowlistTime.getTime()
-  // const tempPublicTime = publicTime.getTime()
-
-  const tempAllowListTime = new Date("").getTime()
-  const tempPublicTime = publicTime.getTime()
-
-  const [targetTime, setTargetTime] = useState(tempAllowListTime)
+  const [targetTime, setTargetTime] = useState(new Date().getTime())
 
   const [days, hours, minutes, seconds] = useCountdown(targetTime)
 
   const [percentBar, setPercentBar] = useState(0)
   const [currentTime, setCurrentTime] = useState(new Date().getTime())
 
-  const hasAllowListStarted = currentTime > tempAllowListTime
-  const hasPublicSaleStarted = currentTime > tempPublicTime
+  const [hasAllowListStarted, setHasAllowListStarted] = useState(false)
+  const [hasPublicSaleStarted, setHasPublicSaleStarted] = useState(false)
 
   useEffect(() => {
     let current = new Date().getTime()
     setCurrentTime(current)
-    let betweenAllowPublic = Math.abs(tempPublicTime - tempAllowListTime)
-    let betweenAllowCurrent = Math.abs(current - tempAllowListTime)
+    setHasAllowListStarted(currentTime > allowlistTime)
+    setHasPublicSaleStarted(currentTime > publicTime)
+
+    let betweenAllowPublic = Math.abs(publicTime - allowlistTime)
+    let betweenAllowCurrent = Math.abs(current - allowlistTime)
 
     let percentBar = (betweenAllowCurrent / betweenAllowPublic) * 100
     if (percentBar >= 100) {
@@ -60,11 +56,11 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
 
   useEffect(() => {
     if (hasAllowListStarted) {
-      setTargetTime(tempPublicTime)
+      setTargetTime(publicTime)
     } else {
-      setTargetTime(tempAllowListTime)
+      setTargetTime(allowlistTime)
     }
-  }, [hasPublicSaleStarted, hasAllowListStarted])
+  }, [publicTime, allowlistTime, hasAllowListStarted, hasPublicSaleStarted])
 
   return (
     <div className="flex justify-center text-center mt-[90px]  z-1 pl-10 pr-10 z-10  ">

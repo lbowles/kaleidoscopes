@@ -18,6 +18,7 @@ describe("Renderer", function () {
   let colorPalette: Renderer.ColorPaletteStructOutput
 
   beforeEach(async function () {
+    await ethers.provider.send("evm_setAutomine", [true])
     await deployments.fixture(["Renderer"])
     signers = await ethers.getSigners()
     const Renderer = await deployments.get("Renderer")

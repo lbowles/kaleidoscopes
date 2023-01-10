@@ -28,6 +28,7 @@
     "ethereum-waffle": "^3.0.0",
     "ethereumjs-util": "^7.1.5",
     "ethers": "^5.0.0",
+    "fast-xml-parser": "^4.0.13",
     "hardhat-deploy": "^0.10.1",
     "hardhat-gas-reporter": "^1.0.9",
     "solc": "^0.8.13",

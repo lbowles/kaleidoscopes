@@ -1,6 +1,7 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { expect } from "chai"
 import { BigNumber } from "ethers"
+import { XMLParser } from "fast-xml-parser"
 import { deployments, ethers } from "hardhat"
 import { getMerkleProof, getTree } from "../common/merkle"
 import holders from "../common/snapshot.json"
@@ -13,6 +14,7 @@ describe("Kaleidoscopes", function () {
   let mintPrice: BigNumber
 
   beforeEach(async function () {
+    await ethers.provider.send("evm_setAutomine", [true])
     await deployments.fixture(["Kaleidoscopes"])
     signers = await ethers.getSigners()
     const Kaleidoscopes = await deployments.get("Kaleidoscopes")
@@ -81,6 +83,9 @@ describe("Kaleidoscopes", function () {
     expect(json.image).to.contain("data:image/svg+xml;base64")
 
     console.log(json.image)
+    const svg = Buffer.from(json.image.split(",")[1], "base64").toString()
+    const parser = new XMLParser()
+    expect(parser.parse(svg, true)).to.not.throw
 
     expect(json.attributes.length).to.be.greaterThanOrEqual(5)
 

@@ -116,7 +116,7 @@ export function LandingPage() {
 
   const handleMintClick = (value: number) => {
     if (value === 1) {
-      if (mintCount + 1 > 20) {
+      if (mintQuotaRemaining && mintCount + 1 > mintQuotaRemaining.toNumber()) {
         playSmallClick()
       } else {
         setMintCount(mintCount + 1)
@@ -163,6 +163,13 @@ export function LandingPage() {
   const { data: publicMintBlockOffset } = useContractRead({
     ...kaleidoscopesConfig,
     functionName: "publicMintOffsetBlocks",
+  })
+
+  const { data: mintQuotaRemaining } = useContractRead({
+    ...kaleidoscopesConfig,
+    functionName: "mintQuotaRemaining",
+    args: [address!],
+    enabled: address !== undefined,
   })
 
   const hasAllowListStarted =
@@ -305,11 +312,19 @@ export function LandingPage() {
     let _canMint = true
     if (!signer || !maxSupply || !totalSupply) {
       // Variables not loaded yet
+      console.log("signer", signer)
+      console.log("maxSupply", maxSupply)
+      console.log("totalSupply", totalSupply)
       _canMint = false
       console.log("variables not loaded yet")
     } else if (maxSupply.lte(totalSupply)) {
       _canMint = false
       console.log("max supply reached")
+    } else if (mintQuotaRemaining) {
+      if (mintQuotaRemaining.lte(0)) {
+        _canMint = false
+        console.log("mint quota reached")
+      }
     }
 
     if (_canMint) {

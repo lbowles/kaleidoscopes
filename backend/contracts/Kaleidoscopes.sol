@@ -215,6 +215,10 @@ contract Kaleidoscopes is ERC721A, Ownable {
     mint(_quantity);
   }
 
+  function mintQuotaRemaining(address _wallet) external view returns (uint256) {
+    return maxMintPerWallet - _numberMinted(_wallet);
+  }
+
   function _startTokenId() internal view virtual override returns (uint256) {
     return 1;
   }

@@ -64,14 +64,16 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
   }, [hasPublicSaleStarted, hasAllowListStarted])
 
   return (
-    <div className="flex justify-center text-center mt-[90px] mb-p[90px] z-1 pl-10 pr-10 z-10  ">
+    <div className="flex justify-center text-center mt-[90px] mb-[90px] z-1 pl-10 pr-10 z-10  ">
       <div className="w-[500px]">
-        {/* TODO: remove ! */}
-        {!hasAllowListStarted ? (
+        {hasAllowListStarted ? (
           <>
-            <p className="text-gray-100 text-center text-sm">
-              {`Starts in ${formatTimeString(days, hours, minutes, seconds)}`}
-            </p>
+            <p className="text-gray-100 text-center text-sm">{`${formatTimeString(
+              days,
+              hours,
+              minutes,
+              seconds,
+            )} left`}</p>
             <div className="flex justify-center">
               <div className="w-[290px]">
                 <div className="flex">

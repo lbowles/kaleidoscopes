@@ -100,10 +100,11 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
                   <div className="flex justify-center">
                     <span>Allowlist mint</span>
                     <a
-                      className="pt-1 pl-2"
+                      className="pt-1 -ml-[100px]"
                       onClick={() => {
                         playGeneralClick()
                       }}
+                      href="#allowlist-anchor"
                     >
                       <img src={allowlistHelpBtn} className="w-[13px]"></img>
                     </a>
@@ -125,7 +126,17 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
                     <img src={countdownLine} alt="countdownLine" className="py-2"></img>
                   </div>
                   <div className="text-gray-100  text-sm flex justify-between">
-                    <span>Allowlist mint </span> <span>Public mint</span>
+                    <span>Allowlist mint </span>{" "}
+                    <a
+                      className="pt-1 -ml-[100px]"
+                      onClick={() => {
+                        playGeneralClick()
+                      }}
+                      href="#allowlist-anchor"
+                    >
+                      <img src={allowlistHelpBtn} className="w-[13px]"></img>
+                    </a>
+                    <span>Public mint</span>
                   </div>
                 </div>
               </div>

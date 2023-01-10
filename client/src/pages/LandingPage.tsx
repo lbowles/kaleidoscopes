@@ -237,7 +237,7 @@ export function LandingPage() {
         return
       }
 
-      const blockTime = await getBlockTime(provider)
+      const blockTime = await getBlockTime(provider, 5)
       const allowlistDate = await futureBlockToDate(provider, allowlistMintBlock.toNumber(), blockTime)
       const publicDate = await futureBlockToDate(
         provider,
@@ -248,7 +248,7 @@ export function LandingPage() {
       setAllowListDate(allowlistDate)
       setPublicDate(publicDate)
     })()
-  }, [allowlistMintBlock, publicMintBlockOffset])
+  }, [allowlistMintBlock, publicMintBlockOffset, latestBlockNumber])
 
   useEffect(() => {
     if (address && merkleTree) {

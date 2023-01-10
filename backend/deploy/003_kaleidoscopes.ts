@@ -28,7 +28,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts()
   const signers = await ethers.getSigners()
 
-  const blockTime = await getBlockTime()
+  let blockTime: number
+  if (hre.network.name === "hardhat") {
+    blockTime = await getBlockTime(2)
+  } else {
+    blockTime = await getBlockTime()
+  }
 
   let name = "Kaleidoscopes"
   let symbol = "KLDSCP"

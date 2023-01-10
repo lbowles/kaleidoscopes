@@ -19,7 +19,11 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
   }
 })
 
-let hardhatNetwork: HardhatNetworkUserConfig = {}
+let hardhatNetwork: HardhatNetworkUserConfig = {
+  mining: {
+    interval: 2000,
+  },
+}
 
 if (process.env.FORK) {
   if (process.env.FORK === "mainnet") {

@@ -83,6 +83,10 @@ contract Renderer {
     return palette;
   }
 
+  function colorPaletteForTokenId(uint256 _tokenId) external pure returns (ColorPalette memory palette) {
+    return colorPaletteForKaleidescope(kaleidoscopeForTokenId(_tokenId));
+  }
+
   function kaleidoscopeForTokenId(uint256 _tokenId) public pure returns (Kaleidoscope memory kaleidoscope) {
     kaleidoscope.tokenId = _tokenId;
     kaleidoscope.repetitions = utils.randomRange(_tokenId, "repetitions", 3, 20);
@@ -370,7 +374,7 @@ contract Renderer {
     svg = string.concat(
       svg,
       "</defs>",
-      '<rect width="',
+      '<rect id="background" width="',
       utils.uint2str(SIZE),
       '" height="',
       utils.uint2str(SIZE),

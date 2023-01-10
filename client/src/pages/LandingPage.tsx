@@ -16,7 +16,7 @@ import {
 } from "wagmi"
 import { getMerkleProof, getTree } from "../../../backend/common/merkle"
 import allowlistAddresses from "../../../backend/common/snapshot.json"
-import { Kaleidoscopes__factory } from "../../../backend/types"
+import { Kaleidoscopes__factory, Utils } from "../../../backend/types"
 import deployments from "../../src/deployments.json"
 import loading from ".././img/loading.svg"
 import kaleidoscopePlaceholder from ".././img/testKaleidoscope.svg"
@@ -39,6 +39,13 @@ const kaleidoscopesConfig = {
 const rendererConfig = {
   address: deployments.contracts.Renderer.address,
   abi: deployments.contracts.Renderer.abi,
+}
+
+function rendererColorToString(color?: Utils.HSLStruct) {
+  if (!color) {
+    return "none"
+  }
+  return `hsl(${color.h}, ${color.s}%, ${color.l}%)`
 }
 
 function getEtherscanBaseURL(chainId: string) {
@@ -120,6 +127,13 @@ export function LandingPage() {
   const { data: sampleSvg, isLoading: isSampleSvgLoading } = useContractRead({
     ...rendererConfig,
     functionName: "render",
+    // Random number
+    args: [BigNumber.from(`${randomTokenId}`)],
+  })
+
+  const { data: sampleColorPalette, isLoading: isSampleColorPaletteLoading } = useContractRead({
+    ...rendererConfig,
+    functionName: "colorPaletteForTokenId",
     // Random number
     args: [BigNumber.from(`${randomTokenId}`)],
   })
@@ -362,10 +376,44 @@ export function LandingPage() {
     }
   }, [signer, maxSupply, totalSupply, hasAllowListStarted, merkleProof, hasPublicSaleStarted])
 
+  useEffect(() => {
+    console.log(sampleSvg)
+    if (sampleSvg) {
+      const svg = new Blob([sampleSvg], { type: "image/svg+xml" })
+      const url = URL.createObjectURL(svg)
+      setHeroSVG(url)
+    }
+  }, [sampleSvg])
+
+  const overrideAccentColor = isViewingSample ? rendererColorToString(sampleColorPalette?.primaryColorHsl) : undefined
+
+  const buttonStyle = isViewingSample
+    ? {
+        color: overrideAccentColor,
+        borderColor: overrideAccentColor,
+      }
+    : {}
+
   return (
-    <div>
-      <div className="flex justify-center w-screen max-w-screen ">
-        <img src={kaleidoscopePlaceholder} className="mt-[220px] w-[300px]"></img>
+    <div
+      style={{
+        backgroundColor: isViewingSample ? rendererColorToString(sampleColorPalette?.backgroundColorHsl) : "none",
+      }}
+    >
+      <div
+        className="flex justify-center w-screen max-w-screen "
+        onClick={() => {
+          setRandomTokenId(Math.floor(Math.random() * 10000) + 1001)
+          setIsViewingSample(true)
+        }}
+      >
+        <div className="mt-[220px] w-[300px] h-[300px]">
+          {isSampleSvgLoading || isSampleColorPaletteLoading ? (
+            <p>Loading</p>
+          ) : (
+            <img src={!isViewingSample ? kaleidoscopePlaceholder : heroSVG} className="w-[300px]"></img>
+          )}
+        </div>
       </div>
       <div className="flex justify-between py-5 px-7  absolute w-full top-2 ">
         <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
@@ -384,7 +432,7 @@ export function LandingPage() {
       {mintPrice && maxSupply && totalSupply !== undefined && (
         <div className="flex justify-center  mt-6 z-1 pl-10 pr-10 z-10 relative">
           {isMintSignLoading ? (
-            <button className={style.claimBtn}>
+            <button className={style.claimBtn} style={buttonStyle}>
               <div className="flex flex-row">
                 <img src={loading} className="animate-spin w-4"></img>‎ Confirm in wallet
               </div>
@@ -399,7 +447,7 @@ export function LandingPage() {
                 playGeneralClick()
               }}
             >
-              <button className={style.claimBtn}>
+              <button className={style.claimBtn} style={buttonStyle}>
                 <div className="flex flex-row">
                   <img src={loading} className="animate-spin w-4"></img>‎ Transaction pending
                 </div>
@@ -409,6 +457,7 @@ export function LandingPage() {
             <div>
               <button
                 className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
+                style={{ color: overrideAccentColor }}
                 onClick={() => {
                   handleMintClick(-1)
                 }}
@@ -417,6 +466,7 @@ export function LandingPage() {
               </button>
               <button
                 className={style.claimBtn}
+                style={buttonStyle}
                 disabled={!canMint}
                 onClick={() => {
                   mint?.()
@@ -429,6 +479,7 @@ export function LandingPage() {
               </button>
               <button
                 className="text-xl font-bold hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
+                style={{ color: overrideAccentColor }}
                 onClick={() => {
                   handleMintClick(1)
                 }}

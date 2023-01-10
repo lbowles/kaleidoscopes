@@ -100,8 +100,8 @@ export function LandingPage() {
   const [merkleTree, setMerkleTree] = useState<MerkleTree>()
   const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
 
-  const [allowListDate, setAllowListDate] = useState<number>()
-  const [publicDate, setPublicDate] = useState<number>()
+  const [allowListDate, setAllowListDate] = useState<Date>()
+  const [publicDate, setPublicDate] = useState<Date>()
 
   const [canMint, setCanMint] = useState<boolean>(false)
 
@@ -231,8 +231,8 @@ export function LandingPage() {
         blockTime,
       )
 
-      setAllowListDate(allowlistDate.getTime())
-      setPublicDate(publicDate.getTime())
+      setAllowListDate(allowlistDate)
+      setPublicDate(publicDate)
     })()
   }, [allowlistMintBlock, publicMintBlockOffset])
 
@@ -428,7 +428,7 @@ export function LandingPage() {
       {allowListDate && publicDate && (
         <Countdown allowlistTime={allowListDate} publicTime={publicDate} playGeneralClick={playGeneralClick} />
       )}
-      <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
+      <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>

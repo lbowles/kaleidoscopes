@@ -419,7 +419,6 @@ contract Renderer {
 
   function render(uint256 _tokenId) public pure returns (string memory) {
     Kaleidoscope memory kaleidoscope = kaleidoscopeForTokenId(_tokenId);
-    kaleidoscope.hasSpecialTrait = true;
     ColorPalette memory palette = colorPaletteForKaleidescope(kaleidoscope);
     string memory svg = getKaleidoscopeSVG(kaleidoscope, palette);
 

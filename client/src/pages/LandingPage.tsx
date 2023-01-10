@@ -1,5 +1,5 @@
 import { ConnectButton, useAddRecentTransaction } from "@rainbow-me/rainbowkit"
-import { BigNumber, ethers } from "ethers"
+import { BigNumber } from "ethers"
 import { formatEther } from "ethers/lib/utils.js"
 import MerkleTree from "merkletreejs"
 import { useEffect, useState } from "react"
@@ -76,6 +76,8 @@ export function LandingPage() {
   })
 
   // State variables
+  const [isViewingSample, setIsViewingSample] = useState(false)
+  const [heroSVG, setHeroSVG] = useState<string>()
 
   const [mintCount, setMintCount] = useState<number>(1)
   const [mintedTokens, setMintedTokens] = useState<number[]>([])
@@ -111,11 +113,11 @@ export function LandingPage() {
     }
   }
 
-  const [randomTokenId, setRandomTokenId] = useState<number>(Math.round(Math.random() * 10000) + 1001)
+  const [randomTokenId, setRandomTokenId] = useState<number>(Math.floor(Math.random() * 10000) + 1001)
 
   // Contract reads
 
-  const { data: sampleSvg, isLoading: sampleSvgLoading } = useContractRead({
+  const { data: sampleSvg, isLoading: isSampleSvgLoading } = useContractRead({
     ...rendererConfig,
     functionName: "render",
     // Random number
@@ -479,13 +481,19 @@ export function LandingPage() {
           </div>
         </div>
       )}
-      {allowListDate && publicDate && !hasPublicSaleStarted && (
-        <Countdown
-          allowlistTime={allowListDate.getTime()}
-          publicTime={publicDate.getTime()}
-          playGeneralClick={playGeneralClick}
-        />
-      )}
+      {allowListDate &&
+        publicDate &&
+        hasPublicSaleStarted !== undefined &&
+        !hasPublicSaleStarted &&
+        hasAllowListStarted !== undefined && (
+          <Countdown
+            allowlistTimeEstimate={allowListDate.getTime()}
+            publicTimeEstimate={publicDate.getTime()}
+            hasAllowlistStarted={hasAllowListStarted}
+            hasPublicStarted={hasPublicSaleStarted}
+            playGeneralClick={playGeneralClick}
+          />
+        )}
       <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative pt-[90px]">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.

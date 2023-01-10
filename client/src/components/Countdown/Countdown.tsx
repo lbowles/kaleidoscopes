@@ -4,12 +4,19 @@ import allowlistHelpBtn from "../../img/allowlistHelpBtn.svg"
 import countdownLine from "../../img/countdownLine.svg"
 
 type ICoundown = {
-  allowlistTime: number
-  publicTime: number
+  allowlistTimeEstimate: number
+  publicTimeEstimate: number
+  hasAllowlistStarted: boolean
+  hasPublicStarted: boolean
   playGeneralClick: () => void
 }
 
 function formatTimeString(days: number, hours: number, minutes: number, seconds: number) {
+  days = Math.max(0, days)
+  hours = Math.max(0, hours)
+  minutes = Math.max(0, minutes)
+  seconds = Math.max(0, seconds)
+
   const textDays = `${days.toString().padStart(2, "0")} day${days != 1 ? "s" : ""},`
   const textHours = ` ${hours.toString().padStart(2, "0")} hour${hours != 1 ? "s" : ""},`
   const textMinutes = ` ${minutes.toString().padStart(2, "0")} minute${minutes != 1 ? "s" : ""},`
@@ -27,7 +34,13 @@ function formatTimeString(days: number, hours: number, minutes: number, seconds:
   return value + textSeconds
 }
 
-export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoundown) => {
+export const Countdown = ({
+  allowlistTimeEstimate,
+  publicTimeEstimate,
+  hasAllowlistStarted,
+  hasPublicStarted,
+  playGeneralClick,
+}: ICoundown) => {
   const [targetTime, setTargetTime] = useState(new Date().getTime())
 
   const [days, hours, minutes, seconds] = useCountdown(targetTime)
@@ -35,17 +48,12 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
   const [percentBar, setPercentBar] = useState(0)
   const [currentTime, setCurrentTime] = useState(new Date().getTime())
 
-  const [hasAllowListStarted, setHasAllowListStarted] = useState(false)
-  const [hasPublicSaleStarted, setHasPublicSaleStarted] = useState(false)
-
   useEffect(() => {
     let current = new Date().getTime()
     setCurrentTime(current)
-    setHasAllowListStarted(currentTime > allowlistTime)
-    setHasPublicSaleStarted(currentTime > publicTime)
 
-    let betweenAllowPublic = Math.abs(publicTime - allowlistTime)
-    let betweenAllowCurrent = Math.abs(current - allowlistTime)
+    let betweenAllowPublic = Math.abs(publicTimeEstimate - allowlistTimeEstimate)
+    let betweenAllowCurrent = Math.abs(current - allowlistTimeEstimate)
 
     let percentBar = (betweenAllowCurrent / betweenAllowPublic) * 100
     if (percentBar >= 100) {
@@ -55,17 +63,17 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
   }, [seconds])
 
   useEffect(() => {
-    if (hasAllowListStarted) {
-      setTargetTime(publicTime)
+    if (hasAllowlistStarted) {
+      setTargetTime(publicTimeEstimate)
     } else {
-      setTargetTime(allowlistTime)
+      setTargetTime(allowlistTimeEstimate)
     }
-  }, [publicTime, allowlistTime, hasAllowListStarted, hasPublicSaleStarted])
+  }, [publicTimeEstimate, allowlistTimeEstimate, hasAllowlistStarted, hasPublicStarted])
 
   return (
     <div className="flex justify-center text-center mt-[90px]  z-1 pl-10 pr-10 z-10  ">
       <div className="w-[500px]">
-        {hasAllowListStarted ? (
+        {hasAllowlistStarted ? (
           <>
             <p className="text-gray-100 text-center text-sm">{`${formatTimeString(
               days,
@@ -115,7 +123,7 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
             </div>
           </>
         ) : (
-          !hasPublicSaleStarted && (
+          !hasPublicStarted && (
             <>
               <p className="text-gray-100 text-center text-sm">
                 {`Starts in ${formatTimeString(days, hours, minutes, seconds)}`}

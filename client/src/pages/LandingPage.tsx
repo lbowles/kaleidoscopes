@@ -100,8 +100,8 @@ export function LandingPage() {
   const [merkleTree, setMerkleTree] = useState<MerkleTree>()
   const [merkleProof, setMerkleProof] = useState<`0x${string}`[]>()
 
-  const [allowListDate, setAllowListDate] = useState<number>()
-  const [publicDate, setPublicDate] = useState<number>()
+  const [allowListDate, setAllowListDate] = useState<Date>()
+  const [publicDate, setPublicDate] = useState<Date>()
 
   const [canMint, setCanMint] = useState<boolean>(false)
 
@@ -112,6 +112,20 @@ export function LandingPage() {
   const handleAmountClickDown = () => {
     if (mintCount > 1) setPlaybackRate(playbackRate - 0.4)
     playSmallClick()
+  }
+
+  const handleMintClick = (value: number) => {
+    if (value === 1) {
+      if (mintCount + 1 > 20) {
+        playSmallClick()
+      } else {
+        setMintCount(mintCount + 1)
+        handleAmountClickUp()
+      }
+    } else {
+      setMintCount(Math.max(mintCount - 1, 1))
+      handleAmountClickDown()
+    }
   }
 
   const [randomTokenId, setRandomTokenId] = useState<number>(Math.round(Math.random() * 10000) + 1001)
@@ -231,8 +245,8 @@ export function LandingPage() {
         blockTime,
       )
 
-      setAllowListDate(allowlistDate.getTime())
-      setPublicDate(publicDate.getTime())
+      setAllowListDate(allowlistDate)
+      setPublicDate(publicDate)
     })()
   }, [allowlistMintBlock, publicMintBlockOffset])
 
@@ -352,8 +366,7 @@ export function LandingPage() {
               <button
                 className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
-                  setMintCount(Math.max(mintCount - 1, 1))
-                  handleAmountClickDown()
+                  handleMintClick(-1)
                 }}
               >
                 –
@@ -373,8 +386,7 @@ export function LandingPage() {
               <button
                 className="text-xl font-bold hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
-                  setMintCount(mintCount + 1)
-                  handleAmountClickUp()
+                  handleMintClick(1)
                 }}
               >
                 +
@@ -428,7 +440,7 @@ export function LandingPage() {
       {allowListDate && publicDate && (
         <Countdown allowlistTime={allowListDate} publicTime={publicDate} playGeneralClick={playGeneralClick} />
       )}
-      <div className="flex justify-center  mt-[90px] z-1 pl-10 pr-10 z-10 relative ">
+      <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative ">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>

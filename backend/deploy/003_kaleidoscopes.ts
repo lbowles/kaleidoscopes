@@ -5,7 +5,7 @@ import readline from "readline"
 import { getMerkleRoot, getTree } from "../common/merkle"
 import { waitForBlocks } from "../test/helpers"
 import { Kaleidoscopes__factory } from "../types"
-import { getBlockTime, futureBlockToDate } from "./../common/blocktime"
+import { getBlockTime, futureBlockToDate, futureDateToBlock } from "./../common/blocktime"
 
 function userInput(query: string): Promise<string> {
   const rl = readline.createInterface({
@@ -42,7 +42,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (hre.network.name !== "mainnet") {
     name = "Test"
     symbol = "TEST"
-    allowListStartBlockNumber = currentBlock
+    const threeMinutesInTheFuture = new Date(new Date().getTime() + 3 * 60 * 1000)
+    allowListStartBlockNumber = await futureDateToBlock(threeMinutesInTheFuture, blockTime)
     publicMintOffsetBlocks = Math.ceil((1 * 60) / blockTime) // 1 minute
   }
 
@@ -96,7 +97,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const trigonometry = await deployments.get("Trigonometry")
   const renderer = await deployments.get("Renderer")
 
-  const deployResult = await deploy("Kaleidoscopes", {
+  await deploy("Kaleidoscopes", {
     from: deployer,
     log: true,
     libraries: {

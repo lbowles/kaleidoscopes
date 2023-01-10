@@ -12,3 +12,10 @@ export async function futureBlockToDate(blockNumber: number, blockTime: number =
   const targetBlockTimestamp = latestBlock.timestamp + blocksUntilTarget * blockTime
   return new Date(targetBlockTimestamp * 1000)
 }
+
+export async function futureDateToBlock(date: Date, blockTime: number = 12): Promise<number> {
+  const latestBlock = await ethers.provider.getBlock("latest")
+  const { number: latestBlockNumber, timestamp: latestBlockTimestamp } = latestBlock
+  const blocksUntilTarget = Math.ceil((date.getTime() / 1000 - latestBlockTimestamp) / blockTime)
+  return latestBlockNumber + blocksUntilTarget
+}

@@ -114,6 +114,20 @@ export function LandingPage() {
     playSmallClick()
   }
 
+  const handleMintClick = (value: number) => {
+    if (value === 1) {
+      if (mintCount + 1 > 20) {
+        playSmallClick()
+      } else {
+        setMintCount(mintCount + 1)
+        handleAmountClickUp()
+      }
+    } else {
+      setMintCount(Math.max(mintCount - 1, 1))
+      handleAmountClickDown()
+    }
+  }
+
   const [randomTokenId, setRandomTokenId] = useState<number>(Math.round(Math.random() * 10000) + 1001)
 
   // Contract reads
@@ -352,8 +366,7 @@ export function LandingPage() {
               <button
                 className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
-                  setMintCount(Math.max(mintCount - 1, 1))
-                  handleAmountClickDown()
+                  handleMintClick(-1)
                 }}
               >
                 –
@@ -373,8 +386,7 @@ export function LandingPage() {
               <button
                 className="text-xl font-bold hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
                 onClick={() => {
-                  setMintCount(mintCount + 1)
-                  handleAmountClickUp()
+                  handleMintClick(1)
                 }}
               >
                 +

@@ -443,10 +443,10 @@ export function LandingPage() {
           </div>
         </div>
       )}
-      {allowListDate && publicDate && (
+      {allowListDate && publicDate && !hasPublicSaleStarted && (
         <Countdown allowlistTime={allowListDate} publicTime={publicDate} playGeneralClick={playGeneralClick} />
       )}
-      <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative ">
+      <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative pt-[90px]">
         <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
           Fully on-chain, procedurally generated, animated kaleidoscopes.
         </p>

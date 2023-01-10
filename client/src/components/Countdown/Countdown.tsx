@@ -29,7 +29,10 @@ function formatTimeString(days: number, hours: number, minutes: number, seconds:
 }
 
 export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoundown) => {
-  const tempAllowListTime = allowlistTime.getTime()
+  // const tempAllowListTime = allowlistTime.getTime()
+  // const tempPublicTime = publicTime.getTime()
+
+  const tempAllowListTime = new Date("").getTime()
   const tempPublicTime = publicTime.getTime()
 
   const [targetTime, setTargetTime] = useState(tempAllowListTime)
@@ -64,7 +67,7 @@ export const Countdown = ({ allowlistTime, publicTime, playGeneralClick }: ICoun
   }, [hasPublicSaleStarted, hasAllowListStarted])
 
   return (
-    <div className="flex justify-center text-center mt-[90px] mb-[90px] z-1 pl-10 pr-10 z-10  ">
+    <div className="flex justify-center text-center mt-[90px]  z-1 pl-10 pr-10 z-10  ">
       <div className="w-[500px]">
         {hasAllowListStarted ? (
           <>

@@ -52,29 +52,6 @@ function getOpenSeaLink(tokenId: string | number) {
   }/${tokenId}`
 }
 
-async function getBlockTime(provider: ethers.providers.BaseProvider, samples: number = 100): Promise<number> {
-  const block = await provider.getBlock("latest")
-  const previousBlock = await provider.getBlock(block.number - samples)
-  return (block.timestamp - previousBlock.timestamp) / samples
-}
-async function blockToDate(
-  provider: ethers.providers.BaseProvider,
-  blockNumber: number,
-  blockTime: number = 12,
-): Promise<Date> {
-  const latestBlock = await provider.getBlock("latest")
-  const { number: latestBlockNumber } = latestBlock
-
-  if (blockNumber > latestBlockNumber) {
-    const blocksUntilTarget = blockNumber - latestBlockNumber
-    const targetBlockTimestamp = latestBlock.timestamp + blocksUntilTarget * blockTime
-    return new Date(targetBlockTimestamp * 1000)
-  } else {
-    const block = await provider.getBlock(blockNumber)
-    return new Date(block.timestamp * 1000)
-  }
-}
-
 const etherscanBaseURL = getEtherscanBaseURL(deployments.chainId)
 
 export function LandingPage() {
@@ -108,9 +85,6 @@ export function LandingPage() {
 
   const [allowListDate, setAllowListDate] = useState<Date>()
   const [publicDate, setPublicDate] = useState<Date>()
-
-  const [hasAllowListStarted, setHasAllowListStarted] = useState(false)
-  const [hasPublicSaleStarted, setHasPublicStarted] = useState(false)
 
   const [canMint, setCanMint] = useState<boolean>(false)
 
@@ -181,6 +155,18 @@ export function LandingPage() {
     enabled: address !== undefined,
   })
 
+  const { data: hasAllowListStarted } = useContractRead({
+    ...kaleidoscopesConfig,
+    functionName: "hasAllowlistSaleStarted",
+    watch: true,
+  })
+
+  const { data: hasPublicSaleStarted } = useContractRead({
+    ...kaleidoscopesConfig,
+    functionName: "hasPublicSaleStarted",
+    watch: true,
+  })
+
   // const hasAllowListStarted = true
   // const hasPublicSaleStarted = true
 
@@ -249,21 +235,57 @@ export function LandingPage() {
         return
       }
 
-      const blockTime = await getBlockTime(provider, 5)
-      const estimatedAllowlistDate = await blockToDate(provider, allowlistMintBlock.toNumber(), blockTime)
-      const estimatedPublicDate = await blockToDate(
-        provider,
-        allowlistMintBlock.add(publicMintBlockOffset).toNumber(),
-        blockTime,
-      )
+      if (hasPublicSaleStarted) {
+        return
+      }
 
-      setHasAllowListStarted(latestBlockNumber > allowlistMintBlock?.toNumber())
-      setHasPublicStarted(latestBlockNumber > allowlistMintBlock.add(publicMintBlockOffset).toNumber())
+      const samples = 5
+      const [latestBlock, previousBlock] = await Promise.all([
+        provider.getBlock(latestBlockNumber),
+        provider.getBlock(latestBlockNumber - samples),
+      ])
+      const blockTime = (latestBlock.timestamp - previousBlock.timestamp) / samples
 
-      setAllowListDate(estimatedAllowlistDate)
-      setPublicDate(estimatedPublicDate)
+      if (hasAllowListStarted && allowListDate) {
+        // Allowlist started
+        const estimatedPublicDate = new Date(
+          allowListDate.getTime() + publicMintBlockOffset.toNumber() * blockTime * 1000,
+        )
+        setPublicDate(estimatedPublicDate)
+        console.log("time left", (estimatedPublicDate.getTime() - new Date().getTime()) / 1000, "seconds")
+      } else {
+        // Pre-mint
+        const estimatedAllowlistDate = new Date(
+          (latestBlock.timestamp + (allowlistMintBlock.toNumber() - latestBlockNumber) * blockTime) * 1000,
+        )
+        const estimatedPublicDate = new Date(
+          estimatedAllowlistDate.getTime() + publicMintBlockOffset.toNumber() * blockTime * 1000,
+        )
+
+        console.log("time left", (estimatedAllowlistDate.getTime() - new Date().getTime()) / 1000, "seconds")
+
+        setAllowListDate(estimatedAllowlistDate)
+        setPublicDate(estimatedPublicDate)
+      }
     })()
-  }, [allowlistMintBlock, publicMintBlockOffset, latestBlockNumber])
+  }, [allowlistMintBlock, publicMintBlockOffset, latestBlockNumber, hasPublicSaleStarted, hasAllowListStarted])
+
+  useEffect(() => {
+    if (!allowlistMintBlock || !publicMintBlockOffset || !latestBlockNumber) {
+      return
+    }
+
+    ;(async () => {
+      if (hasPublicSaleStarted && publicDate === undefined) {
+        const publicSaleBlock = await provider.getBlock(allowlistMintBlock.add(publicMintBlockOffset).toNumber())
+        setPublicDate(new Date(publicSaleBlock.timestamp * 1000))
+      }
+      if (hasAllowListStarted && allowListDate === undefined) {
+        const allowlistSaleBlock = await provider.getBlock(allowlistMintBlock.toNumber())
+        setAllowListDate(new Date(allowlistSaleBlock.timestamp * 1000))
+      }
+    })()
+  }, [hasPublicSaleStarted, hasAllowListStarted, latestBlockNumber])
 
   useEffect(() => {
     if (address && merkleTree) {
@@ -302,15 +324,10 @@ export function LandingPage() {
     }
   }, [mintTx])
 
-  // useEffect(() => {
-  //   if (mintedTokens.length > 0) {
-  //     setHasAllowListStarted(false)
-  //   } else {
-  //     setHasAllowListStarted(true)
-  //   }
-  // }, [merkleProof])
-
   useEffect(() => {
+    console.log("hasAllowListStarted", hasAllowListStarted)
+    console.log("hasPublicSaleStarted", hasPublicSaleStarted)
+
     let _canMint = true
     if (!signer || !maxSupply || !totalSupply) {
       // Variables not loaded yet

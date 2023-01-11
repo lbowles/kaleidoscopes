@@ -44,7 +44,7 @@ export function Traits() {
           <div>
             <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center">
               <img src={andMore} alt="Number Of Reflections" className="w-[20px] mr-2"></img>
-              <span>and more...</span>
+              <span>And more...</span>
             </div>
           </div>
         </div>

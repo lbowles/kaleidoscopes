@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.fd7e6f79.css",
-    "main.js": "/static/js/main.90779a22.js",
+    "main.css": "/static/css/main.edd6fb8b.css",
+    "main.js": "/static/js/main.e9cc1766.js",
     "static/js/510.468e6322.chunk.js": "/static/js/510.468e6322.chunk.js",
     "static/js/89.a6b89c7b.chunk.js": "/static/js/89.a6b89c7b.chunk.js",
     "static/js/389.e89ee850.chunk.js": "/static/js/389.e89ee850.chunk.js",
@@ -32,7 +32,7 @@
     "static/js/127.b7eb5246.chunk.js": "/static/js/127.b7eb5246.chunk.js",
     "static/js/836.869556ca.chunk.js": "/static/js/836.869556ca.chunk.js",
     "static/js/550.5ef55949.chunk.js": "/static/js/550.5ef55949.chunk.js",
-    "static/media/success.mp3": "/static/media/success.ae8c3fb3850fc7a10056.mp3",
+    "static/media/success.mp3": "/static/media/success.5f72ce7a5e15451b621b.mp3",
     "static/media/mintClickSound.mp3": "/static/media/mintClickSound.6766a0341d7b09bed799.mp3",
     "static/media/background.svg": "/static/media/background.a815a5cf1878a49da182.svg",
     "static/media/smallClick.mp3": "/static/media/smallClick.7972ea5468d3472e180e.mp3",
@@ -50,7 +50,7 @@
     "static/media/loading.svg": "/static/media/loading.7346dba78613dccee895b84272a6cc8d.svg"
   },
   "entrypoints": [
-    "static/css/main.fd7e6f79.css",
-    "static/js/main.90779a22.js"
+    "static/css/main.edd6fb8b.css",
+    "static/js/main.e9cc1766.js"
   ]
 }

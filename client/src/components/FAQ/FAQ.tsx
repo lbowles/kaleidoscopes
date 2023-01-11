@@ -17,7 +17,7 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
             <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
               Kaleidoscopes is the second instalment of fully on-chain collectibles by the team that brought you{" "}
               {/* TODO: Style properly */}
-              <a href="https://onchainsolar.systems" target="_blank" rel="noopener noreferrer">
+              <a href="https://onchainsolar.systems" target="_blank" rel="noopener noreferrer" className="underline">
                 Solar Systems
               </a>
               . This new collection features fully on-chain, procedurally generated, animated kaleidescopes. They are

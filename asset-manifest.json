@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.edd6fb8b.css",
-    "main.js": "/static/js/main.bd1898c6.js",
+    "main.css": "/static/css/main.cae80dcb.css",
+    "main.js": "/static/js/main.316cd88f.js",
     "static/js/510.468e6322.chunk.js": "/static/js/510.468e6322.chunk.js",
     "static/js/89.a6b89c7b.chunk.js": "/static/js/89.a6b89c7b.chunk.js",
     "static/js/389.e89ee850.chunk.js": "/static/js/389.e89ee850.chunk.js",
@@ -43,14 +43,16 @@
     "static/media/allowlistHelpBtn.svg": "/static/media/allowlistHelpBtn.b514b1501a6210f1827e79ac2d6eb6df.svg",
     "static/media/github.svg": "/static/media/github.a9958c8c4f5dc7abcec3fd09c44c3fa5.svg",
     "index.html": "/index.html",
-    "static/media/inputShapes.svg": "/static/media/inputShapes.11394b7aa0968967d3b2837ab4734711.svg",
     "static/media/noReflections.svg": "/static/media/noReflections.8dee301e114d2b690a4759348d9d92e1.svg",
     "static/media/countdownLine.svg": "/static/media/countdownLine.5925e78f0476cfe234836e8dabbffd17.svg",
-    "static/media/maxSaturation.svg": "/static/media/maxSaturation.438fec7df905cf347b8c4cb4303a67c8.svg",
-    "static/media/loading.svg": "/static/media/loading.7346dba78613dccee895b84272a6cc8d.svg"
+    "static/media/animation.svg": "/static/media/animation.917528199303aa8f5ea7ed4739e03a05.svg",
+    "static/media/andMore.svg": "/static/media/andMore.858c4fb138c9ad32626e85b2276be85d.svg",
+    "static/media/loading.svg": "/static/media/loading.7346dba78613dccee895b84272a6cc8d.svg",
+    "static/media/inputShapes.svg": "/static/media/inputShapes.cdb358c364494fb0f2ce57df201362ee.svg",
+    "static/media/halo.svg": "/static/media/halo.37b572b5588a24ef33ac68813d7d9807.svg"
   },
   "entrypoints": [
-    "static/css/main.edd6fb8b.css",
-    "static/js/main.bd1898c6.js"
+    "static/css/main.cae80dcb.css",
+    "static/js/main.316cd88f.js"
   ]
 }

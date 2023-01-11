@@ -81,7 +81,7 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
               </a>{" "}
               (approximately 4pm UTC on Friday, 13 January 2023). The allowlist mint will last{" "}
               <a
-                href="https://etherscan.io/block/countdown/16400000"
+                href="https://etherscan.io/block/countdown/16399400"
                 target="_blank"
                 className="underline"
                 rel="noopener noreferrer"
@@ -89,9 +89,9 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
                   playGeneralClick()
                 }}
               >
-                900 blocks
+                300 blocks
               </a>{" "}
-              (approximately 3 hours) after which the public mint will be open and anyone can mint.
+              (approximately 1 hour) after which the public mint will be open and anyone can mint.
             </p>
           </div>
 

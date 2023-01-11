@@ -439,8 +439,26 @@ export function LandingPage() {
           )}
         </div>
       )}
+      {allowListDate &&
+        publicDate &&
+        hasPublicSaleStarted !== undefined &&
+        !hasPublicSaleStarted &&
+        hasAllowListStarted !== undefined && (
+          <Countdown
+            allowlistTimeEstimate={allowListDate.getTime()}
+            publicTimeEstimate={publicDate.getTime()}
+            hasAllowlistStarted={hasAllowListStarted}
+            hasPublicStarted={hasPublicSaleStarted}
+            playGeneralClick={playGeneralClick}
+          />
+        )}
+      <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative pt-[90px]">
+        <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
+          Fully on-chain, procedurally generated, animated kaleidoscopes.
+        </p>
+      </div>
       {mintTx && mintTx.status && (
-        <div className="-mb-[62px] h-[50px] text-gray-100">
+        <div className="absolute top-[690px] w-full text-gray-100">
           <div className="flex justify-center  mt-3 z-1 pl-10 pr-10 z-10 relative  h-4">
             <div>
               <a
@@ -481,24 +499,6 @@ export function LandingPage() {
           </div>
         </div>
       )}
-      {allowListDate &&
-        publicDate &&
-        hasPublicSaleStarted !== undefined &&
-        !hasPublicSaleStarted &&
-        hasAllowListStarted !== undefined && (
-          <Countdown
-            allowlistTimeEstimate={allowListDate.getTime()}
-            publicTimeEstimate={publicDate.getTime()}
-            hasAllowlistStarted={hasAllowListStarted}
-            hasPublicStarted={hasPublicSaleStarted}
-            playGeneralClick={playGeneralClick}
-          />
-        )}
-      <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative pt-[90px]">
-        <p className="font-medium text-gray-100 text-center text-xl w-[360px] min-w-[360px]">
-          Fully on-chain, procedurally generated, animated kaleidoscopes.
-        </p>
-      </div>
       <Links
         etherscanBaseURL={etherscanBaseURL}
         deployAddress={deployments.contracts.Kaleidoscopes.address}

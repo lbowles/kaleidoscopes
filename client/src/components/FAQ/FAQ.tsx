@@ -16,7 +16,6 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
             </div>
             <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
               Kaleidoscopes is the second instalment of fully on-chain collectibles by the team that brought you{" "}
-              {/* TODO: Style properly */}
               <a href="https://onchainsolar.systems" target="_blank" rel="noopener noreferrer" className="underline">
                 Solar Systems
               </a>
@@ -68,10 +67,31 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
               <span>What is the mint schedule?</span>
             </div>
             <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
-              {/* TODO: Add final dates and times */}
-              Allowlisted addresses can mint from block 16399100 (approximately 4pm UTC on Friday, 13 January 2023). The
-              allowlist mint will last 900 blocks (approximately 3 hours) after which the public mint will be open and
-              anyone can mint.
+              Allowlisted addresses can mint from{" "}
+              <a
+                href="https://etherscan.io/block/countdown/16399100"
+                target="_blank"
+                className="underline"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  playGeneralClick()
+                }}
+              >
+                block 16399100
+              </a>{" "}
+              (approximately 4pm UTC on Friday, 13 January 2023). The allowlist mint will last{" "}
+              <a
+                href="https://etherscan.io/block/countdown/16400000"
+                target="_blank"
+                className="underline"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  playGeneralClick()
+                }}
+              >
+                900 blocks
+              </a>{" "}
+              (approximately 3 hours) after which the public mint will be open and anyone can mint.
             </p>
           </div>
 
@@ -81,9 +101,9 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
             </div>
             <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
               The allowlist consists of holders of Solar Systems collection as of 1:50pm UTC on Tuesday, 10 January
-              2023. The list of eligible addresses can be found {/* TODO: Add allowlist URL */}
+              2023. The list of eligible addresses can be found{" "}
               <a
-                href="http://"
+                href="https://raw.githubusercontent.com/lbowles/kaleidoscopes/main/backend/common/snapshot.csv"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline"

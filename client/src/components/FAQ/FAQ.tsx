@@ -82,7 +82,15 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
             <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
               The allowlist consists of holders of Solar Systems collection as of 1:50pm UTC on Tuesday, 10 January
               2023. The list of eligible addresses can be found {/* TODO: Add allowlist URL */}
-              <a href="http://" target="_blank" rel="noopener noreferrer">
+              <a
+                href="http://"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+                onClick={() => {
+                  playGeneralClick()
+                }}
+              >
                 here
               </a>
               .

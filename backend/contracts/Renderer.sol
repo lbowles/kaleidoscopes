@@ -31,7 +31,7 @@ contract Renderer {
     uint256 centerY_precise;
     bool hasGradient;
     bool hasSecondaryColor;
-    bool hasSpecialTrait;
+    bool hasHalo;
   }
 
   struct AnimatedCircle {
@@ -390,11 +390,11 @@ contract Renderer {
       '" r="'
     );
 
-    string memory specialTrait = string.concat(
+    string memory haloTrait = string.concat(
       backgroundCircleBase,
       utils.uint2str(RADIUS + 8),
       '" fill="none"',
-      _kaleidoscope.hasSpecialTrait ? ' stroke="#EBA947" stroke-width="4"' : "",
+      _kaleidoscope.hasHalo ? ' stroke="#EBA947" stroke-width="4"' : "",
       "/>"
     );
 
@@ -409,7 +409,7 @@ contract Renderer {
       '" fill="',
       utils.getHslString(_palette.primaryColorHsl),
       '" />',
-      _kaleidoscope.hasSpecialTrait ? specialTrait : ""
+      _kaleidoscope.hasHalo ? haloTrait : ""
     );
 
     svg = string.concat(svg, paths, "</g>", "</svg>");

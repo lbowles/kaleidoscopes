@@ -14,7 +14,7 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
             <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
               <span>What is Kaleidoscopes?</span>
             </div>
-            <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
+            <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">
               Kaleidoscopes is the second instalment of fully on-chain collectibles by the team that brought you{" "}
               {/* TODO: Style properly */}
               <a href="https://onchainsolar.systems" target="_blank" rel="noopener noreferrer">
@@ -101,9 +101,7 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
             <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
               <span>Roadmap?</span>
             </div>
-            <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
-              There is no roadmap.
-            </p>
+            <p className="text-sm text-zinc-500 px-3 pt-3 pb-5">There is no roadmap.</p>
           </div>
         </div>
       </div>

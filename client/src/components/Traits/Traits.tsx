@@ -38,7 +38,7 @@ export function Traits() {
           <div>
             <div className=" bg-zinc-800 px-3 py-4 rounded-lg w-100 text-sm text-gray-100 flex  items-center">
               <img src={animation} alt="Number Of Reflections" className="h-4 mr-2"></img>
-              <span>Unique Animations</span>
+              <span>Unique animations</span>
             </div>
           </div>
           <div>

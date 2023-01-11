@@ -253,7 +253,6 @@ export function LandingPage() {
           allowListDate.getTime() + publicMintBlockOffset.toNumber() * blockTime * 1000,
         )
         setPublicDate(estimatedPublicDate)
-        console.log("time left", (estimatedPublicDate.getTime() - new Date().getTime()) / 1000, "seconds")
       } else {
         // Pre-mint
         const estimatedAllowlistDate = new Date(
@@ -262,8 +261,6 @@ export function LandingPage() {
         const estimatedPublicDate = new Date(
           estimatedAllowlistDate.getTime() + publicMintBlockOffset.toNumber() * blockTime * 1000,
         )
-
-        console.log("time left", (estimatedAllowlistDate.getTime() - new Date().getTime()) / 1000, "seconds")
 
         setAllowListDate(estimatedAllowlistDate)
         setPublicDate(estimatedPublicDate)
@@ -326,9 +323,6 @@ export function LandingPage() {
   }, [mintTx])
 
   useEffect(() => {
-    console.log("hasAllowListStarted", hasAllowListStarted)
-    console.log("hasPublicSaleStarted", hasPublicSaleStarted)
-
     let _canMint = true
     if (!signer || !maxSupply || !totalSupply) {
       // Variables not loaded yet

@@ -119,37 +119,37 @@ describe("KaleidoscopesAllowList", function () {
     )
   })
 
-  it("Should have special trait only for first 100 mints", async function () {
+  it("Should have halo trait only for first 50 mints", async function () {
     const currentBlock = await ethers.provider.getBlockNumber()
     const startBlock = await kaleidoscopes.allowListMintStartBlock()
 
     await waitForBlocks(startBlock.sub(currentBlock))
 
-    // Mint 120 tokens
+    // Mint 60 tokens
     await Promise.all(
-      allowListSigners.slice(0, 6).map(async (signer, index) => {
+      allowListSigners.slice(0, 4).map(async (signer, index) => {
         const merkleProof = getMerkleProof(tree, signer.address)
         const amount = 20
         await kaleidoscopes.connect(signer).mintAllowList(amount, merkleProof, { value: mintPrice.mul(amount) })
       }),
     )
 
-    // Check that 5 random tokens in the first 100 have special trait
+    // Check that 5 random tokens in the first 100 have halo trait
     for (let _ = 1; _ <= 5; _++) {
-      const i = Math.floor(Math.random() * 100) + 1
+      const i = Math.floor(Math.random() * 50) + 1
       const tokenURI = await kaleidoscopes.tokenURI(i)
       const json = JSON.parse(atob(tokenURI.split(",")[1]))
-      // Expect one of the traits to be Special
-      const trait = json.attributes.find((trait: any) => trait.trait_type === "Special")
+      // Expect one of the traits to be halo
+      const trait = json.attributes.find((trait: any) => trait.trait_type === "Halo")
       expect(trait).to.not.be.undefined
     }
 
-    // Check that the rest of the tokens do not have special trait
-    for (let i = 101; i <= 105; i++) {
+    // Check that the rest of the tokens do not have halo trait
+    for (let i = 51; i <= 60; i++) {
       const tokenURI = await kaleidoscopes.tokenURI(i)
       const json = JSON.parse(atob(tokenURI.split(",")[1]))
-      // Expect one of the traits to be Special
-      const trait = json.attributes.find((trait: any) => trait.trait_type === "Special")
+      // Expect one of the traits to be halo
+      const trait = json.attributes.find((trait: any) => trait.trait_type === "Halo")
       expect(trait).to.be.undefined
     }
   })

@@ -11,13 +11,13 @@ Use `FORK=mainnet` to fork mainnet on the localhost network.
 ### Tests
 
 ```
-yarn hardhat test
+yarn test
 ```
 
 ### Deployment
 
 ```
-yarn hardhat deploy
+yarn deploy
 ```
 
 Optionally specify network with `--network <network>`

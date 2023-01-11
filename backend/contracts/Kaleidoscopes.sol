@@ -95,7 +95,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
     string memory name = string(abi.encodePacked("Kaleidoscope #", utils.uint2str(_tokenId)));
     string memory description = "Fully on-chain, procedurally generated, animated kaleidoscopes.";
     Renderer.Kaleidoscope memory kaleidoscope = renderer.kaleidoscopeForTokenId(_tokenId);
-    kaleidoscope.hasSpecialTrait = _tokenId <= 100;
+    kaleidoscope.hasHalo = _tokenId <= 100;
 
     Renderer.ColorPalette memory palette = renderer.colorPaletteForKaleidescope(kaleidoscope);
     string memory svg = renderer.getKaleidoscopeSVG(kaleidoscope, palette);
@@ -119,7 +119,7 @@ contract Kaleidoscopes is ERC721A, Ownable {
       '"}'
     );
 
-    if (kaleidoscope.hasSpecialTrait) {
+    if (kaleidoscope.hasHalo) {
       attributes = string.concat(
         attributes,
         ',{"trait_type": "Secondary Color", "value": "',
@@ -128,8 +128,8 @@ contract Kaleidoscopes is ERC721A, Ownable {
       );
     }
 
-    if (_tokenId <= 100) {
-      attributes = string.concat(attributes, ',{"trait_type": "Special", "value": "Yes"}');
+    if (_tokenId <= 50) {
+      attributes = string.concat(attributes, ',{"trait_type": "Halo", "value": "Yes"}');
     }
 
     attributes = string.concat(attributes, "]");

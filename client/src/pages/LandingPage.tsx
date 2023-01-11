@@ -414,6 +414,7 @@ export function LandingPage() {
                 onClick={() => {
                   handleMintClick(-1)
                 }}
+                disabled={!canMint}
               >
                 –
               </button>
@@ -434,6 +435,7 @@ export function LandingPage() {
                 onClick={() => {
                   handleMintClick(1)
                 }}
+                disabled={!canMint}
               >
                 +
               </button>
@@ -505,6 +507,7 @@ export function LandingPage() {
         etherscanBaseURL={etherscanBaseURL}
         deployAddress={deployments.contracts.Kaleidoscopes.address}
         playGeneralClick={playGeneralClick}
+        openSeaReady={totalSupply}
       />
       <FAQ
         etherscanBaseURL={etherscanBaseURL}

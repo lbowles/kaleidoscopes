@@ -458,7 +458,7 @@ export function LandingPage() {
         </p>
       </div>
       {mintTx && mintTx.status && (
-        <div className="absolute top-[690px] w-full text-gray-100">
+        <div className="absolute top-[694px] w-full text-gray-100">
           <div className="flex justify-center  mt-3 z-1 pl-10 pr-10 z-10 relative  h-4">
             <div>
               <a

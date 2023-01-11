@@ -511,32 +511,38 @@ export function LandingPage() {
         deployAddress={deployments.contracts.Kaleidoscopes.address}
         playGeneralClick={playGeneralClick}
       />
-      <Traits />
       <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
-        <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
-          <div className="p-5">
-            <p className="font- text-xl pb-4 text-gray-100">Playground</p>
-            <div className="flex justify-center grid-rows-1">
-              {" "}
-              {isSampleSvgLoading ? (
-                <div style={{ height: "500px" }}>Loading</div>
-              ) : (
-                <>
-                  <img className="rounded-lg shrink" src={heroSVG}></img>
-                  <button
-                    className="rounded-full"
-                    onClick={() => {
-                      setRandomTokenId(Math.floor(Math.random() * 10000) + 1001)
-                    }}
-                  >
-                    Randomize
-                  </button>
-                </>
-              )}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 w-[800px]">
+          <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-full">
+            <div className="p-5">
+              <p className="font- text-xl pb-4 text-gray-100">Playground</p>
+              <div className=" ">
+                <img className="rounded-lg shrink" src={heroSVG}></img>
+                <button
+                  className={style.playgroundBtn}
+                  onClick={() => {
+                    playGeneralClick()
+                    setRandomTokenId(Math.floor(Math.random() * 10000) + 1001)
+                  }}
+                >
+                  {isSampleSvgLoading ? (
+                    <div className="flex justify-center">
+                      {" "}
+                      <div className="flex flex-row">
+                        <img src={loading} className="animate-spin w-4"></img>‎ Loading
+                      </div>
+                    </div>
+                  ) : (
+                    <>Randomize</>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
+          <Traits />
         </div>
       </div>
+
       <Footer playGeneralClick={playGeneralClick} />
     </div>
   )

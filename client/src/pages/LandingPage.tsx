@@ -410,7 +410,7 @@ export function LandingPage() {
           ) : (
             <div>
               <button
-                className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
+                className="text-xl font-bold  hover:scale-125 duration-100 ease-in-out text-[#c697b4] disabled:text-[#414141]"
                 onClick={() => {
                   handleMintClick(-1)
                 }}
@@ -431,7 +431,7 @@ export function LandingPage() {
                   : "Sold out"}
               </button>
               <button
-                className="text-xl font-bold hover:scale-125 duration-100 ease-in-out text-[#c697b4]"
+                className="text-xl font-bold hover:scale-125 duration-100 ease-in-out text-[#c697b4] disabled:text-[#414141]"
                 onClick={() => {
                   handleMintClick(1)
                 }}

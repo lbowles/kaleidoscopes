@@ -45,9 +45,8 @@ function getEtherscanBaseURL(chainId: string) {
   return `https://${chainId !== "1" ? "goerli." : ""}etherscan.io`
 }
 
-function getOpenSeaLink(tokenId: string | number) {
-  const development = process.env.NODE_ENV === "development"
-  return `https://${development ? "testnets." : ""}opensea.io/assets/${development ? "goerli/" : ""}${
+function getOpenSeaLink(chainId: string, tokenId: string | number) {
+  return `https://${chainId !== "1" ? "testnets." : ""}opensea.io/assets/${chainId !== "1" ? "goerli/" : ""}${
     deployments.contracts.Kaleidoscopes.address
   }/${tokenId}`
 }
@@ -481,7 +480,7 @@ export function LandingPage() {
                 return (
                   <span key={tokenId}>
                     <a
-                      href={getOpenSeaLink(tokenId)}
+                      href={getOpenSeaLink(deployments.chainId, tokenId)}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => {

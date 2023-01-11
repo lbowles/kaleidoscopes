@@ -105,18 +105,16 @@ export const Countdown = ({
                   </div>
                 </div>
                 <div className="text-gray-100  text-sm flex justify-between">
-                  <div className="flex justify-center">
-                    <span>Allowlist mint</span>
-                    <a
-                      className="pt-1 -ml-[100px]"
-                      onClick={() => {
-                        playGeneralClick()
-                      }}
-                      href="#allowlist-anchor"
-                    >
-                      <img src={allowlistHelpBtn} className="w-[13px]"></img>
-                    </a>
-                  </div>{" "}
+                  <span>Allowlist mint </span>{" "}
+                  <a
+                    className="pt-1 -ml-[100px]"
+                    onClick={() => {
+                      playGeneralClick()
+                    }}
+                    href="#allowlist-anchor"
+                  >
+                    <img src={allowlistHelpBtn} className="w-[13px]"></img>
+                  </a>
                   <span>Public mint</span>
                 </div>
               </div>

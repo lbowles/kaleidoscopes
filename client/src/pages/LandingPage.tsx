@@ -356,7 +356,6 @@ export function LandingPage() {
   }, [signer, maxSupply, totalSupply, hasAllowListStarted, merkleProof, hasPublicSaleStarted])
 
   useEffect(() => {
-    console.log(sampleSvg)
     if (sampleSvg) {
       const svg = new Blob([sampleSvg], { type: "image/svg+xml" })
       const url = URL.createObjectURL(svg)

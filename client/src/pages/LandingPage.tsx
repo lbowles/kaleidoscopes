@@ -372,8 +372,6 @@ export function LandingPage() {
         <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
         <ConnectButton />
       </div>
-
-      {/* TODO : Update with actual details  remove !*/}
       <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
       </div>

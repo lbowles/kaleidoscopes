@@ -40,7 +40,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   let merkleRoot: string
   let addresses: string[] = signers.slice(0, 2).map((signer) => signer.address)
   let allowListStartBlockNumber = 16399100 // 6pm UTC+2, 13 January 2023
-  let publicMintOffsetBlocks = (3 * 60 * 60) / blockTime // 3 hours
+  let publicMintOffsetBlocks = 300 // 3 hours
 
   const currentBlock = await ethers.provider.getBlockNumber()
 
@@ -114,6 +114,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const trigonometry = await deployments.get("Trigonometry")
   const renderer = await deployments.get("Renderer")
 
+  const latestBlock = await ethers.provider.getBlock("latest")
+  const fee = await ethers.provider.getFeeData()
+
+  console.log(ethers.utils.formatUnits(fee.gasPrice!, "gwei"), "gwei")
+  const deployerBalance = await ethers.provider.getBalance(deployer)
+  console.log(ethers.utils.formatEther(deployerBalance), "ETH")
+
   await deploy("Kaleidoscopes", {
     from: deployer,
     log: true,
@@ -132,6 +139,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       renderer.address,
     ],
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
+    gasPrice: ethers.utils.parseUnits("16", "gwei"),
   })
 
   if (hre.network.name === "hardhat") {

@@ -513,6 +513,7 @@ export function LandingPage() {
         etherscanBaseURL={etherscanBaseURL}
         deployAddress={deployments.contracts.Kaleidoscopes.address}
         playGeneralClick={playGeneralClick}
+        allowlistMintBlock={allowlistMintBlock}
       />
       <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 w-[800px]">

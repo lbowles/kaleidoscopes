@@ -1,10 +1,13 @@
+import { BigNumber } from "ethers"
+
 type IFAQ = {
   etherscanBaseURL: string
   deployAddress: string
   playGeneralClick: () => void
+  allowlistMintBlock: BigNumber | undefined
 }
 
-export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ) {
+export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick, allowlistMintBlock }: IFAQ) {
   return (
     <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
       <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
@@ -77,7 +80,7 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick }: IFAQ)
                   playGeneralClick()
                 }}
               >
-                block 16399100
+                block {allowlistMintBlock?.toString()}
               </a>{" "}
               (approximately 4pm UTC on Friday, 13 January 2023). The allowlist mint will last{" "}
               <a

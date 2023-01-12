@@ -372,9 +372,12 @@ export function LandingPage() {
         <h3 className="text-base font-bold text-gray-50">Kaleidoscopes</h3>
         <ConnectButton />
       </div>
-      <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
-        <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
-      </div>
+      {hasAllowListStarted && (
+        <div className="flex justify-center  mt-[65px] z-1 pl-10 pr-10 z-10 relative text-gray-200">
+          <p className="text-size-sm">{`${totalSupply}/${maxSupply}`} minted</p>
+        </div>
+      )}
+
       <div className="flex justify-center z-1 pl-10 pr-10 z-10 relative text-gray-200">
         <p className="text-size-xs">
           {!hasAllowListStarted ? "Sale not started" : !hasPublicSaleStarted ? "Allowlist Mint" : "Public Mint"}

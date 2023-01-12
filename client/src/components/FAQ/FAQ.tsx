@@ -5,9 +5,16 @@ type IFAQ = {
   deployAddress: string
   playGeneralClick: () => void
   allowlistMintBlock: BigNumber | undefined
+  publicMintBlockOffset: BigNumber | undefined
 }
 
-export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick, allowlistMintBlock }: IFAQ) {
+export function FAQ({
+  etherscanBaseURL,
+  deployAddress,
+  playGeneralClick,
+  allowlistMintBlock,
+  publicMintBlockOffset,
+}: IFAQ) {
   return (
     <div className="flex justify-center  mt-10 z-1 pl-5 pr-5 relative">
       <div className="block  bg-zinc-900 border border-zinc-800 rounded-lg w-[800px]">
@@ -69,33 +76,37 @@ export function FAQ({ etherscanBaseURL, deployAddress, playGeneralClick, allowli
             <div className="block bg-zinc-800 px-3 py-2 rounded-lg w-100 text-sm text-gray-100 ">
               <span>What is the mint schedule?</span>
             </div>
-            <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
-              Allowlisted addresses can mint from{" "}
-              <a
-                href="https://etherscan.io/block/countdown/16399100"
-                target="_blank"
-                className="underline"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  playGeneralClick()
-                }}
-              >
-                block {allowlistMintBlock?.toString()}
-              </a>{" "}
-              (approximately 4pm UTC on Friday, 13 January 2023). The allowlist mint will last{" "}
-              <a
-                href="https://etherscan.io/block/countdown/16399400"
-                target="_blank"
-                className="underline"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  playGeneralClick()
-                }}
-              >
-                300 blocks
-              </a>{" "}
-              (approximately 1 hour) after which the public mint will be open and anyone can mint.
-            </p>
+            {allowlistMintBlock && publicMintBlockOffset && (
+              <p className="text-sm text-zinc-500 px-3 pt-3 pb-5" id="allowlist-anchor">
+                Allowlisted addresses can mint from{" "}
+                <a
+                  href={`https://etherscan.io/block/countdown/${allowlistMintBlock.toString()}`}
+                  target="_blank"
+                  className="underline"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    playGeneralClick()
+                  }}
+                >
+                  block {allowlistMintBlock?.toString()}
+                </a>{" "}
+                (approximately 4pm UTC on Friday, 13 January 2023). The allowlist mint will last{" "}
+                <a
+                  href={`https://etherscan.io/block/countdown/${allowlistMintBlock
+                    .add(publicMintBlockOffset)
+                    .toString()}`}
+                  target="_blank"
+                  className="underline"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    playGeneralClick()
+                  }}
+                >
+                  {publicMintBlockOffset.toString()} blocks
+                </a>{" "}
+                (approximately 1 hour) after which the public mint will be open and anyone can mint.
+              </p>
+            )}
           </div>
 
           <div className=" ">

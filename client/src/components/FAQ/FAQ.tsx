@@ -30,7 +30,7 @@ export function FAQ({
                 Solar Systems
               </a>
               . This new collection features fully on-chain, procedurally generated, animated kaleidoscopes. They are
-              available for a minting price of 0.01 ETH with a maximum supply of 1,000 on the Ethereum blockchain.
+              available for a minting price of 0.005 ETH with a maximum supply of 1,000 on the Ethereum blockchain.
               Wallets can mint up to 20 each.
             </p>
           </div>
